@@ -1,5 +1,13 @@
 .content {
   background: #f8f2fa;
   height: calc(67vh - 50px);
+}
+
+.metamask {
   text-align: center;
+}
+
+.box {
+  font-family: 'Roboto', sans-serif;
+  font-size: 25px;
 }

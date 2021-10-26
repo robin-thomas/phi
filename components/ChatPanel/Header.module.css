@@ -1,9 +1,10 @@
 .header {
-  height: 75px;
+  height: 100px;
 }
 
 .appName {
   font-family: 'Roboto', sans-serif;
   text-transform: capitalize;
   font-size: 20px;
+  font-weight: 800;
 }

@@ -13,18 +13,18 @@ const Circle = () => (
 const Header = () => (
   <Grid
     container
-    spacing={2}
+    spacing={3}
     alignItems='center'
     justifyContent="center"
     className={styles.header}
   >
-    <Grid item xs="2">
+    <Grid item xs="auto" sx={{ pr: 2 }}>
       <span className={styles.appName}>{process.env.APP_NAME}</span>
     </Grid>
     <Circle />
     <Circle />
     <Circle />
-    <Grid item xs={4} />
+    <Grid item xs={6} />
   </Grid>
 )
 

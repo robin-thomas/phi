@@ -3,11 +3,15 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Popover from '@mui/material/Popover';
 import List from '@mui/material/List';
+import Tooltip from '@mui/material/Tooltip';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import IconButton from '@mui/material/IconButton';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import ListSubheader from '@mui/material/ListSubheader';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import LogoutIcon from '@mui/icons-material/Logout';
 import { useMoralis } from 'react-moralis';
 
 import styles from './Settings.module.css';
@@ -24,9 +28,11 @@ const Settings = () => {
     <>
       <Grid container sx={{ px: 3, py: 3 }} justifyContent="flex-end">
         <Grid item>
-          <IconButton onClick={handleClick}>
-            <MoreHorizIcon fontSize="large" className={styles.button}/>
-          </IconButton>
+          <Tooltip title="Settings" arrow placement="top">
+            <IconButton onClick={handleClick}>
+              <MoreHorizIcon fontSize="large" className={styles.button}/>
+            </IconButton>
+          </Tooltip>
         </Grid>
       </Grid>
       <Popover
@@ -38,10 +44,13 @@ const Settings = () => {
           horizontal: 'left',
         }}
       >
-        <Box sx={{ minWidth: 300, bgcolor: 'background.paper' }}>
-          <List>
+        <Box sx={{ minWidth: 280, bgcolor: 'background.paper' }}>
+          <List subheader={<ListSubheader>Settings</ListSubheader>}>
             <ListItem disablePadding>
               <ListItemButton disabled={isAuthenticating} onClick={logout}>
+                <ListItemIcon>
+                  <LogoutIcon />
+                </ListItemIcon>
                 <ListItemText primary="Logout" />
               </ListItemButton>
             </ListItem>
