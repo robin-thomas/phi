@@ -25,7 +25,7 @@
     "@emotion/styled": "^11.3.0",
     "@mui/icons-material": "^5.0.4",
     "@mui/material": "^5.0.4",
-    "@walletconnect/web3-provider": "^1.6.6",
+    "@self.id/web": "^0.1.0",
     "moralis": "^0.0.105",
     "next": "^11.1.2",
     "react": "^17.0.2",

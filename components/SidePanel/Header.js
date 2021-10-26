@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useMoralis } from 'react-moralis';
 
 import Settings from './Settings';

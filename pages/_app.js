@@ -1,12 +1,15 @@
 import { MoralisProvider } from "react-moralis";
 
+import DataProvider from '../components/DataProvider';
+
 import '../globals/styles.css'
 
-// This default export is required in a new `pages/_app.js` file.
 export default function MyApp({ Component, pageProps }) {
   return (
     <MoralisProvider appId={process.env.MORALIS_APP_ID} serverUrl={process.env.MORALIS_SERVER_URL}>
-      <Component {...pageProps} />
+      <DataProvider>
+        <Component {...pageProps} />
+      </DataProvider>
     </MoralisProvider>
   )
 }
