@@ -12,7 +12,15 @@ const DataProvider = ({ children }) => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      getSelfProfile().then(setProfile);
+      getSelfProfile()
+        .then((_profile) => {
+          // first time.
+          if (!profile?.name) {
+            _profile = { name: 'John Doe', description: 'Available' };
+          }
+
+          setProfile(_profile);
+        });
     }
   }, [isAuthenticated]);
 

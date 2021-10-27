@@ -5,7 +5,7 @@ import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
-import Name from './Name';
+import Edit from './Edit';
 
 import styles from './index.module.css';
 
@@ -25,7 +25,10 @@ const Profile = ({ closeDrawer }) => (
     </Grid>
     <Box sx={{ px: 3, py: 1 }}>
       <Box sx={{ mt: 6 }}>
-        <Name />
+        <Edit label="Your Name" name="name" />
+      </Box>
+      <Box sx={{ mt: 15 }}>
+        <Edit label="About" name="description" />
       </Box>
     </Box>
   </>
