@@ -14,8 +14,6 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useMoralis } from 'react-moralis';
 
-import styles from './Settings.module.css';
-
 const Settings = () => {
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -26,15 +24,11 @@ const Settings = () => {
 
   return (
     <>
-      <Grid container sx={{ px: 3, py: 3 }} justifyContent="flex-end">
-        <Grid item>
-          <Tooltip title="Settings" arrow placement="top">
-            <IconButton onClick={handleClick}>
-              <MoreHorizIcon fontSize="large" className={styles.button}/>
-            </IconButton>
-          </Tooltip>
-        </Grid>
-      </Grid>
+      <Tooltip title="Settings" arrow placement="top">
+        <IconButton onClick={handleClick}>
+          <MoreHorizIcon fontSize="large"/>
+        </IconButton>
+      </Tooltip>
       <Popover
         open={Boolean(anchorEl)}
         anchorEl={anchorEl}

@@ -1,10 +1,17 @@
 .panel {
-  border-radius: 8px;
   box-shadow: -5px 10px 24px -8px black;
+}
+
+.drawer {
+  color: white;
+}
+
+.panel, .drawer {
   width: 400px;
   height: 66vh;
-  margin-top: 5vh;
-  margin-left: 15vw;
-  background: #271a33;
   position: absolute;
+  border-radius: 8px;
+  top: 17.9vh;
+  left: 15vw;
+  background: #271a33;
 }

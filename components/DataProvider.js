@@ -1,7 +1,7 @@
 import { createContext, useState, useEffect } from 'react';
 import { useMoralis } from 'react-moralis';
 
-import { getProfile } from '../utils/ceramic';
+import { getSelfProfile } from '../utils/ceramic';
 
 const DataContext = createContext();
 
@@ -12,7 +12,7 @@ const DataProvider = ({ children }) => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      getProfile().then(setProfile);
+      getSelfProfile().then(setProfile);
     }
   }, [isAuthenticated]);
 
@@ -20,6 +20,7 @@ const DataProvider = ({ children }) => {
     <DataContext.Provider
       value={{
         profile,
+        setProfile,
       }}
     >
       {children}

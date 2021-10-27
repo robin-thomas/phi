@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Image from 'next/image';
 import Grid from '@mui/material/Grid';
@@ -7,7 +7,7 @@ import MUISkeleton from '@mui/material/Skeleton';
 import { useMoralis } from 'react-moralis';
 
 import styles from './Content.module.css';
-import { DataContext } from '../DataProvider';
+import { useAppContext } from '../hooks';
 import MetamaskLogo from '../../assets/metamask.png';
 
 const Skeleton = () => (
@@ -19,7 +19,7 @@ const Skeleton = () => (
 
 const Content = () => {
   const [name, setName] = useState('');
-  const { profile } = useContext(DataContext);
+  const { profile } = useAppContext();
   const { authenticate, isAuthenticated, user } = useMoralis();
 
   useEffect(() => {
