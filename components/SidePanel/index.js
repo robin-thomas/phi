@@ -1,12 +1,5 @@
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
 import Drawer from '@mui/material/Drawer';
-import Tooltip from '@mui/material/Tooltip';
-import IconButton from '@mui/material/IconButton';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import Fab from '@mui/material/Fab';
-import AddIcon from '@mui/icons-material/Add';
 
 import Header from './Header';
 import Profile from '../Profile';
@@ -56,13 +49,12 @@ const darkTheme = createTheme({
 const SidePanel = () => {
   const { showProfile, setShowProfile } = useAppContext();
 
-  const openDrawer = () => setShowProfile(true);
   const closeDrawer = () => setShowProfile(false);
 
   return (
     <ThemeProvider theme={darkTheme}>
       <div className={styles.panel}>
-        <Header openDrawer={openDrawer} />
+        <Header />
         <Contacts />
         <Drawer
           anchor="left"

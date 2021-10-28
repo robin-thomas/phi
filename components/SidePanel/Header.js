@@ -1,13 +1,7 @@
-import { useEffect, useState } from 'react';
 import { useMoralis } from 'react-moralis';
-import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import Skeleton from '@mui/material/Skeleton';
-import IconButton from '@mui/material/IconButton';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import Drawer from '@mui/material/Drawer';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 import Avatar from '../Profile/Avatar';
 import Settings from './Settings';
@@ -15,7 +9,7 @@ import Settings from './Settings';
 import { useAppContext } from '../hooks';
 import styles from './Header.module.css';
 
-const Header = ({ openDrawer }) => {
+const Header = () => {
   const { profile } = useAppContext();
   const { isAuthenticated } = useMoralis();
 

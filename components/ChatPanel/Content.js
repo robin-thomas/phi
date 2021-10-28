@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Image from 'next/image';
-import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import MUISkeleton from '@mui/material/Skeleton';
 import { useMoralis } from 'react-moralis';
@@ -20,7 +19,7 @@ const Skeleton = () => (
 const Content = () => {
   const [name, setName] = useState('');
   const { profile } = useAppContext();
-  const { authenticate, isAuthenticated, user } = useMoralis();
+  const { authenticate, isAuthenticated } = useMoralis();
 
   useEffect(() => {
     if (profile?.name) {

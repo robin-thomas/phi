@@ -18,7 +18,6 @@ import { updateProfile } from '../../utils/ceramic';
 const Edit = ({ name, label }) => {
   const { profile, setProfile } = useAppContext();
 
-  const [value, setValue] = useState(profile[name] || '');
   const [disabled, setDisabled] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 

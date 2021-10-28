@@ -14,7 +14,6 @@ import Input from '@mui/material/Input';
 import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
-import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/Check';
 import CircularProgress from '@mui/material/CircularProgress';
 import FormHelperText from '@mui/material/FormHelperText';
@@ -31,7 +30,6 @@ const Contacts = () => {
   const [profile, setProfile] = useState({});
   const [addContact, setAddContact] = useState(false);
   const [checkingContact, setCheckingContact] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
 
   const formik = useFormik({
     initialValues: { address: '' },

@@ -1,14 +1,11 @@
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Tooltip from '@mui/material/Tooltip';
-import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 import Edit from './Edit';
 import Avatar from './Avatar';
-
-import styles from './index.module.css';
 
 const Profile = ({ closeDrawer }) => (
   <>
