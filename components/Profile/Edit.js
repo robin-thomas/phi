@@ -36,8 +36,10 @@ const Edit = ({ name, label }) => {
       if (values[name] !== formik.initialValues[name]) {
         setSubmitting(true);
 
-        await updateProfile({ [name]: values[name] });
-        setProfile((_profile) => ({ ..._profile, [name]: values[name] }));
+        const _profile = { ...profile, [name]: values[name] };
+        await updateProfile(_profile);
+        setProfile((_profile));
+
         setSubmitting(false);
       }
     },

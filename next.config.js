@@ -6,6 +6,6 @@ module.exports = {
     CERAMIC_NODE_URL: 'https://ceramic-clay.3boxlabs.com',
     CERAMIC_NETWORK: 'testnet-clay',
     TEXTILE_KEY: 'boqzh4ln446uicmk6btvefvd5yu',
-    TEXTILE_PIC_BUCKET: 'connect',
+    TEXTILE_PROFILE_BUCKET: 'profiles',
   },
 }

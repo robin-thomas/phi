@@ -40,10 +40,10 @@ class Bucket {
     return { key: result.root.key, threadID: result.threadID };
   }
 
-  async upload(bucketKey, path, ab) {
+  async upload(bucketKey, path, file) {
     console.debug(`Uploading to textile bucket with path: ${path}`);
     this.client.withThread(bucketKey.threadID);
-    return await this.client.pushPath(bucketKey.key, path, ab);
+    return await this.client.pushPath(bucketKey.key, path, file);
   }
 
   async download(bucketKey, path) {

@@ -26,25 +26,21 @@ const Avatar = () => {
   // load the image.
   useEffect(() => {
     (async () => {
-      console.log('profile', profile);
       if (profile.image) {
         const path = await getPath();
 
         const bucket = await Bucket.getInstance();
-        const metadataBuf = await bucket.download(profileKey, path + 'metadata.json');
-        const metadata = JSON.parse(new TextDecoder('utf-8').decode(metadataBuf));
-
-        const fileBuf = await bucket.download(profileKey, path + 'pic');
-        setSrc(URL.createObjectURL(new Blob(fileBuf, { type: metadata.type })));
+        const buf = await bucket.download(profileKey, path + 'pic');
+        setSrc(URL.createObjectURL(new Blob([buf], { type: profile.image.original.mimeType })));
 
         setLoading(false);
       }
     })();
-  }, [profile.image]);
+  }, [profileKey, profile.image]);
 
   const getPath = async () => {
     const [path] = await window.ethereum.enable();
-    return `profiles/${path}/`;
+    return `${path}/`;
   }
 
   const onClick = () => {
@@ -53,23 +49,26 @@ const Avatar = () => {
     input.accept = 'image/*';
     input.onchange = async (e) => {
       const file = e.target.files[0];
-      const metadata = {
-        name: file.name,
-        type: file.type,
-        size: file.size,
-        date: Date.now(),
-      }
 
       setLoading(true);
+
       const path = await getPath();
-
       const bucket = await Bucket.getInstance();
-      await bucket.upload(profileKey, path + 'pic', file);
-      await bucket.upload(profileKey, path + 'metadata.json', Buffer.from(JSON.stringify(metadata)));
+      const uploaded = await bucket.upload(profileKey, path + 'pic', file);
+      console.debug('Uploaded profile picture to textile bucket');
 
-      // Update profile with path.
-      await updateProfile({ image: path + 'pic' });
-      setProfile((_profile) => ({ ..._profile, image: path + 'pic' }));
+      const image = {
+        original: {
+          src: `ipfs://${uploaded.path.path.replace('/ipfs/', '')}`,
+          mimeType: file.type,
+          width: 200,
+          height: 200,
+        },
+      };
+
+      const _profile = { ...profile, image };
+      await updateProfile(_profile);
+      setProfile(_profile);
     }
     input.click();
   }
@@ -78,15 +77,11 @@ const Avatar = () => {
     return <Skeleton variant="circular" width={200} height={200} />
   }
 
-  if (!profile?.image) {
-    return (
-      <Pic onClick={onClick}>
-        <MUIAvatar sx={{ width: 200, height: 200 }} alt="John Doe" />
-      </Pic>
-    );
-  }
-
-  return <MUIAvatar sx={{ width: 200, height: 200 }} alt="John Doe" src={src} />;
+  return (
+    <Pic onClick={onClick}>
+      <MUIAvatar sx={{ width: 200, height: 200 }} alt="John Doe" src={src} />
+    </Pic>
+  );
 }
 
 export default Avatar;
