@@ -17,7 +17,7 @@ const Pic = ({ onClick, children }) => (
   </Tooltip>
 )
 
-const Avatar = () => {
+const Avatar = ({ mini }) => {
   const [src, setSrc] = useState(null);
   const [loading, setLoading] = useState(Boolean(profile?.image));
 
@@ -74,7 +74,14 @@ const Avatar = () => {
   }
 
   if (!profileKey || loading) {
+    if (mini) {
+      return <Skeleton variant="circular" width={50} height={50} />
+    }
     return <Skeleton variant="circular" width={200} height={200} />
+  }
+
+  if (mini) {
+    return <MUIAvatar sx={{ width: 50, height: 50 }} alt="John Doe" src={src} />
   }
 
   return (

@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useMoralis } from 'react-moralis';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
-import Avatar from '@mui/material/Avatar';
 import CardHeader from '@mui/material/CardHeader';
 import Skeleton from '@mui/material/Skeleton';
 import IconButton from '@mui/material/IconButton';
@@ -11,6 +10,7 @@ import Drawer from '@mui/material/Drawer';
 import { styled } from '@mui/material/styles';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
+import Avatar from '../Profile/Avatar';
 import Settings from './Settings';
 
 import { useAppContext } from '../hooks';
@@ -43,15 +43,7 @@ const Header = ({ openDrawer }) => {
         sx={{ px: 3, pt: 2 }}
       >
         <CardHeader
-          avatar={
-            !profile?.name ? (
-              <Skeleton animation="wave" variant="circular" width={40} height={40} sx={{ bgcolor: "#c57e9e" }} />
-            ) : (
-              <Avatar
-                onClick={openDrawer}
-              />
-            )
-          }
+          avatar={<Avatar mini={true} />}
           action={
             !profile?.name ? null : (
               <Settings />

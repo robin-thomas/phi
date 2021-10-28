@@ -51,7 +51,7 @@ const SidePanel = () => {
         <Drawer
           anchor="left"
           open={showProfile}
-          hideBackdrop
+          onClose={closeDrawer}
           classes={{ paper: styles.drawer }}
           ModalProps={{ keepMounted: true }}
           SlideProps={{ timeout: 300 }}

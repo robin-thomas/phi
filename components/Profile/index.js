@@ -12,7 +12,7 @@ import styles from './index.module.css';
 
 const Profile = ({ closeDrawer }) => (
   <>
-    <Grid container sx={{ px: 1, py: 1 }} alignItems="center" spacing={2} className={styles.drawerHeader}>
+    <Grid container sx={{ px: 1, py: 1 }} alignItems="center" spacing={2}>
       <Grid item xs="auto">
         <Tooltip title="Back" placement="top" arrow>
           <IconButton onClick={closeDrawer}>

@@ -1,17 +1,14 @@
 .panel {
   box-shadow: -5px 10px 24px -8px black;
+  border-radius: 8px;
+  background: #271a33;
+  width: 400px;
+  height: 66vh;
+  position: absolute;
+  top: 17.9vh;
+  left: 15vw;
 }
 
 .drawer {
   color: white;
-}
-
-.panel, .drawer {
-  width: 400px;
-  height: 66vh;
-  position: absolute;
-  border-radius: 8px;
-  top: 17.9vh;
-  left: 15vw;
-  background: #271a33;
 }

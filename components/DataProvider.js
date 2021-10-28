@@ -17,7 +17,7 @@ const DataProvider = ({ children }) => {
     (async () => {
       const bucket = await Bucket.getInstance();
       const key = await bucket.getKey(process.env.TEXTILE_PROFILE_BUCKET);
-      console.log('key', key);
+      console.debug('key', key);
       setProfileKey(key);
     })();
   }, []);
