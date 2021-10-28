@@ -67,6 +67,11 @@ class Bucket {
 
     return result;
   }
+
+  async getImage(bucketKey, address, mimeType) {
+    const buf = await this.download(bucketKey, `${address}/pic`);
+    return URL.createObjectURL(new Blob([buf], { type: mimeType }));
+  }
 };
 
 export default Bucket;

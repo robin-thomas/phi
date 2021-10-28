@@ -1,4 +1,10 @@
-import { EthereumAuthProvider, SelfID } from '@self.id/web';
+import { WebClient, EthereumAuthProvider, SelfID } from '@self.id/web';
+import { Caip10Link } from '@ceramicnetwork/stream-caip10-link';
+import CeramicClient from '@ceramicnetwork/http-client';
+
+/**
+ * {@link https://developers.ceramic.network/tools/self-id/overview/}
+ **/
 
 export const getSelfProfile = async () => {
   const [address] = await window.ethereum.enable();
@@ -9,7 +15,7 @@ export const getSelfProfile = async () => {
     connectNetwork: process.env.CERAMIC_NETWORK,
   });
 
-  console.debug('Retrieving ceramic basicProfile');
+  console.debug('Retrieving authenticated ceramic basicProfile');
 
   return await self.get('basicProfile');
 }
@@ -28,6 +34,16 @@ export const updateProfile = async (profile) => {
   return await self.set('basicProfile', profile);
 }
 
-export const getProfile = async (did) => {
+export const getProfile = async (address) => {
+  const ceramic = new CeramicClient(process.env.CERAMIC_NODE_URL);
+  const { did } = await Caip10Link.fromAccount(ceramic, `${address}@eip155:4`);
 
+  const self = new WebClient({
+    ceramic: process.env.CERAMIC_NODE_URL,
+    connectNetwork: process.env.CERAMIC_NETWORK,
+  });
+
+  console.debug('Retrieving un-authenticated ceramic basicProfile');
+
+  return await self.get('basicProfile', did);
 }

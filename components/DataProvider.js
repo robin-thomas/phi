@@ -45,8 +45,7 @@ const DataProvider = ({ children }) => {
       if (profile.image && profileKey) {
         const [address] = await window.ethereum.enable();
         const bucket = await Bucket.getInstance();
-        const buf = await bucket.download(profileKey, `${address}/pic`);
-        setProfilePic(URL.createObjectURL(new Blob([buf], { type: profile.image.original.mimeType })));
+        setProfilePic(await bucket.getImage(profileKey, address, profile.image.original.mimeType));
       }
     })();
   }, [profile.image, profileKey]);

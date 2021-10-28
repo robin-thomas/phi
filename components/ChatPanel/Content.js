@@ -33,7 +33,7 @@ const Content = () => {
       {!isAuthenticated ? (
         <>
           <div className={styles.metamask}>
-            <Image src={MetamaskLogo} width={336} height={450} />
+            <Image alt="Metamask Wallet login" src={MetamaskLogo} width={336} height={450} />
           </div>
           <div className={styles.metamask}>
             <Button variant="contained" onClick={authenticate}>Connect Wallet</Button>
