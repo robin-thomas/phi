@@ -15,28 +15,13 @@ const Pic = ({ onClick, children }) => (
       {children}
     </IconButton>
   </Tooltip>
-)
+);
 
 const Avatar = ({ mini }) => {
-  const [src, setSrc] = useState(null);
   const [loading, setLoading] = useState(Boolean(profile?.image));
+  const { profile, profilePic, setProfile, profileKey } = useAppContext();
 
-  const { profile, setProfile, profileKey } = useAppContext();
-
-  // load the image.
-  useEffect(() => {
-    (async () => {
-      if (profile.image) {
-        const path = await getPath();
-
-        const bucket = await Bucket.getInstance();
-        const buf = await bucket.download(profileKey, path + 'pic');
-        setSrc(URL.createObjectURL(new Blob([buf], { type: profile.image.original.mimeType })));
-
-        setLoading(false);
-      }
-    })();
-  }, [profileKey, profile.image]);
+  useEffect(() => profilePic && setLoading(false), [profilePic]);
 
   const getPath = async () => {
     const [path] = await window.ethereum.enable();
@@ -73,7 +58,7 @@ const Avatar = ({ mini }) => {
     input.click();
   }
 
-  if (!profileKey || loading) {
+  if (!profilePic || loading) {
     if (mini) {
       return <Skeleton variant="circular" width={50} height={50} />
     }
@@ -81,12 +66,12 @@ const Avatar = ({ mini }) => {
   }
 
   if (mini) {
-    return <MUIAvatar sx={{ width: 50, height: 50 }} alt="John Doe" src={src} />
+    return <MUIAvatar sx={{ width: 50, height: 50 }} alt="John Doe" src={profilePic} />
   }
 
   return (
     <Pic onClick={onClick}>
-      <MUIAvatar sx={{ width: 200, height: 200 }} alt="John Doe" src={src} />
+      <MUIAvatar sx={{ width: 200, height: 200 }} alt="John Doe" src={profilePic} />
     </Pic>
   );
 }

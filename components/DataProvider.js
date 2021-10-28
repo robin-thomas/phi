@@ -8,6 +8,7 @@ const DataContext = createContext();
 
 const DataProvider = ({ children }) => {
   const [profile, setProfile] = useState({});
+  const [profilePic, setProfilePic] = useState(null);
   const [showProfile, setShowProfile] = useState(false);
   const [profileKey, setProfileKey] = useState(null);
 
@@ -17,7 +18,7 @@ const DataProvider = ({ children }) => {
     (async () => {
       const bucket = await Bucket.getInstance();
       const key = await bucket.getKey(process.env.TEXTILE_PROFILE_BUCKET);
-      console.debug('key', key);
+      console.debug('Retrieved textile key for profile bucket', key);
       setProfileKey(key);
     })();
   }, []);
@@ -39,11 +40,23 @@ const DataProvider = ({ children }) => {
     }
   }, [isAuthenticated]);
 
+  useEffect(() => {
+    (async () => {
+      if (profile.image && profileKey) {
+        const [address] = await window.ethereum.enable();
+        const bucket = await Bucket.getInstance();
+        const buf = await bucket.download(profileKey, `${address}/pic`);
+        setProfilePic(URL.createObjectURL(new Blob([buf], { type: profile.image.original.mimeType })));
+      }
+    })();
+  }, [profile.image, profileKey]);
+
   return (
     <DataContext.Provider
       value={{
         profile,
         setProfile,
+        profilePic,
         showProfile,
         setShowProfile,
         profileKey,
