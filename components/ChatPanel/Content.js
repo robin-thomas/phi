@@ -46,7 +46,7 @@ const Content = () => {
           ) : (
             <>
               <h2>Hi, {name}!</h2>
-              <h4 style={{ marginTop: '-15px' }}>Get started by messaging a friend</h4>
+              <h4 style={{ marginTop: '-15px' }}>Get started by messaging a friend.</h4>
             </>
           )}
         </Box>

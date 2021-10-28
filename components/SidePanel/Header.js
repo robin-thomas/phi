@@ -34,46 +34,44 @@ const Header = ({ openDrawer }) => {
   }
 
   return (
-    <>
-      <Card
-        style={{
-          backgroundColor: 'transparent',
-          boxShadow: 'none',
+    <Card
+      style={{
+        backgroundColor: 'transparent',
+        boxShadow: 'none',
+      }}
+      sx={{ px: 3, pt: 2 }}
+    >
+      <CardHeader
+        avatar={<Avatar mini={true} />}
+        action={
+          !profile?.name ? null : (
+            <Settings />
+          )
+        }
+        title={
+          !profile?.name ? (
+            <Skeleton
+              animation="wave"
+              height={10}
+              width="80%"
+              style={{ marginBottom: 6 }}
+              sx={{ bgcolor: "#c57e9e" }}
+            />
+          ) : profile?.name
+        }
+        subheader={
+          !profile?.description ? (
+            <Skeleton animation="wave" height={10} width="40%" sx={{ bgcolor: "#c57e9e" }} />
+          ) : (
+            profile.description
+          )
+        }
+        classes={{
+          title: styles.title,
+          subheader: styles.subheader,
         }}
-        sx={{ px: 3, pt: 2 }}
-      >
-        <CardHeader
-          avatar={<Avatar mini={true} />}
-          action={
-            !profile?.name ? null : (
-              <Settings />
-            )
-          }
-          title={
-            !profile?.name ? (
-              <Skeleton
-                animation="wave"
-                height={10}
-                width="80%"
-                style={{ marginBottom: 6 }}
-                sx={{ bgcolor: "#c57e9e" }}
-              />
-            ) : profile?.name
-          }
-          subheader={
-            !profile?.name ? (
-              <Skeleton animation="wave" height={10} width="40%" sx={{ bgcolor: "#c57e9e" }} />
-            ) : (
-              '5 hours ago'
-            )
-          }
-          classes={{
-            title: styles.title,
-            subheader: styles.subheader,
-          }}
-        />
-      </Card>
-    </>
+      />
+    </Card>
   )
 }
 
