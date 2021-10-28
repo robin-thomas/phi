@@ -6,6 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 import Edit from './Edit';
+import Avatar from './Avatar';
 
 import styles from './index.module.css';
 
@@ -24,10 +25,13 @@ const Profile = ({ closeDrawer }) => (
       </Grid>
     </Grid>
     <Box sx={{ px: 3, py: 1 }}>
+      <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
+        <Avatar />
+      </Box>
       <Box sx={{ mt: 6 }}>
         <Edit label="Your Name" name="name" />
       </Box>
-      <Box sx={{ mt: 15 }}>
+      <Box sx={{ mt: 10 }}>
         <Edit label="About" name="description" />
       </Box>
     </Box>

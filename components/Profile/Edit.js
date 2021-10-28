@@ -31,11 +31,15 @@ const Edit = ({ name, label }) => {
     }),
     onSubmit: async (values) => {
       setDisabled(true);
-      setSubmitting(true);
 
-      await updateProfile({ [name]: values[name] });
-      setProfile((_profile) => ({ ..._profile, [name]: values[name] }));
-      setSubmitting(false);
+      // if no change.
+      if (values[name] !== formik.initialValues[name]) {
+        setSubmitting(true);
+
+        await updateProfile({ [name]: values[name] });
+        setProfile((_profile) => ({ ..._profile, [name]: values[name] }));
+        setSubmitting(false);
+      }
     },
     enableReinitialize: true,
   });
@@ -50,6 +54,7 @@ const Edit = ({ name, label }) => {
           formik.setFieldTouched(name);
           formik.handleChange(e);
         }}
+        onBlur={formik.handleSubmit}
         disabled={disabled}
         disableUnderline={disabled}
         autoComplete='off'

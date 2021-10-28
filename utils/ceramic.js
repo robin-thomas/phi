@@ -9,6 +9,8 @@ export const getSelfProfile = async () => {
     connectNetwork: process.env.CERAMIC_NETWORK,
   });
 
+  console.debug('Retrieving ceramic basicProfile');
+
   return await self.get('basicProfile');
 }
 
@@ -20,6 +22,8 @@ export const updateProfile = async (profile) => {
     ceramic: process.env.CERAMIC_NODE_URL,
     connectNetwork: process.env.CERAMIC_NETWORK,
   });
+
+  console.debug('Updating ceramic basicProfile');
 
   return await self.set('basicProfile', profile);
 }

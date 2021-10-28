@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import Grid from '@mui/material/Grid';
 import Drawer from '@mui/material/Drawer';
 import Tooltip from '@mui/material/Tooltip';
@@ -10,6 +9,7 @@ import Header from './Header';
 import Profile from '../Profile';
 
 import styles from './index.module.css';
+import { useAppContext } from '../hooks';
 
 const darkTheme = createTheme({
   palette: {
@@ -39,10 +39,10 @@ const darkTheme = createTheme({
 });
 
 const SidePanel = () => {
-  const [open, setOpen] = useState(false);
+  const { showProfile, setShowProfile } = useAppContext();
 
-  const openDrawer = () => setOpen(true);
-  const closeDrawer = () => setOpen(false);
+  const openDrawer = () => setShowProfile(true);
+  const closeDrawer = () => setShowProfile(false);
 
   return (
     <ThemeProvider theme={darkTheme}>
@@ -50,17 +50,11 @@ const SidePanel = () => {
         <Header openDrawer={openDrawer} />
         <Drawer
           anchor="left"
-          open={open}
+          open={showProfile}
           hideBackdrop
-          classes={{
-            paper: styles.drawer
-          }}
-          ModalProps={{
-            keepMounted: true,
-          }}
-          SlideProps={{
-            timeout: 300
-          }}
+          classes={{ paper: styles.drawer }}
+          ModalProps={{ keepMounted: true }}
+          SlideProps={{ timeout: 300 }}
         >
           <Profile closeDrawer={closeDrawer} />
         </Drawer>

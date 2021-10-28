@@ -12,15 +12,25 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import ListSubheader from '@mui/material/ListSubheader';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import LogoutIcon from '@mui/icons-material/Logout';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import { useMoralis } from 'react-moralis';
+import Divider from '@mui/material/Divider';
+
+import { useAppContext } from '../hooks';
 
 const Settings = () => {
   const [anchorEl, setAnchorEl] = useState(null);
 
+  const { setShowProfile } = useAppContext();
   const { logout, isAuthenticating } = useMoralis();
 
   const handleClick = (e) => setAnchorEl(e.currentTarget);
   const handleClose = () => setAnchorEl(null);
+
+  const showProfile = () => {
+    setShowProfile(true);
+    handleClose();
+  }
 
   return (
     <>
@@ -40,6 +50,15 @@ const Settings = () => {
       >
         <Box sx={{ minWidth: 280, bgcolor: 'background.paper' }}>
           <List subheader={<ListSubheader>Settings</ListSubheader>}>
+            <ListItem disablePadding>
+              <ListItemButton disabled={isAuthenticating} onClick={showProfile}>
+                <ListItemIcon>
+                  <AccountBoxIcon />
+                </ListItemIcon>
+                <ListItemText primary="Your Profile" />
+              </ListItemButton>
+            </ListItem>
+            <Divider />
             <ListItem disablePadding>
               <ListItemButton disabled={isAuthenticating} onClick={logout}>
                 <ListItemIcon>
