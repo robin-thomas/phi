@@ -10,13 +10,13 @@ import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
 import { useMoralis } from 'react-moralis';
-import Input from '@mui/material/Input';
-import InputLabel from '@mui/material/InputLabel';
+import SearchIcon from '@mui/icons-material/Search';
 import InputAdornment from '@mui/material/InputAdornment';
-import FormControl from '@mui/material/FormControl';
 import CheckIcon from '@mui/icons-material/Check';
 import CircularProgress from '@mui/material/CircularProgress';
-import FormHelperText from '@mui/material/FormHelperText';
+import ContactPageIcon from '@mui/icons-material/ContactPage';
+import TextField from '@mui/material/TextField';
+import Divider from '@mui/material/Divider';
 
 import Contact from './Contact';
 
@@ -49,6 +49,12 @@ const Contacts = () => {
     enableReinitialize: true,
   });
 
+  const onClose = () => {
+    setAddContact(false);
+    formik.resetForm();
+    setProfile(null);
+  }
+
   if (!isAuthenticated || !profileKey) {
     return null;
   }
@@ -58,54 +64,64 @@ const Contacts = () => {
       <Box sx={{ px: 2, height: 'calc(100% - 120px)' }}>
         {addContact && (
           <Card
-            sx={{ pt: 4, height: '100%' }}
+            sx={{ pt: 4 }}
             style={{
               backgroundColor: 'transparent',
               backgroundImage: 'none',
-              boxShadow: 'none',
             }}
           >
             <CardHeader
               title="Add New Contact"
+              avatar={<ContactPageIcon fontSize="large" />}
               action={(
-                <IconButton onClick={() => setAddContact(false)} disabled={checkingContact}>
+                <IconButton onClick={onClose} disabled={checkingContact}>
                   <CloseIcon />
                 </IconButton>
               )}
             />
-            <Box sx={{ px: 2, mt: 5 }}>
-              <FormControl variant="standard" fullWidth error={formik.touched.address && Boolean(formik.errors.address)}>
-                <InputLabel shrink>Ethereum Address</InputLabel>
-                <Input
-                  name="address"
-                  value={formik.values.address}
-                  onChange={(e) => {
-                    formik.setFieldTouched('address');
-                    formik.handleChange(e);
-                    setProfile('');
-                  }}
-                  onBlur={formik.handleSubmit}
-                  disabled={checkingContact}
-                  autoComplete='off'
-                  endAdornment={(
+            <Box sx={{ px: 2, mt: 1 }}>
+              <TextField
+                name="address"
+                placeholder="Ethereum address"
+                value={formik.values.address}
+                onChange={(e) => {
+                  formik.setFieldTouched('address');
+                  formik.handleChange(e);
+                  setProfile('');
+                }}
+                onBlur={formik.handleSubmit}
+                disabled={checkingContact}
+                autoComplete='off'
+                error={formik.touched.address && Boolean(formik.errors.address)}
+                helperText={formik.touched.address && formik.errors.address}
+                InputProps={{
+                  disableUnderline: true,
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon fontSize="small" />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
                     <InputAdornment position="end">
                       {checkingContact ? (
-                        <CircularProgress color="secondary" size={25} />
+                        <CircularProgress color="secondary" size={16} />
                       ) : formik.touched.address && !formik.errors.address && !profile ? (
                         <Tooltip title="Save" placement="top" arrow>
                           <IconButton
                             color="primary"
                             onClick={formik.handleSubmit}
                           >
-                            <CheckIcon />
+                            <CheckIcon fontSize="small" />
                           </IconButton>
                         </Tooltip>
                       ) : null}
                     </InputAdornment>
-                  )}
-                />
-                <FormHelperText>{formik.touched.address && formik.errors.address}</FormHelperText>
-              </FormControl>
+                  ),
+                }}
+                variant="filled"
+                fullWidth
+              />
+              <Divider sx={{ mt: 4, mb: -3 }}/>
               <Contact address={formik.values.address} profile={profile} />
             </Box>
           </Card>

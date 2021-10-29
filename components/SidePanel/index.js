@@ -43,6 +43,25 @@ const darkTheme = createTheme({
         },
       },
     },
+    MuiFilledInput: {
+      styleOverrides: {
+        root: {
+          borderRadius: '20px',
+          paddingTop: '0px',
+          fontSize: '16px',
+        },
+        input: {
+          paddingTop: '10px',
+        },
+      },
+    },
+    MuiInputAdornment: {
+      styleOverrides: {
+        root: {
+          marginTop: '5px !important',
+        },
+      },
+    },
   },
 });
 

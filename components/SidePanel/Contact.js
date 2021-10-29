@@ -25,7 +25,7 @@ const Contact = ({ profile, address }) => {
     }
   }, [address, profile, profileKey]);
 
-  if (profile.notfound === null) {
+  if (profile?.notfound === null) {
     return (
       <Box sx={{ mt: 2}}>
         <span>Found none!</span>
