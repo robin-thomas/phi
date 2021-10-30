@@ -22,6 +22,7 @@ const Header = () => {
       style={{
         backgroundColor: 'transparent',
         boxShadow: 'none',
+        backgroundImage: 'none',
       }}
       sx={{ px: 3, pt: 2 }}
     >

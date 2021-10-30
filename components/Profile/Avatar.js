@@ -58,7 +58,7 @@ const Avatar = ({ mini }) => {
     input.click();
   }
 
-  if (!profilePic || loading) {
+  if (loading) {
     if (mini) {
       return <Skeleton variant="circular" width={50} height={50} />
     }

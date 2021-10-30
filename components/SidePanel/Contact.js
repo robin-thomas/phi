@@ -7,23 +7,45 @@ import IconButton from '@mui/material/IconButton';
 import CardHeader from '@mui/material/CardHeader';
 import CheckIcon from '@mui/icons-material/Check';
 
+import { getProfile } from '../../utils/ceramic';
+import Thread from '../../utils/textile/thread';
 import Bucket from '../../utils/textile/bucket';
 import { useAppContext } from '../hooks';
 import styles from './Header.module.css';
 
-const Contact = ({ profile, address }) => {
-  const { profileKey } = useAppContext();
+const Contact = ({ address, close, checkingContact, setCheckingContact }) => {
+  const { profileKey, setContacts } = useAppContext();
 
   const [src, setSrc] = useState(null);
+  const [profile, setProfile] = useState(null);
 
+  // load the profile.
   useEffect(() => {
-    if (address && profile?.image && profileKey) {
+    if (address && checkingContact) {
+      (async () => {
+        const _profile = await getProfile(address);
+        setProfile(_profile || { notfound: null });
+        setCheckingContact && setCheckingContact(false);
+      })();
+    }
+  }, [address, checkingContact, setCheckingContact]);
+
+  // load the profile pic.
+  useEffect(() => {
+    if (address && profileKey && profile?.image) {
       (async () => {
         const bucket = await Bucket.getInstance();
         setSrc(await bucket.getImage(profileKey, address.toLowerCase(), profile.image.original.mimeType));
       })();
     }
   }, [address, profile, profileKey]);
+
+  const addNewContact = async () => {
+    const thread = await Thread.getInstance();
+    await thread.sendRequest(address.toLowerCase());
+    setContacts((contacts) => [address, ...contacts]);
+    close && close();
+  }
 
   if (profile?.notfound === null) {
     return (
@@ -37,9 +59,17 @@ const Contact = ({ profile, address }) => {
     return null;
   }
 
+  const action = close ? (
+    <Tooltip title="Add new Contact" arrow placement="top">
+      <IconButton onClick={addNewContact}>
+        <CheckIcon />
+      </IconButton>
+    </Tooltip>
+  ) : undefined;
+
   return (
     <Card
-      sx={{ mt: 7 }}
+      sx={{ mt: 1 }}
       style={{
         backgroundColor: 'transparent',
         boxShadow: 'none',
@@ -49,13 +79,7 @@ const Contact = ({ profile, address }) => {
         avatar={<Avatar src={src} width={50} height={50} />}
         title={profile?.name}
         subheader={profile?.description}
-        action={
-          <Tooltip title="Add new Contact" arrow placement="top">
-            <IconButton>
-              <CheckIcon />
-            </IconButton>
-          </Tooltip>
-        }
+        action={action}
         classes={{
           title: styles.title,
           subheader: styles.subheader,

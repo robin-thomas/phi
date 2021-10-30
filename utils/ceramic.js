@@ -35,8 +35,12 @@ export const updateProfile = async (profile) => {
 }
 
 export const getProfile = async (address) => {
+  console.debug('Searching ceramic profile for: ', address);
   const ceramic = new CeramicClient(process.env.CERAMIC_NODE_URL);
-  const { did } = await Caip10Link.fromAccount(ceramic, `${address}@eip155:4`);
+  const { did } = await Caip10Link.fromAccount(ceramic, `${address.toLowerCase()}@eip155:4`);
+  if (!did) {
+    return null;
+  }
 
   const self = new WebClient({
     ceramic: process.env.CERAMIC_NODE_URL,

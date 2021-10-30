@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect, useCallback } from 'react';
 import { useMoralis } from 'react-moralis';
 
 import Bucket from '../utils/textile/bucket';
@@ -12,8 +12,27 @@ const DataProvider = ({ children }) => {
   const [profilePic, setProfilePic] = useState(null);
   const [showProfile, setShowProfile] = useState(false);
   const [profileKey, setProfileKey] = useState(null);
+  const [contacts, setContacts] = useState([
+    '0x110c2cc44c06865De20c157D42B701aF8438d18A',
+    '0x110c2cc44c06865De20c157D42B701aF8438d18A',
+    '0x110c2cc44c06865De20c157D42B701aF8438d18A',
+    '0x110c2cc44c06865De20c157D42B701aF8438d18A',
+  ]);
 
   const { isAuthenticated } = useMoralis();
+
+  const callback = useCallback(async (reply, err) => {
+    const [address] = await window.ethereum.enable();
+
+    if (!err) {
+      // chat request received.
+      if (reply?.instance?.to === address.toLowerCase()) {
+        console.debug('chat request: ', reply.instance.from);
+      }
+    } else {
+      console.error(err);
+    }
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -21,12 +40,16 @@ const DataProvider = ({ children }) => {
       const key = await bucket.getKey(process.env.TEXTILE_PROFILE_BUCKET);
       console.debug('Retrieved textile key for profile bucket', key);
       setProfileKey(key);
-
-      const thread = await Thread.getInstance();
-      console.debug('Listening to chat invites thread');
-      await thread.join(console.log);
     })();
   }, []);
+
+  useEffect(() => {
+    (async () => {
+      const thread = await Thread.getInstance();
+      console.debug('Listening to chat invites thread');
+      thread.listen(callback);
+    })();
+  }, [callback]);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -64,6 +87,8 @@ const DataProvider = ({ children }) => {
         showProfile,
         setShowProfile,
         profileKey,
+        contacts,
+        setContacts,
       }}
     >
       {children}
