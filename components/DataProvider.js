@@ -1,7 +1,8 @@
 import { createContext, useState, useEffect } from 'react';
 import { useMoralis } from 'react-moralis';
 
-import Bucket from '../utils/bucket';
+import Bucket from '../utils/textile/bucket';
+import Thread from '../utils/textile/thread';
 import { getSelfProfile } from '../utils/ceramic';
 
 const DataContext = createContext();
@@ -20,6 +21,10 @@ const DataProvider = ({ children }) => {
       const key = await bucket.getKey(process.env.TEXTILE_PROFILE_BUCKET);
       console.debug('Retrieved textile key for profile bucket', key);
       setProfileKey(key);
+
+      const thread = await Thread.getInstance();
+      console.debug('Listening to chat invites thread');
+      await thread.join(console.log);
     })();
   }, []);
 

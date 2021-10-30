@@ -1,0 +1,13 @@
+{
+  "threadID": "bafkul24smzcgjmgtnpk4rvvvnihgmdejeqrizigwckznfdabkk46v4a",
+  "dbInfo": {
+    "key":"bpaykz4q2sjexwfr7tfkpq36jy7wyi4jzduty2c5uxe3bd7dozjj6zvbmnwxeg7v33v7vridh2bo4it64mlgnlakpwi6iksaidnro5vy",
+    "addrs":[
+      "/ip4/10.244.0.93/tcp/4006/p2p/12D3KooWQEtCBXMKjVas6Ph1pUHG2T4Lc9j1KvnAipojP2xcKU7n/thread/bafkul24smzcgjmgtnpk4rvvvnihgmdejeqrizigwckznfdabkk46v4a",
+      "/ip4/127.0.0.1/tcp/4006/p2p/12D3KooWQEtCBXMKjVas6Ph1pUHG2T4Lc9j1KvnAipojP2xcKU7n/thread/bafkul24smzcgjmgtnpk4rvvvnihgmdejeqrizigwckznfdabkk46v4a",
+      "/ip4/52.186.99.239/tcp/4006/p2p/12D3KooWQEtCBXMKjVas6Ph1pUHG2T4Lc9j1KvnAipojP2xcKU7n/thread/bafkul24smzcgjmgtnpk4rvvvnihgmdejeqrizigwckznfdabkk46v4a",
+      "/ip4/52.149.237.207/tcp/10688/p2p/12D3KooWQEtCBXMKjVas6Ph1pUHG2T4Lc9j1KvnAipojP2xcKU7n/thread/bafkul24smzcgjmgtnpk4rvvvnihgmdejeqrizigwckznfdabkk46v4a",
+      "/ip4/52.149.237.207/tcp/10689/p2p/12D3KooWQEtCBXMKjVas6Ph1pUHG2T4Lc9j1KvnAipojP2xcKU7n/thread/bafkul24smzcgjmgtnpk4rvvvnihgmdejeqrizigwckznfdabkk46v4a"
+    ]
+  }
+}

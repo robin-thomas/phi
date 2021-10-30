@@ -4,7 +4,7 @@ import MUIAvatar from '@mui/material/Avatar';
 import Skeleton from '@mui/material/Skeleton';
 import IconButton from '@mui/material/IconButton';
 
-import Bucket from '../../utils/bucket';
+import Bucket from '../../utils/textile/bucket';
 import { updateProfile } from '../../utils/ceramic';
 
 import { useAppContext } from '../hooks';
