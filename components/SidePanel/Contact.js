@@ -14,7 +14,7 @@ import { useAppContext } from '../hooks';
 import styles from './Header.module.css';
 
 const Contact = ({ address, active, close, onClick, checkingContact, setCheckingContact }) => {
-  const { profileKey, setContacts } = useAppContext();
+  const { profileKey, setLoadingContacts } = useAppContext();
 
   const [src, setSrc] = useState(null);
   const [profile, setProfile] = useState(null);
@@ -41,9 +41,9 @@ const Contact = ({ address, active, close, onClick, checkingContact, setChecking
   }, [address, profile, profileKey]);
 
   const addNewContact = async () => {
+    setLoadingContacts(true);
     const thread = await Thread.getInstance();
     await thread.sendRequest(address.toLowerCase());
-    setContacts((contacts) => [address, ...contacts]);
     close && close();
   }
 

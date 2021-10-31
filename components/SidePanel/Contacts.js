@@ -1,11 +1,14 @@
 import { useState } from 'react';
+import { useMoralis } from 'react-moralis';
 import Fab from '@mui/material/Fab';
 import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 import AddIcon from '@mui/icons-material/Add';
-import { useMoralis } from 'react-moralis';
 import Divider from '@mui/material/Divider';
+import MUIBackdrop from '@mui/material/Backdrop';
 import SimpleBar from 'simplebar-react';
+import { withStyles } from '@mui/styles';
+import CircularProgress from '@mui/material/CircularProgress';
 
 import Contact from './Contact';
 import AddContact from './AddContact';
@@ -14,9 +17,16 @@ import SearchContact from './SearchContact';
 import { useAppContext } from '../hooks';
 import 'simplebar/dist/simplebar.min.css';
 
+const Backdrop = withStyles({
+  root: {
+    position: "absolute",
+    zIndex: 1
+  }
+})(MUIBackdrop);
+
 const Contacts = () => {
   const { isAuthenticated } = useMoralis();
-  const { contacts, profileKey, activeContact, setActiveContact } = useAppContext();
+  const { contacts, profileKey, activeContact, setActiveContact, loadingContacts } = useAppContext();
 
   const [addContact, setAddContact] = useState(false);
 
@@ -27,6 +37,9 @@ const Contacts = () => {
   return (
     <>
       <Box sx={{ px: 2, height: 'calc(100% - 120px)' }}>
+        <Backdrop open={loadingContacts}>
+          <CircularProgress color="secondary" />
+        </Backdrop>
         {addContact ? <AddContact close={() => setAddContact(false)} /> : (
           <>
             {contacts?.length > 0 ? (

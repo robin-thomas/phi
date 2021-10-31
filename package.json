@@ -28,6 +28,7 @@
     "@metamask/detect-provider": "^1.2.0",
     "@mui/icons-material": "^5.0.4",
     "@mui/material": "^5.0.4",
+    "@mui/styles": "^5.0.2",
     "@self.id/web": "^0.1.0",
     "@textile/hub": "^6.3.0",
     "formik": "^2.2.9",

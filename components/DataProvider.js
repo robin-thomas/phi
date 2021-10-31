@@ -12,10 +12,9 @@ const DataProvider = ({ children }) => {
   const [showProfile, setShowProfile] = useState(false);
   const [profileKey, setProfileKey] = useState(null);
   const [authenticated, setAuthenticated] = useState(false);
-  const [contacts, setContacts] = useState([
-    '0x110c2cc44c06865De20c157D42B701aF8438d18A',
-  ]);
+  const [contacts, setContacts] = useState([]);
   const [activeContact, setActiveContact] = useState(null);
+  const [loadingContacts, setLoadingContacts] = useState(false);
 
   const callback = useCallback(async (reply, err) => {
     const [address] = await window.ethereum.enable();
@@ -23,7 +22,10 @@ const DataProvider = ({ children }) => {
     if (!err) {
       // chat request received.
       if (reply?.instance?.to === address.toLowerCase()) {
-        console.debug('chat request: ', reply.instance.from);
+        setContacts((_contacts) => [reply.instance.from, ..._contacts]);
+      } else if (reply?.instance?.from === address.toLowerCase()) {
+        setContacts((_contacts) => [reply.instance.to, ..._contacts]);
+        setLoadingContacts(false);
       }
     } else {
       console.error(err, reply);
@@ -43,7 +45,7 @@ const DataProvider = ({ children }) => {
     (async () => {
       const thread = await Thread.getInstance();
       console.debug('Listening to chat invites thread');
-      thread.listen(callback);
+      return thread.listen(callback);
     })();
   }, [callback]);
 
@@ -99,6 +101,8 @@ const DataProvider = ({ children }) => {
         setAuthenticated,
         activeContact,
         setActiveContact,
+        loadingContacts,
+        setLoadingContacts,
       }}
     >
       {children}
