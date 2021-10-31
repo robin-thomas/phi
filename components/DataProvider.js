@@ -14,10 +14,8 @@ const DataProvider = ({ children }) => {
   const [authenticated, setAuthenticated] = useState(false);
   const [contacts, setContacts] = useState([
     '0x110c2cc44c06865De20c157D42B701aF8438d18A',
-    '0x110c2cc44c06865De20c157D42B701aF8438d18A',
-    '0x110c2cc44c06865De20c157D42B701aF8438d18A',
-    '0x110c2cc44c06865De20c157D42B701aF8438d18A',
   ]);
+  const [activeContact, setActiveContact] = useState(null);
 
   const callback = useCallback(async (reply, err) => {
     const [address] = await window.ethereum.enable();
@@ -99,6 +97,8 @@ const DataProvider = ({ children }) => {
         setContacts,
         authenticated,
         setAuthenticated,
+        activeContact,
+        setActiveContact,
       }}
     >
       {children}

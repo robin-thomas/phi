@@ -5,16 +5,19 @@ import Tooltip from '@mui/material/Tooltip';
 import AddIcon from '@mui/icons-material/Add';
 import { useMoralis } from 'react-moralis';
 import Divider from '@mui/material/Divider';
+import SimpleBar from 'simplebar-react';
 
 import Contact from './Contact';
 import AddContact from './AddContact';
 import SearchContact from './SearchContact';
 
 import { useAppContext } from '../hooks';
+import 'simplebar/dist/simplebar.min.css';
 
 const Contacts = () => {
   const { isAuthenticated } = useMoralis();
-  const { contacts, profileKey } = useAppContext();
+  const { contacts, profileKey, activeContact, setActiveContact } = useAppContext();
+
   const [addContact, setAddContact] = useState(false);
 
   if (!isAuthenticated || !profileKey) {
@@ -29,9 +32,17 @@ const Contacts = () => {
             {contacts?.length > 0 ? (
               <Box sx={{ px: 2, mt: 1 }}>
                 <SearchContact />
-                {contacts.map((contact, index) => (
-                  <Contact address={contact} key={index} checkingContact={true} />
-                ))}
+                <SimpleBar style={{ height: '425px' }}>
+                  {contacts.map((contact) => (
+                    <Contact
+                      key={contact}
+                      address={contact}
+                      active={activeContact === contact}
+                      checkingContact
+                      onClick={() => setActiveContact((_active) => (_active === contact ? null : contact))}
+                    />
+                  ))}
+                </SimpleBar>
               </Box>
             ) : (
               <>

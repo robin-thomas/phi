@@ -13,7 +13,7 @@ import Bucket from '../../utils/textile/bucket';
 import { useAppContext } from '../hooks';
 import styles from './Header.module.css';
 
-const Contact = ({ address, close, checkingContact, setCheckingContact }) => {
+const Contact = ({ address, active, close, onClick, checkingContact, setCheckingContact }) => {
   const { profileKey, setContacts } = useAppContext();
 
   const [src, setSrc] = useState(null);
@@ -69,11 +69,21 @@ const Contact = ({ address, close, checkingContact, setCheckingContact }) => {
 
   return (
     <Card
-      sx={{ mt: 1 }}
-      style={{
+      sx={{
+        mt: 1,
         backgroundColor: 'transparent',
         boxShadow: 'none',
+        ...(active ? {
+          backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.1))',
+        } : {}),
+        ...(!close ? {
+          cursor: 'pointer',
+          '&:hover': {
+            backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1))',
+          },
+        } : {}),
       }}
+      onClick={onClick}
     >
       <CardHeader
         avatar={<Avatar src={src} width={50} height={50} />}

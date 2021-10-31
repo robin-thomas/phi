@@ -21,7 +21,7 @@ const Content = () => {
   const [name, setName] = useState('');
   const [error, setError] = useState(null);
 
-  const { profile, setAuthenticated } = useAppContext();
+  const { profile, activeContact, setAuthenticated } = useAppContext();
   const { authenticate, isAuthenticated } = useMoralis();
 
   useEffect(() => {
@@ -80,7 +80,7 @@ const Content = () => {
         <Box sx={{ ml: 20, pt: 10 }} className={styles.box}>
           {!name ? (
             <Skeleton />
-          ) : (
+          ) : !activeContact && (
             <>
               <h2>Hi, {name}!</h2>
               <h4 style={{ marginTop: '-15px' }}>Get started by messaging a friend.</h4>
