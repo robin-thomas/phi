@@ -15,14 +15,14 @@ const Skeleton = () => (
     <MUISkeleton animation="wave" variant="rectangular" width={150} height={50} sx={{ mt: 4 }}/>
     <MUISkeleton animation="wave" variant="rectangular" width={300} height={40} sx={{ mt: 1 }}/>
   </>
-)
+);
 
 const Content = () => {
   const [name, setName] = useState('');
   const [error, setError] = useState(null);
 
-  const { profile, activeContact, setAuthenticated } = useAppContext();
   const { authenticate, isAuthenticated } = useMoralis();
+  const { profile, activeContact, setAuthenticated } = useAppContext();
 
   useEffect(() => {
     (async () => {

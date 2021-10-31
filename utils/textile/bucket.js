@@ -1,6 +1,12 @@
+import LRU from 'lru-cache';
 import { Buckets } from '@textile/hub';
 
 import Textile from './base';
+
+const imageCache = new LRU({
+  max: 50,
+  maxAge: 60 * 60 * 1000,
+});
 
 class Bucket extends Textile {
   constructor() {
@@ -50,8 +56,16 @@ class Bucket extends Textile {
   }
 
   async getImage(bucketKey, address, mimeType) {
+    if (imageCache.has(address)) {
+      console.debug('Found image in cache. Not downloading from bucket');
+      return imageCache.get(address);
+    }
+
     const buf = await this.download(bucketKey, `${address}/pic`);
-    return URL.createObjectURL(new Blob([buf], { type: mimeType }));
+    const url = URL.createObjectURL(new Blob([buf], { type: mimeType }));
+
+    imageCache.set(address, url);
+    return imageCache.get(address);
   }
 };
 
