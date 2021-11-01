@@ -19,7 +19,7 @@ import 'simplebar/dist/simplebar.min.css';
 
 const Backdrop = withStyles({
   root: {
-    position: "absolute",
+    position: 'absolute !important',
     zIndex: 1
   }
 })(MUIBackdrop);
