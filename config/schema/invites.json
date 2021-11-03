@@ -5,6 +5,8 @@
   "properties": {
     "_id": { "type": "string" },
     "from": { "type": "string" },
-    "to": { "type": "string" }
+    "to": { "type": "string" },
+    "date": { "type": "string" },
+    "dbInfo": { "type": "string" }
   }
 }

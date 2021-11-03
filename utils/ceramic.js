@@ -3,66 +3,85 @@ import { WebClient, EthereumAuthProvider, SelfID } from '@self.id/web';
 import { Caip10Link } from '@ceramicnetwork/stream-caip10-link';
 import CeramicClient from '@ceramicnetwork/http-client';
 
-const profileCache = new LRU({
-  max: 50,
-  maxAge: 60 * 60 * 1000,
-});
-
-/**
- * {@link https://developers.ceramic.network/tools/self-id/overview/}
- **/
-
-export const getSelfProfile = async () => {
-  const [address] = await window.ethereum.enable();
-
-  const self = await SelfID.authenticate({
-    authProvider: new EthereumAuthProvider(window.ethereum, address),
-    ceramic: process.env.CERAMIC_NODE_URL,
-    connectNetwork: process.env.CERAMIC_NETWORK,
-  });
-
-  console.debug('Retrieving authenticated ceramic basicProfile');
-
-  return await self.get('basicProfile');
-}
-
-export const updateProfile = async (profile) => {
-  const [address] = await window.ethereum.enable();
-
-  const self = await SelfID.authenticate({
-    authProvider: new EthereumAuthProvider(window.ethereum, address),
-    ceramic: process.env.CERAMIC_NODE_URL,
-    connectNetwork: process.env.CERAMIC_NETWORK,
-  });
-
-  console.debug('Updating ceramic basicProfile');
-
-  return await self.set('basicProfile', profile);
-}
-
-export const getProfile = async (address) => {
-  console.debug('Searching ceramic profile for: ', address);
-
-  if (profileCache.has(address)) {
-    console.debug('Found profile in cache. Not downloading from ceramic');
-    return profileCache.get(address);
-  }
-
+const address2did = async (address) => {
   const ceramic = new CeramicClient(process.env.CERAMIC_NODE_URL);
   const { did } = await Caip10Link.fromAccount(ceramic, `${address.toLowerCase()}@eip155:4`);
-  if (!did) {
-    return null;
+  return did;
+}
+
+class Ceramic {
+  static getInstance() {
+    return (async () => await new Ceramic().build())();
   }
 
-  const self = new WebClient({
-    ceramic: process.env.CERAMIC_NODE_URL,
-    connectNetwork: process.env.CERAMIC_NETWORK,
-  });
+  static getClassName() {
+    return 'Ceramic';
+  }
 
-  console.debug('Retrieving un-authenticated ceramic basicProfile');
+  async build() {
+    this.cache = new LRU({
+      max: 50,
+      maxAge: 60 * 60 * 1000,
+    });
 
-  const profile = await self.get('basicProfile', did);
-  profileCache.set(address, profile);
+    this.address = (await window.ethereum.enable())[0];
 
-  return profileCache.get(address);
+    this.self = await SelfID.authenticate({
+      authProvider: new EthereumAuthProvider(window.ethereum, this.address),
+      ceramic: process.env.CERAMIC_NODE_URL,
+      connectNetwork: process.env.CERAMIC_NETWORK,
+    });
+
+    this.client = new WebClient({
+      ceramic: process.env.CERAMIC_NODE_URL,
+      connectNetwork: process.env.CERAMIC_NETWORK,
+    });
+
+    this.did = this.self.client.ceramic.did;
+
+    return this;
+  }
+
+  async updateProfile(profile) {
+    console.debug('Updating ceramic basicProfile to: ', profile);
+    return await this.self.set('basicProfile', profile);
+  }
+
+  async getProfile(address = null) {
+    if (!address) {
+      console.debug('Retrieving authenticated ceramic basicProfile');
+      return await this.self.get('basicProfile');
+    }
+
+    console.debug('Searching ceramic profile for: ', address);
+
+    if (this.cache.has(address)) {
+      console.debug('Found profile in cache. Not downloading from ceramic');
+      return this.cache.get(address);
+    }
+
+    const did = await address2did(address);
+    if (!did) {
+      return null;
+    }
+
+    console.debug('Retrieving un-authenticated ceramic basicProfile');
+    const profile = await this.client.get('basicProfile', did);
+    this.cache.set(address, profile);
+
+    return this.cache.get(address);
+  }
+
+  async encrypt(payload, address) {
+    const did = await address2did(address);
+    const encrypted = await this.did.createDagJWE(payload, [did]);
+    return Buffer.from(JSON.stringify(encrypted)).toString('hex');
+  }
+
+  async decrypt(payload) {
+    const jwe = Buffer.from(payload, 'hex').toString();
+    return await this.did.decryptDagJWE(JSON.parse(jwe));
+  }
 }
+
+export default Ceramic;

@@ -17,6 +17,10 @@ class Bucket extends Textile {
     return (async () => await new Bucket().build())();
   }
 
+  static getClassName() {
+    return 'Bucket';
+  }
+
   async getKey(bucketName) {
     console.debug(`Retrieving textile key for bucketName: ${bucketName}`);
     const result = await this.client.getOrCreate(bucketName);

@@ -1,9 +1,8 @@
 import { PrivateKey } from '@textile/hub';
 
 class Base {
-  constructor(clientClass, childClass) {
+  constructor(clientClass) {
     this.clientClass = clientClass;
-    this.childClass = childClass;
   }
 
   async build() {

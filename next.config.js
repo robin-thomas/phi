@@ -7,6 +7,7 @@ module.exports = {
     CERAMIC_NETWORK: 'testnet-clay',
     TEXTILE_KEY: 'boqzh4ln446uicmk6btvefvd5yu',
     TEXTILE_PROFILE_BUCKET: 'profiles',
+    TEXTILE_INVITE_COLLECTION: 'invite',
     ETH_CHAIN_ID: '0x4',
   },
 }

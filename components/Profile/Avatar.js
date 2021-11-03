@@ -4,10 +4,10 @@ import MUIAvatar from '@mui/material/Avatar';
 import Skeleton from '@mui/material/Skeleton';
 import IconButton from '@mui/material/IconButton';
 
-import Bucket from '../../utils/textile/bucket';
-import { updateProfile } from '../../utils/ceramic';
-
 import { useAppContext } from '../hooks';
+import Utils from '../../utils';
+import Ceramic from '../../utils/ceramic';
+import Bucket from '../../utils/textile/bucket';
 
 const Pic = ({ onClick, children }) => (
   <Tooltip title="Change Profile Picture" placement="bottom" arrow>
@@ -38,7 +38,7 @@ const Avatar = ({ mini }) => {
       setLoading(true);
 
       const path = await getPath();
-      const bucket = await Bucket.getInstance();
+      const bucket = await Utils.getInstance(Bucket);
       const uploaded = await bucket.upload(profileKey, path + 'pic', file);
       console.debug('Uploaded profile picture to textile bucket');
 
@@ -52,7 +52,8 @@ const Avatar = ({ mini }) => {
       };
 
       const _profile = { ...profile, image };
-      await updateProfile(_profile);
+      const ceramic = await Utils.getInstance(Ceramic);
+      await ceramic.updateProfile(_profile);
       setProfile(_profile);
     }
     input.click();

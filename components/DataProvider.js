@@ -1,8 +1,9 @@
 import { createContext, useState, useEffect, useCallback } from 'react';
 
+import Utils from '../utils';
+import Ceramic from '../utils/ceramic';
 import Bucket from '../utils/textile/bucket';
 import Thread from '../utils/textile/thread';
-import { getSelfProfile } from '../utils/ceramic';
 
 const DataContext = createContext();
 
@@ -23,6 +24,12 @@ const DataProvider = ({ children }) => {
       // chat request received.
       if (reply?.instance?.to === address.toLowerCase()) {
         setContacts((_contacts) => [reply.instance.from, ..._contacts]);
+
+        // Perform decryption.
+        const ceramic = await Utils.getInstance(Ceramic);
+        const dbInfo = await ceramic.decrypt(reply.instance.dbInfo);
+        console.debug('dbInfo', dbInfo);
+
       } else if (reply?.instance?.from === address.toLowerCase()) {
         setContacts((_contacts) => [reply.instance.to, ..._contacts]);
         setLoadingContacts(false);
@@ -34,7 +41,7 @@ const DataProvider = ({ children }) => {
 
   useEffect(() => {
     (async () => {
-      const bucket = await Bucket.getInstance();
+      const bucket = await Utils.getInstance(Bucket);
       const key = await bucket.getKey(process.env.TEXTILE_PROFILE_BUCKET);
       console.debug('Retrieved textile key for profile bucket', key);
       setProfileKey(key);
@@ -43,7 +50,11 @@ const DataProvider = ({ children }) => {
 
   useEffect(() => {
     (async () => {
-      const thread = await Thread.getInstance();
+      const thread = await Utils.getInstance(Thread);
+
+      const invites = await thread.getRequests();
+      console.debug('invites', invites);
+
       console.debug('Listening to chat invites thread');
       return thread.listen(callback);
     })();
@@ -52,7 +63,8 @@ const DataProvider = ({ children }) => {
   useEffect(() => {
     (async () => {
       if (authenticated) {
-        const _profile = await getSelfProfile();
+        const ceramic = await Utils.getInstance(Ceramic);
+        const _profile = await ceramic.getProfile();
 
         // first time.
         _profile.name = _profile?.name || 'John Doe';
@@ -66,9 +78,10 @@ const DataProvider = ({ children }) => {
   useEffect(() => {
     (async () => {
       if (profile.image && profileKey) {
-        const [address] = await window.ethereum.enable();
-        const bucket = await Bucket.getInstance();
-        setProfilePic(await bucket.getImage(profileKey, address, profile.image.original.mimeType));
+        const bucket = await Utils.getInstance(Bucket);
+        const ceramic = await Utils.getInstance(Ceramic);
+        const _profile = await bucket.getImage(profileKey, ceramic.address, profile.image.original.mimeType);
+        setProfilePic(_profile);
       }
     })();
   }, [profile.image, profileKey]);

@@ -13,7 +13,8 @@ import CircularProgress from '@mui/material/CircularProgress';
 import FormHelperText from '@mui/material/FormHelperText';
 
 import { useAppContext } from '../hooks';
-import { updateProfile } from '../../utils/ceramic';
+import Utils from '../../utils';
+import Ceramic from '../../utils/ceramic';
 
 const Edit = ({ name, label }) => {
   const { profile, setProfile } = useAppContext();
@@ -36,7 +37,8 @@ const Edit = ({ name, label }) => {
         setSubmitting(true);
 
         const _profile = { ...profile, [name]: values[name] };
-        await updateProfile(_profile);
+        const ceramic = await Utils.getInstance(Ceramic);
+        await ceramic.updateProfile(_profile);
         setProfile((_profile));
 
         setSubmitting(false);

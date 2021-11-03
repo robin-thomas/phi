@@ -7,14 +7,15 @@ import IconButton from '@mui/material/IconButton';
 import CardHeader from '@mui/material/CardHeader';
 import CheckIcon from '@mui/icons-material/Check';
 
-import { getProfile } from '../../utils/ceramic';
-import Thread from '../../utils/textile/thread';
+import Utils from '../../utils';
+import Ceramic from '../../utils/ceramic';
 import Bucket from '../../utils/textile/bucket';
+import Thread from '../../utils/textile/thread';
 import { useAppContext } from '../hooks';
 import styles from './Header.module.css';
 
 const Contact = ({ address, active, close, onClick, checkingContact, setCheckingContact }) => {
-  const { profileKey, setLoadingContacts } = useAppContext();
+  const { bucket, thread, profileKey, setLoadingContacts } = useAppContext();
 
   const [src, setSrc] = useState(null);
   const [profile, setProfile] = useState(null);
@@ -23,7 +24,8 @@ const Contact = ({ address, active, close, onClick, checkingContact, setChecking
   useEffect(() => {
     if (address && checkingContact) {
       (async () => {
-        const _profile = await getProfile(address);
+        const ceramic = await Utils.getInstance(Ceramic);
+        const _profile = await ceramic.getProfile(address);
         setProfile(_profile || { notfound: null });
         setCheckingContact && setCheckingContact(false);
       })();
@@ -34,7 +36,7 @@ const Contact = ({ address, active, close, onClick, checkingContact, setChecking
   useEffect(() => {
     if (address && profileKey && profile?.image) {
       (async () => {
-        const bucket = await Bucket.getInstance();
+        const bucket = await Utils.getInstance(Bucket);
         setSrc(await bucket.getImage(profileKey, address.toLowerCase(), profile.image.original.mimeType));
       })();
     }
@@ -42,9 +44,15 @@ const Contact = ({ address, active, close, onClick, checkingContact, setChecking
 
   const addNewContact = async () => {
     setLoadingContacts(true);
-    const thread = await Thread.getInstance();
-    await thread.sendRequest(address.toLowerCase());
-    close && close();
+
+    try {
+      const thread = await Utils.getInstance(Thread);
+      await thread.sendRequest(address.toLowerCase());
+      close && close();
+    } catch (err) {
+      setLoadingContacts(false);
+      alert(err.message);
+    }
   }
 
   if (profile?.notfound === null) {
