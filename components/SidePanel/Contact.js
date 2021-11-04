@@ -15,7 +15,7 @@ import { useAppContext } from '../hooks';
 import styles from './Header.module.css';
 
 const Contact = ({ address, active, close, onClick, checkingContact, setCheckingContact }) => {
-  const { bucket, thread, profileKey, setLoadingContacts } = useAppContext();
+  const { profileKey, setLoadingContacts } = useAppContext();
 
   const [src, setSrc] = useState(null);
   const [profile, setProfile] = useState(null);

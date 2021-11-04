@@ -6,11 +6,9 @@ import Tooltip from '@mui/material/Tooltip';
 import AddIcon from '@mui/icons-material/Add';
 import Divider from '@mui/material/Divider';
 import MUIBackdrop from '@mui/material/Backdrop';
-import SimpleBar from 'simplebar-react';
 import { withStyles } from '@mui/styles';
 import CircularProgress from '@mui/material/CircularProgress';
 
-import Contact from './Contact';
 import AddContact from './AddContact';
 import SearchContact from './SearchContact';
 
@@ -26,7 +24,7 @@ const Backdrop = withStyles({
 
 const Contacts = () => {
   const { isAuthenticated } = useMoralis();
-  const { contacts, profileKey, activeContact, setActiveContact, loadingContacts } = useAppContext();
+  const { contacts, profileKey, loadingContacts } = useAppContext();
 
   const [addContact, setAddContact] = useState(false);
 
@@ -45,17 +43,6 @@ const Contacts = () => {
             {contacts?.length > 0 ? (
               <Box sx={{ px: 2, mt: 1 }}>
                 <SearchContact />
-                <SimpleBar style={{ height: '425px' }}>
-                  {contacts.map((contact) => (
-                    <Contact
-                      key={contact}
-                      address={contact}
-                      active={activeContact === contact}
-                      checkingContact
-                      onClick={() => setActiveContact((_active) => (_active === contact ? null : contact))}
-                    />
-                  ))}
-                </SimpleBar>
               </Box>
             ) : (
               <>

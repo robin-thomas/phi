@@ -17,6 +17,9 @@ const DataProvider = ({ children }) => {
   const [activeContact, setActiveContact] = useState(null);
   const [loadingContacts, setLoadingContacts] = useState(false);
 
+  useEffect(() => authenticated && getProfileKey(), [authenticated]);
+  useEffect(() => authenticated && getProfile(), [authenticated]);
+
   const callback = useCallback(async (reply, err) => {
     const [address] = await window.ethereum.enable();
 
@@ -39,14 +42,23 @@ const DataProvider = ({ children }) => {
     }
   }, []);
 
-  useEffect(() => {
-    (async () => {
-      const bucket = await Utils.getInstance(Bucket);
-      const key = await bucket.getKey(process.env.TEXTILE_PROFILE_BUCKET);
-      console.debug('Retrieved textile key for profile bucket', key);
-      setProfileKey(key);
-    })();
-  }, []);
+  const getProfile = async () => {
+    const ceramic = await Utils.getInstance(Ceramic);
+    const _profile = await ceramic.getProfile();
+
+    // first time.
+    _profile.name = _profile?.name || 'John Doe';
+    _profile.description = _profile.description || 'Available';
+
+    setProfile(_profile);
+  }
+
+  const getProfileKey = async () => {
+    const bucket = await Utils.getInstance(Bucket);
+    const key = await bucket.getKey(process.env.TEXTILE_PROFILE_BUCKET);
+    console.debug('Retrieved textile key for profile bucket');
+    setProfileKey(key);
+  }
 
   useEffect(() => {
     (async () => {
@@ -55,25 +67,12 @@ const DataProvider = ({ children }) => {
       const invites = await thread.getRequests();
       console.debug('invites', invites);
 
+      setContacts(invites.map(invite => invite.from));
+
       console.debug('Listening to chat invites thread');
       return thread.listen(callback);
     })();
   }, [callback]);
-
-  useEffect(() => {
-    (async () => {
-      if (authenticated) {
-        const ceramic = await Utils.getInstance(Ceramic);
-        const _profile = await ceramic.getProfile();
-
-        // first time.
-        _profile.name = _profile?.name || 'John Doe';
-        _profile.description = _profile.description || 'Available';
-
-        setProfile(_profile);
-      }
-    })();
-  }, [authenticated]);
 
   useEffect(() => {
     (async () => {

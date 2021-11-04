@@ -72,6 +72,29 @@ class Ceramic {
     return this.cache.get(address);
   }
 
+  searchProfiles(keyword) {
+    const results = [];
+    keyword = keyword.toLowerCase();
+
+    // exact match to an address.
+    const addresses = this.cache.keys();
+    if (addresses.includes(keyword)) {
+      return keyword;
+    }
+
+    // search for names.
+    for (const address of this.cache.keys()) {
+      const profile = this.cache.get(address);
+      const name = profile?.name?.toLowerCase() || '';
+
+      if (name.startsWith(keyword)) {
+        results.push(address);
+      }
+    }
+
+    return results;
+  }
+
   async encrypt(payload, address) {
     const did = await address2did(address);
     const encrypted = await this.did.createDagJWE(payload, [did]);
