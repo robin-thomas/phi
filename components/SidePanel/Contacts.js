@@ -44,7 +44,7 @@ const Contacts = () => {
               <Box sx={{ px: 2, mt: 1 }}>
                 <SearchContact />
               </Box>
-            ) : (
+            ) : contacts !== null && (
               <>
                 <Divider />
                 <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>

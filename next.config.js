@@ -8,6 +8,7 @@ module.exports = {
     TEXTILE_KEY: 'boqzh4ln446uicmk6btvefvd5yu',
     TEXTILE_PROFILE_BUCKET: 'profiles',
     TEXTILE_INVITE_COLLECTION: 'invite',
+    TEXTILE_INVITE_ACK_COLLECTION: 'invite-ack',
     ETH_CHAIN_ID: '0x4',
   },
 }

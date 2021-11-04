@@ -34,6 +34,34 @@ class Thread extends Textile {
     this.client.listen(threadID, filters, callback);
   }
 
+  async newThread() {
+    const thread = await this.client.newDB();
+    const dbInfo = await this.client.getDBInfo(thread);
+
+    return {
+      threadID: thread.toString(),
+      dbInfo,
+    };
+  }
+
+  async ack(accepted, from) {
+    const [to] = await window.ethereum.enable();
+    const threadID = ThreadID.fromString(invites.threadID);
+
+    console.debug('Sending chat ack to: ', to);
+    await this.client.create(threadID, process.env.TEXTILE_INVITE_ACK_COLLECTION, [{ to, from, date: new Date().toISOString(), accepted }]);
+  }
+
+  async getAck(from) {
+    const [to] = await window.ethereum.enable();
+    const threadID = ThreadID.fromString(invites.threadID);
+
+    const query = Query.where('to').eq(to).and('from').eq(from);
+    const results = await this.client.find(threadID, process.env.TEXTILE_INVITE_ACK_COLLECTION, query);
+
+    return results?.length > 0 ? results[0] : null;
+  }
+
   async sendRequest(to) {
     const [from] = await window.ethereum.enable();
     const threadID = ThreadID.fromString(invites.threadID);
@@ -46,19 +74,14 @@ class Thread extends Textile {
     }
 
     // Create a new thread for chat.
-    const thread = await this.client.newDB();
-    const dbInfo = await this.client.getDBInfo(thread);
-    const payload = {
-      threadID: thread.toString(),
-      dbInfo,
-    };
+    const payload = await this.newThread();
 
     // Encrypt the joinInfo.
     const ceramic = await Utils.getInstance(Ceramic);
     const encrypted = await ceramic.encrypt(payload, to);
 
     console.debug('Sending chat request to: ', to);
-    await this.client.create(threadID, 'invite', [{ to, from, date: new Date().toISOString(), dbInfo: encrypted }]);
+    await this.client.create(threadID, process.env.TEXTILE_INVITE_COLLECTION, [{ to, from, date: new Date().toISOString(), dbInfo: encrypted }]);
   }
 
   async getRequests() {

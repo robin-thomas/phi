@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "invites-ack",
+  "type": "object",
+  "properties": {
+    "_id": { "type": "string" },
+    "from": { "type": "string" },
+    "to": { "type": "string" },
+    "date": { "type": "string" },
+    "accepted": { "type": "boolean" }
+  }
+}

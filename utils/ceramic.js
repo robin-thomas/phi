@@ -67,6 +67,11 @@ class Ceramic {
 
     console.debug('Retrieving un-authenticated ceramic basicProfile');
     const profile = await this.client.get('basicProfile', did);
+
+    // first time.
+    profile.name = profile?.name || 'John Doe';
+    profile.description = profile.description || 'Available';
+
     this.cache.set(address, profile);
 
     return this.cache.get(address);

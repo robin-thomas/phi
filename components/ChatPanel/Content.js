@@ -6,6 +6,8 @@ import MUISkeleton from '@mui/material/Skeleton';
 import { useMoralis } from 'react-moralis';
 import detectEthereumProvider from '@metamask/detect-provider';
 
+import ActiveContact from './ActiveContact';
+
 import styles from './Content.module.css';
 import { useAppContext } from '../hooks';
 import MetamaskLogo from '../../assets/metamask.png';
@@ -80,12 +82,12 @@ const Content = () => {
         <Box sx={{ ml: 20, pt: 10 }} className={styles.box}>
           {!name ? (
             <Skeleton />
-          ) : !activeContact && (
+          ) : !activeContact ? (
             <>
               <h2>Hi, {name}!</h2>
               <h4 style={{ marginTop: '-15px' }}>Get started by messaging a friend.</h4>
             </>
-          )}
+          ) : <ActiveContact />}
         </Box>
       )}
     </div>

@@ -1,0 +1,80 @@
+import { useCallback, useState, useEffect } from 'react';
+import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
+import Tooltip from '@mui/material/Tooltip';
+
+import Utils from '../../utils';
+import Ceramic from '../../utils/ceramic';
+import Thread from '../../utils/textile/thread';
+import { useAppContext } from '../hooks';
+
+const ActiveContact = () => {
+  const [contact, setContact] = useState(null);
+  const [accepted, setAccepted] = useState(-1);
+
+  const { profile, activeContact, setActiveContact, setContacts } = useAppContext();
+
+  useEffect(() => loadProfile() && loadAck(), [loadProfile, loadAck]);
+
+  const loadProfile = useCallback(async () => {
+    const ceramic = await Utils.getInstance(Ceramic);
+    const _profile = await ceramic.getProfile(activeContact);
+    setContact(_profile);
+  }, [activeContact]);
+
+  const loadAck = useCallback(async () => {
+    const thread = await Utils.getInstance(Thread);
+    const ack = await thread.getAck(activeContact);
+    setAccepted(ack === null ? 0 : 1);
+  }, [activeContact]);
+
+  const accept = useCallback(async () => {
+    if (window.confirm('Are you sure you want to accept?')) {
+      const thread = await Utils.getInstance(Thread);
+      await thread.ack(true, activeContact);
+
+      // TODO.
+    }
+  }, [activeContact]);
+
+  const reject = useCallback(async () => {
+    if (window.confirm('Are you sure you want to reject?')) {
+      const thread = await Utils.getInstance(Thread);
+      await thread.ack(false, activeContact);
+
+      // Delete this contact from setContacts;
+      setContacts((_contacts) => _contacts.filter(c !== activeContact));
+      setActiveContact(null);
+    }
+  }, [activeContact, setContacts, setActiveContact]);
+
+  if (accepted === -1) {
+    return null;
+  }
+
+  if (accepted === 0) {
+    return (
+      <>
+        <h2>Hi, {profile.name}!</h2>
+        <h4 style={{ marginTop: '-15px' }}>
+          <Tooltip arrow placement="bottom" title={activeContact}>
+            <Button variant="text" color="info" size="large" sx={{ ml: '-10px' }}>
+              <b style={{ fontSize: 21 }}>{contact.name}</b>
+            </Button>
+          </Tooltip>
+          &nbsp;has sent you a chat request.
+        </h4>
+        <Grid container spacing={3}>
+          <Grid item xs="auto">
+            <Button variant="contained" color="success" size="large" onClick={accept}>Accept</Button>
+          </Grid>
+          <Grid item xs="auto">
+            <Button variant="outlined" color="error" size="large" onClick={reject}>Ignore</Button>
+          </Grid>
+        </Grid>
+      </>
+    )
+  }
+}
+
+export default ActiveContact;

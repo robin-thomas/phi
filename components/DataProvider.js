@@ -13,7 +13,7 @@ const DataProvider = ({ children }) => {
   const [showProfile, setShowProfile] = useState(false);
   const [profileKey, setProfileKey] = useState(null);
   const [authenticated, setAuthenticated] = useState(false);
-  const [contacts, setContacts] = useState([]);
+  const [contacts, setContacts] = useState(null);
   const [activeContact, setActiveContact] = useState(null);
   const [loadingContacts, setLoadingContacts] = useState(false);
 
