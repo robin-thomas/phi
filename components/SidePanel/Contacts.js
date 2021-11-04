@@ -5,22 +5,13 @@ import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 import AddIcon from '@mui/icons-material/Add';
 import Divider from '@mui/material/Divider';
-import MUIBackdrop from '@mui/material/Backdrop';
-import { withStyles } from '@mui/styles';
-import CircularProgress from '@mui/material/CircularProgress';
 
 import AddContact from './AddContact';
+import Backdrop from '../Backdrop';
 import SearchContact from './SearchContact';
 
 import { useAppContext } from '../hooks';
 import 'simplebar/dist/simplebar.min.css';
-
-const Backdrop = withStyles({
-  root: {
-    position: 'absolute !important',
-    zIndex: 1
-  }
-})(MUIBackdrop);
 
 const Contacts = () => {
   const { isAuthenticated } = useMoralis();
@@ -35,9 +26,7 @@ const Contacts = () => {
   return (
     <>
       <Box sx={{ px: 2, height: 'calc(100% - 120px)' }}>
-        <Backdrop open={loadingContacts}>
-          <CircularProgress color="secondary" />
-        </Backdrop>
+        <Backdrop open={loadingContacts} />
         {addContact ? <AddContact close={() => setAddContact(false)} /> : (
           <>
             {contacts?.length > 0 ? (

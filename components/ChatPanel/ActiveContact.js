@@ -3,6 +3,8 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 
+import Backdrop from '../Backdrop';
+
 import Utils from '../../utils';
 import Ceramic from '../../utils/ceramic';
 import Thread from '../../utils/textile/thread';
@@ -49,7 +51,11 @@ const ActiveContact = () => {
   }, [activeContact, setContacts, setActiveContact]);
 
   if (accepted === -1) {
-    return null;
+    return (
+      <Grid item style={{ position: 'relative', height: '100%' }} sx={{ ml: -20, mt: -10 }}>
+        <Backdrop open />
+      </Grid>
+    );
   }
 
   if (accepted === 0) {

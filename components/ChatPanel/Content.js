@@ -79,7 +79,7 @@ const Content = () => {
           </div>
         </>
       ) : (
-        <Box sx={{ ml: 20, pt: 10 }} className={styles.box}>
+        <Box sx={{ ml: 20, pt: 10, height: '100%' }} className={styles.box}>
           {!name ? (
             <Skeleton />
           ) : !activeContact ? (
