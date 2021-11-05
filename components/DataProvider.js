@@ -64,10 +64,11 @@ const DataProvider = ({ children }) => {
     (async () => {
       const thread = await Utils.getInstance(Thread);
 
-      const invites = await thread.invite().get();
-      console.debug('invites', invites);
-
-      setContacts(invites.map(invite => invite.from));
+      const { sent, received } = await thread.invite().get();
+      setContacts([
+        ...sent.map(c => c.to),
+        ...received.map(c => c.from),
+      ]);
 
       console.debug('Listening to chat invites thread');
       return thread.listen(callback);

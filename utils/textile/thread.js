@@ -54,9 +54,11 @@ class Thread extends Textile {
     }
 
     async function getRequests(key, value) {
-      const results = await find(Query.where(key).eq(value));
-
       const getValue = (key, value) => key === 'to' ? value.from : value.to;
+
+      let results = await find(Query.where(key).eq(value));
+      results = results.reduce((p, result) => ({ ...p, [getValue(key, result)]: result }), {});
+      results = Object.keys(results).map(from => results[from]);
 
       // retrieve rejected requests.
       const query = Query.where(key).eq(value).and('accepted').eq(false);
@@ -69,28 +71,25 @@ class Thread extends Textile {
     return function(client) {
       return {
         get: async function() {
-          console.debug('Retrieving all received chat requests');
+          console.debug('Retrieving all received/(approved sent) chat requests');
 
           // received chat requests (rejected filtered out).
-          const [to] = await window.ethereum.enable();
-          const results = await getRequests('to', to);
+          const [me] = await window.ethereum.enable();
+          let received = await getRequests('to', me);
 
           // perform decryption.
-          if (results?.length > 0) {
+          if (received?.length > 0) {
             const ceramic = await Utils.getInstance(Ceramic);
-            const map = {};
 
-            for (const result of results) {
+            for (const result of received) {
               try {
                 result.dbInfo = await ceramic.decrypt(result.dbInfo);
-                map[result.from] = result;
               } catch (err) {}
             }
-
-            return Object.keys(map).map(from => map[from]);
           }
 
-          return results;
+          const sent = await getRequests('from', me);
+          return { received, sent };
         },
 
         post: async function(to) {
@@ -123,8 +122,10 @@ class Thread extends Textile {
 
     return function(client) {
       return {
-        get: async function(from) {
-          const [to] = await window.ethereum.enable();
+        get: async function(from, to = null) {
+          if (!to) {
+            to = (await window.ethereum.enable())[0];
+          }
 
           const query = Query.where('to').eq(to).and('from').eq(from);
           const results = await client.find(threadID, collection, query);

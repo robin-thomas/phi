@@ -34,8 +34,15 @@ const ActiveContact = () => {
 
   const loadAck = useCallback(async () => {
     const thread = await Utils.getInstance(Thread);
-    const ack = await thread.ack().get(activeContact);
-    setAccepted(ack === null ? 0 : 1);
+
+    const received = await thread.ack().get(activeContact);
+    if (received) {
+      setAccepted(1);
+    } else {
+      const [from] = await window.ethereum.enable();
+      const sent = await thread.ack().get(from, activeContact);
+      setAccepted(sent === null ? 0 : 1);
+    }
   }, [activeContact]);
 
   const accept = useCallback(async () => {
