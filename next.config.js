@@ -6,9 +6,10 @@ module.exports = {
     CERAMIC_NODE_URL: 'https://ceramic-clay.3boxlabs.com',
     CERAMIC_NETWORK: 'testnet-clay',
     TEXTILE_KEY: 'boqzh4ln446uicmk6btvefvd5yu',
-    TEXTILE_PROFILE_BUCKET: 'profiles',
-    TEXTILE_INVITE_COLLECTION: 'invite',
-    TEXTILE_INVITE_ACK_COLLECTION: 'invite-ack',
+    TEXTILE_BUCKET_PROFILE: 'profiles',
+    TEXTILE_COLLECTION_INVITE: 'invite',
+    TEXTILE_COLLECTION_INVITE_ACK: 'invite-ack',
+    TEXTILE_COLLECTION_CHAT: 'chat',
     ETH_CHAIN_ID: '0x4',
   },
 }

@@ -55,7 +55,7 @@ const DataProvider = ({ children }) => {
 
   const getProfileKey = async () => {
     const bucket = await Utils.getInstance(Bucket);
-    const key = await bucket.getKey(process.env.TEXTILE_PROFILE_BUCKET);
+    const key = await bucket.getKey(process.env.TEXTILE_BUCKET_PROFILE);
     console.debug('Retrieved textile key for profile bucket');
     setProfileKey(key);
   }
@@ -64,7 +64,7 @@ const DataProvider = ({ children }) => {
     (async () => {
       const thread = await Utils.getInstance(Thread);
 
-      const invites = await thread.getRequests();
+      const invites = await thread.invite().get();
       console.debug('invites', invites);
 
       setContacts(invites.map(invite => invite.from));

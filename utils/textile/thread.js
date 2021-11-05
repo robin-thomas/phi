@@ -34,81 +34,112 @@ class Thread extends Textile {
     this.client.listen(threadID, filters, callback);
   }
 
-  async newThread() {
-    const thread = await this.client.newDB();
-    const dbInfo = await this.client.getDBInfo(thread);
-
-    return {
-      threadID: thread.toString(),
-      dbInfo,
-    };
-  }
-
-  async ack(accepted, from) {
-    const [to] = await window.ethereum.enable();
+  invite() {
+    const client = this.client;
+    const collection = process.env.TEXTILE_COLLECTION_INVITE;
     const threadID = ThreadID.fromString(invites.threadID);
 
-    console.debug('Sending chat ack to: ', to);
-    await this.client.create(threadID, process.env.TEXTILE_INVITE_ACK_COLLECTION, [{ to, from, date: new Date().toISOString(), accepted }]);
-  }
+    async function newThread() {
+      const thread = await client.newDB();
+      const dbInfo = await client.getDBInfo(thread);
 
-  async getAck(from) {
-    const [to] = await window.ethereum.enable();
-    const threadID = ThreadID.fromString(invites.threadID);
-
-    const query = Query.where('to').eq(to).and('from').eq(from);
-    const results = await this.client.find(threadID, process.env.TEXTILE_INVITE_ACK_COLLECTION, query);
-
-    return results?.length > 0 ? results[0] : null;
-  }
-
-  async sendRequest(to) {
-    const [from] = await window.ethereum.enable();
-    const threadID = ThreadID.fromString(invites.threadID);
-
-    // Verify whether a request has been sent before.
-    const query = Query.where('to').eq(to).and('from').eq(from);
-    const results = await this.client.find(threadID, process.env.TEXTILE_INVITE_COLLECTION, query);
-    if (results?.length > 0) {
-      throw new Error('Have already sent a chat request to this address before');
+      return {
+        threadID: thread.toString(),
+        dbInfo,
+      };
     }
 
-    // Create a new thread for chat.
-    const payload = await this.newThread();
+    async function find(query) {
+      return await client.find(threadID, collection, query);
+    }
 
-    // Encrypt the joinInfo.
-    const ceramic = await Utils.getInstance(Ceramic);
-    const encrypted = await ceramic.encrypt(payload, to);
+    async function getRequests(key, value) {
+      const results = await find(Query.where(key).eq(value));
 
-    console.debug('Sending chat request to: ', to);
-    await this.client.create(threadID, process.env.TEXTILE_INVITE_COLLECTION, [{ to, from, date: new Date().toISOString(), dbInfo: encrypted }]);
+      const getValue = (key, value) => key === 'to' ? value.from : value.to;
+
+      // retrieve rejected requests.
+      const query = Query.where(key).eq(value).and('accepted').eq(false);
+      const rejected = await client.find(threadID, process.env.TEXTILE_COLLECTION_INVITE_ACK, query);
+      const rejectedAddresses = rejected.map(reject => getValue(key, reject));
+
+      return results.filter(result => !rejectedAddresses.includes(getValue(key, result)));
+    }
+
+    return function(client) {
+      return {
+        get: async function() {
+          console.debug('Retrieving all received chat requests');
+
+          // received chat requests (rejected filtered out).
+          const [to] = await window.ethereum.enable();
+          const results = await getRequests('to', to);
+
+          // perform decryption.
+          if (results?.length > 0) {
+            const ceramic = await Utils.getInstance(Ceramic);
+            const map = {};
+
+            for (const result of results) {
+              try {
+                result.dbInfo = await ceramic.decrypt(result.dbInfo);
+                map[result.from] = result;
+              } catch (err) {}
+            }
+
+            return Object.keys(map).map(from => map[from]);
+          }
+
+          return results;
+        },
+
+        post: async function(to) {
+          const [from] = await window.ethereum.enable();
+
+          // Verify whether a request has been sent before.
+          const query = Query.where('to').eq(to).and('from').eq(from);
+          const results = await find(query);
+          if (results?.length > 0) {
+            throw new Error('Have already sent a chat request to this address before');
+          }
+
+          // Create a new thread for chat.
+          const payload = await newThread();
+
+          // Encrypt the joinInfo.
+          const ceramic = await Utils.getInstance(Ceramic);
+          const encrypted = await ceramic.encrypt(payload, to);
+
+          console.debug('Sending chat request to: ', to);
+          await client.create(threadID, collection, [{ to, from, date: new Date().toISOString(), dbInfo: encrypted }]);
+        },
+      };
+    }(this.client);
   }
 
-  async getRequests() {
-    console.debug('Retrieving all received chat requests');
-
-    const [to] = await window.ethereum.enable();
-    const query = Query.where('to').eq(to);
-
+  ack() {
+    const collection = process.env.TEXTILE_COLLECTION_INVITE_ACK;
     const threadID = ThreadID.fromString(invites.threadID);
-    const results = await this.client.find(threadID, process.env.TEXTILE_INVITE_COLLECTION, query);
 
-    // perform decryption.
-    if (results?.length > 0) {
-      const ceramic = await Utils.getInstance(Ceramic);
-      const map = {};
+    return function(client) {
+      return {
+        get: async function(from) {
+          const [to] = await window.ethereum.enable();
 
-      for (const result of results) {
-        try {
-          result.dbInfo = await ceramic.decrypt(result.dbInfo);
-          map[result.from] = result;
-        } catch (err) {}
+          const query = Query.where('to').eq(to).and('from').eq(from);
+          const results = await client.find(threadID, collection, query);
+
+          return results?.length > 0 ? results[0] : null;
+        },
+
+        post: async function(accepted, from) {
+          const [to] = await window.ethereum.enable();
+
+          console.debug('Sending chat ack to: ', to);
+          await client.create(threadID, collection, [{ to, from, date: new Date().toISOString(), accepted }]);
+        }
       }
-
-      return Object.keys(map).map(from => map[from]);
-    }
-
-    return results;
+    }(this.client);
   }
 };
 

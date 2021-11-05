@@ -47,7 +47,7 @@ const Contact = ({ address, active, close, onClick, checkingContact, setChecking
 
     try {
       const thread = await Utils.getInstance(Thread);
-      await thread.sendRequest(address.toLowerCase());
+      await thread.invite().post(address.toLowerCase());
       close && close();
     } catch (err) {
       setLoadingContacts(false);
