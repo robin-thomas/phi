@@ -3,6 +3,7 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 
+import Chat from './Chat';
 import Backdrop from '../Backdrop';
 
 import Utils from '../../utils';
@@ -97,7 +98,11 @@ const ActiveContact = () => {
   }
 
   if (accepted == 1) {
-    return null;
+    return (
+      <Grid item style={{ position: 'relative', height: '100%' }} sx={{ mt: -10 }}>
+        <Chat />
+      </Grid>
+    );
   }
 }
 

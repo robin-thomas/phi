@@ -79,7 +79,7 @@ const Content = () => {
           </div>
         </>
       ) : (
-        <Box sx={{ ml: 20, pt: 10, height: '100%' }} className={styles.box}>
+        <Box sx={{ ml: 20, pt: '80px', height: '100%' }} className={styles.box}>
           {!name ? (
             <Skeleton />
           ) : !activeContact ? (
@@ -87,7 +87,9 @@ const Content = () => {
               <h2>Hi, {name}!</h2>
               <h4 style={{ marginTop: '-15px' }}>Get started by messaging a friend.</h4>
             </>
-          ) : <ActiveContact />}
+          ) : (
+            <ActiveContact />
+          )}
         </Box>
       )}
     </div>
