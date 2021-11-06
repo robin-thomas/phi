@@ -4,6 +4,7 @@ import Textile from './base';
 import Utils from '../index';
 import Ceramic from '../ceramic';
 import invites from '../../config/invites.json';
+import chatSchema from '../../config/schema/chat.json';
 
 class Thread extends Textile {
   constructor() {
@@ -47,6 +48,7 @@ class Thread extends Textile {
     async function newThread() {
       const thread = await client.newDB();
       const dbInfo = await client.getDBInfo(thread);
+      await client.newCollection(thread, { name: process.env.TEXTILE_COLLECTION_CHAT, schema: chatSchema });
 
       return {
         threadID: thread.toString(),
@@ -77,10 +79,20 @@ class Thread extends Textile {
       return results.filter(result => !rejectedAddresses.includes(getValue(key, result)));
     }
 
+    async function decrypt(result) {
+      const ceramic = await Utils.getInstance(Ceramic);
+
+      try {
+        result.dbInfo = await ceramic.decrypt(result.dbInfo);
+      } catch (err) {}
+
+      return result;
+    }
+
     return function(client) {
       return {
-        delete: async function(id) {
-          await client.delete(threadID, collection, [id]);
+        delete: async function(ids) {
+          await client.delete(threadID, collection, ids);
         },
 
         findBy: async function({ from, to }) {
@@ -91,13 +103,7 @@ class Thread extends Textile {
             return null;
           }
 
-          const result = results.pop();
-          const ceramic = await Utils.getInstance(Ceramic);
-          try {
-            result.dbInfo = await ceramic.decrypt(result.dbInfo);
-          } catch (err) {}
-
-          return result;
+          return await decrypt(results.pop());
         },
 
         get: async function() {

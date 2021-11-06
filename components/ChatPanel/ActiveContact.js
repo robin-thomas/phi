@@ -31,6 +31,7 @@ const ActiveContact = () => {
 
     const received = await thread.ack().get(activeContact);
     if (received) {
+      // await thread.ack().delete(received._id);
       setAccepted(1);
     } else {
       const [from] = await window.ethereum.enable();

@@ -23,7 +23,7 @@ const DataProvider = ({ children }) => {
   const callback = useCallback(async (reply, err) => {
     const [address] = await window.ethereum.enable();
 
-    if (!err) {
+    if (!err && reply.collectionName === process.env.TEXTILE_COLLECTION_INVITE) {
       // chat request received.
       if (reply?.instance?.to === address.toLowerCase()) {
         setContacts((_contacts) => [reply.instance.from, ..._contacts]);
@@ -63,8 +63,12 @@ const DataProvider = ({ children }) => {
   useEffect(() => {
     (async () => {
       const thread = await Utils.getInstance(Thread);
-
       const { sent, received } = await thread.invite().get();
+
+      // const ids = [...sent.map(c => c._id), ...received.map(c => c._id)];
+      // console.log('ids', ids);
+      // await thread.invite().delete(ids);
+
       setContacts([
         ...sent.map(c => c.to),
         ...received.map(c => c.from),
