@@ -23,7 +23,7 @@ const DataProvider = ({ children }) => {
   const callback = useCallback(async (reply, err) => {
     const [address] = await window.ethereum.enable();
 
-    if (!err && reply.collectionName === process.env.TEXTILE_COLLECTION_INVITE) {
+    if (!err && reply?.collectionName === process.env.TEXTILE_COLLECTION_INVITE) {
       // chat request received.
       if (reply?.instance?.to === address.toLowerCase()) {
         setContacts((_contacts) => [reply.instance.from, ..._contacts]);

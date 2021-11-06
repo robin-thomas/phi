@@ -39,7 +39,7 @@ const ActiveContact = () => {
 
       if (sent) {
         setSent(true);
-        setAccepted(1);
+        setAccepted(sent.accepted ? 1 : 3);
       } else {
         // No ack.
         // Check if user is the one who sent the request.
@@ -63,7 +63,7 @@ const ActiveContact = () => {
       await thread.ack().post(false, activeContact);
 
       // Delete this contact from setContacts;
-      setContacts((_contacts) => _contacts.filter(c !== activeContact));
+      setContacts((_contacts) => _contacts.filter(c => c !== activeContact));
       setActiveContact(null);
     }
   }, [activeContact, setContacts, setActiveContact]);
@@ -74,32 +74,6 @@ const ActiveContact = () => {
         <Backdrop open />
       </Grid>
     );
-  }
-
-  if (accepted === 0 || accepted === 2) {
-    return (
-      <>
-        <h2>Hi, {profile.name}!</h2>
-        <h4 style={{ marginTop: '-15px' }}>
-          <Tooltip arrow placement="bottom" title={activeContact}>
-            <Button variant="text" color="info" size="large" sx={{ ml: '-10px' }}>
-              <b style={{ fontSize: 21 }}>{contact.name}</b>
-            </Button>
-          </Tooltip>
-          {accepted === 2 ? 'hasnt yet seen your chat request' : 'has sent you a chat request'}.
-        </h4>
-        {accepted === 0 && (
-          <Grid container spacing={3}>
-            <Grid item xs="auto">
-              <Button variant="contained" color="success" size="large" onClick={accept}>Accept</Button>
-            </Grid>
-            <Grid item xs="auto">
-              <Button variant="outlined" color="error" size="large" onClick={reject}>Ignore</Button>
-            </Grid>
-          </Grid>
-        )}
-      </>
-    )
   }
 
   if (accepted == 1) {
@@ -113,6 +87,41 @@ const ActiveContact = () => {
       </Grid>
     );
   }
+
+  const getAccepted = (_accepted) => {
+    switch (_accepted) {
+      case 3:
+        return 'has rejected your chat request';
+      case 2:
+        return 'hasnt yet seen your chat request';
+      case 0:
+        return 'has sent you a chat request';
+    }
+  }
+
+  return (
+    <>
+      <h2>Hi, {profile.name}!</h2>
+      <h4 style={{ marginTop: '-15px' }}>
+        <Tooltip arrow placement="bottom" title={activeContact}>
+          <Button variant="text" color="info" size="large" sx={{ ml: '-10px' }}>
+            <b style={{ fontSize: 21 }}>{contact.name}</b>
+          </Button>
+        </Tooltip>
+        {getAccepted(accepted)}
+      </h4>
+      {accepted === 0 && (
+        <Grid container spacing={3}>
+          <Grid item xs="auto">
+            <Button variant="contained" color="success" size="large" onClick={accept}>Accept</Button>
+          </Grid>
+          <Grid item xs="auto">
+            <Button variant="outlined" color="error" size="large" onClick={reject}>Reject</Button>
+          </Grid>
+        </Grid>
+      )}
+    </>
+  )
 }
 
 export default ActiveContact;
