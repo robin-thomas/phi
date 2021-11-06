@@ -11,7 +11,6 @@ import Backdrop from '../Backdrop';
 import SearchContact from './SearchContact';
 
 import { useAppContext } from '../hooks';
-import 'simplebar/dist/simplebar.min.css';
 
 const Contacts = () => {
   const { isAuthenticated } = useMoralis();

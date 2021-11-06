@@ -12,20 +12,13 @@ import Thread from '../../utils/textile/thread';
 import { useAppContext } from '../hooks';
 
 const ActiveContact = () => {
+  const [sent, setSent] = useState(false);
   const [contact, setContact] = useState(null);
   const [accepted, setAccepted] = useState(-1);
 
   const { profile, activeContact, setActiveContact, setContacts } = useAppContext();
 
   useEffect(() => loadProfile() && loadAck(), [loadProfile, loadAck]);
-
-  useEffect(() => {
-    if (accepted === -1) {
-      // get the threadId.
-
-      // load the messages from that thread;
-    }
-  }, [accepted]);
 
   const loadProfile = useCallback(async () => {
     const ceramic = await Utils.getInstance(Ceramic);
@@ -42,7 +35,16 @@ const ActiveContact = () => {
     } else {
       const [from] = await window.ethereum.enable();
       const sent = await thread.ack().get(from, activeContact);
-      setAccepted(sent === null ? 0 : 1);
+
+      if (sent) {
+        setSent(true);
+        setAccepted(1);
+      } else {
+        // No ack.
+        // Check if user is the one who sent the request.
+        const result = await thread.invite().findBy({ from, to: activeContact });
+        setAccepted(result ? 2 : 0);
+      }
     }
   }, [activeContact]);
 
@@ -73,7 +75,7 @@ const ActiveContact = () => {
     );
   }
 
-  if (accepted === 0) {
+  if (accepted === 0 || accepted === 2) {
     return (
       <>
         <h2>Hi, {profile.name}!</h2>
@@ -83,24 +85,30 @@ const ActiveContact = () => {
               <b style={{ fontSize: 21 }}>{contact.name}</b>
             </Button>
           </Tooltip>
-          &nbsp;has sent you a chat request.
+          {accepted === 2 ? 'hasnt yet seen your chat request' : 'has sent you a chat request'}.
         </h4>
-        <Grid container spacing={3}>
-          <Grid item xs="auto">
-            <Button variant="contained" color="success" size="large" onClick={accept}>Accept</Button>
+        {accepted === 0 && (
+          <Grid container spacing={3}>
+            <Grid item xs="auto">
+              <Button variant="contained" color="success" size="large" onClick={accept}>Accept</Button>
+            </Grid>
+            <Grid item xs="auto">
+              <Button variant="outlined" color="error" size="large" onClick={reject}>Ignore</Button>
+            </Grid>
           </Grid>
-          <Grid item xs="auto">
-            <Button variant="outlined" color="error" size="large" onClick={reject}>Ignore</Button>
-          </Grid>
-        </Grid>
+        )}
       </>
     )
   }
 
   if (accepted == 1) {
     return (
-      <Grid item style={{ position: 'relative', height: '100%' }} sx={{ mt: -10 }}>
-        <Chat />
+      <Grid
+        item
+        sx={{ mt: -10 }}
+        style={{ position: 'relative', height: '100%' }}
+      >
+        <Chat sent={sent} />
       </Grid>
     );
   }

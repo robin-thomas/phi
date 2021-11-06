@@ -102,7 +102,7 @@ class Ceramic {
 
   async encrypt(payload, address) {
     const did = await address2did(address);
-    const encrypted = await this.did.createDagJWE(payload, [did]);
+    const encrypted = await this.did.createDagJWE(payload, [did, this.did.id]);
     return Buffer.from(JSON.stringify(encrypted)).toString('hex');
   }
 

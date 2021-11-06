@@ -10,9 +10,9 @@ import MessageIcon from '@mui/icons-material/Message';
 import CloseIcon from '@mui/icons-material/Close';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
-const Button = ({ title, disabled, children }) => (
+const Button = ({ title, disabled, onClick, children }) => (
   <Tooltip title={title} placement="top" arrow>
-    <IconButton color="secondary" disabled={disabled}>
+    <IconButton color="secondary" disabled={disabled} {...onClick ? {onClick}: {}}>
       {children}
     </IconButton>
   </Tooltip>
@@ -97,9 +97,10 @@ const ChatBox = () => {
               <>
                 <Button
                   title="Attach file"
+                  onClick={attachFile}
                   disabled={Object.keys(files).length === 3}
                 >
-                  <AttachFileIcon fontSize="small" onClick={attachFile} />
+                  <AttachFileIcon fontSize="small" />
                 </Button>
                 <Button title="Send message">
                   <MessageIcon fontSize="small" />

@@ -34,6 +34,11 @@ class Thread extends Textile {
     this.client.listen(threadID, filters, callback);
   }
 
+  async getAll(threadID) {
+    threadID = ThreadID.fromString(threadID);
+    return await this.client.find(threadID, process.env.TEXTILE_COLLECTION_CHAT, new Query());
+  }
+
   invite() {
     const client = this.client;
     const collection = process.env.TEXTILE_COLLECTION_INVITE;
@@ -53,12 +58,16 @@ class Thread extends Textile {
       return await client.find(threadID, collection, query);
     }
 
-    async function getRequests(key, value) {
-      const getValue = (key, value) => key === 'to' ? value.from : value.to;
+    const getValue = (key, value) => key === 'to' ? value.from : value.to;
 
-      let results = await find(Query.where(key).eq(value));
+    const filter = (results, key) => {
       results = results.reduce((p, result) => ({ ...p, [getValue(key, result)]: result }), {});
-      results = Object.keys(results).map(from => results[from]);
+      return Object.keys(results).map(from => results[from]);
+    }
+
+    async function getRequests(key, value) {
+      let results = await find(Query.where(key).eq(value));
+      results = filter(results, key);
 
       // retrieve rejected requests.
       const query = Query.where(key).eq(value).and('accepted').eq(false);
@@ -70,6 +79,27 @@ class Thread extends Textile {
 
     return function(client) {
       return {
+        delete: async function(id) {
+          await client.delete(threadID, collection, [id]);
+        },
+
+        findBy: async function({ from, to }) {
+          console.debug(`Retrieving chat request from: ${from}, and to: ${to}`);
+
+          const results = await find(Query.where('from').eq(from).and('to').eq(to));
+          if (results?.length === 0) {
+            return null;
+          }
+
+          const result = results.pop();
+          const ceramic = await Utils.getInstance(Ceramic);
+          try {
+            result.dbInfo = await ceramic.decrypt(result.dbInfo);
+          } catch (err) {}
+
+          return result;
+        },
+
         get: async function() {
           console.debug('Retrieving all received/(approved sent) chat requests');
 
@@ -122,6 +152,10 @@ class Thread extends Textile {
 
     return function(client) {
       return {
+        delete: async function(id) {
+          await client.delete(threadID, collection, [id]);
+        },
+
         get: async function(from, to = null) {
           if (!to) {
             to = (await window.ethereum.enable())[0];
