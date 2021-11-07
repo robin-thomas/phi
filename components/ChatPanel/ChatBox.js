@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import * as yup from 'yup';
+import { useFormik } from 'formik';
 import Grid from '@mui/material/Grid';
 import Alert from '@mui/material/Alert';
 import TextField from '@mui/material/TextField';
@@ -9,6 +11,10 @@ import AttachFileIcon from '@mui/icons-material/AttachFile';
 import MessageIcon from '@mui/icons-material/Message';
 import CloseIcon from '@mui/icons-material/Close';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
+
+import Utils from '../../utils';
+import Thread from '../../utils/textile/thread';
+import { useAppContext } from '../hooks';
 
 const Button = ({ title, disabled, onClick, children }) => (
   <Tooltip title={title} placement="top" arrow>
@@ -44,8 +50,9 @@ const whiteTheme = createTheme({
   },
 });
 
-const ChatBox = () => {
+const ChatBox = ({ threadID }) => {
   const [files, setFiles] = useState([]);
+  const { activeContact } = useAppContext();
 
   const attachFile = () => {
     const input = document.createElement('input');
@@ -55,7 +62,7 @@ const ChatBox = () => {
       setFiles(_files => ({..._files, [file.name]: file }));
     }
     input.click();
-  }
+  };
 
   const removeFile = (name) => () => {
     setFiles(_files => {
@@ -63,6 +70,19 @@ const ChatBox = () => {
       return {..._files};
     });
   }
+
+  const formik = useFormik({
+    initialValues: { message: '' },
+    validationSchema: yup.object({ message: yup.string() }),
+    onSubmit: async (values, { resetForm }) => {
+      if (values.message) {
+        const thread = await Utils.getInstance(Thread);
+        await thread.chat(threadID).post(activeContact, values.message);
+        resetForm();
+      }
+    },
+    enableReinitialize: true,
+  });
 
   return (
     <ThemeProvider theme={whiteTheme}>
@@ -85,6 +105,10 @@ const ChatBox = () => {
         ))}
       </Grid>
       <TextField
+        name="message"
+        value={formik.values.message}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
         placeholder="Type a message"
         autoComplete='off'
         variant="filled"
@@ -102,7 +126,11 @@ const ChatBox = () => {
                 >
                   <AttachFileIcon fontSize="small" />
                 </Button>
-                <Button title="Send message">
+                <Button
+                  title="Send message"
+                  onClick={formik.handleSubmit}
+                  disabled={!formik.values.message || formik.values.message?.length === 0}
+                >
                   <MessageIcon fontSize="small" />
                 </Button>
               </>

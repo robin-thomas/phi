@@ -10,8 +10,9 @@ import Thread from '../../utils/textile/thread';
 import { useAppContext } from '../hooks';
 
 const Chat = ({ sent }) => {
-  const { activeContact } = useAppContext();
+  const [chats, setChats] = useState([]);
   const [threadID, setThreadID] = useState(null);
+  const { activeContact } = useAppContext();
 
   useEffect(() => activeContact && getThreadID().then(setThreadID), [activeContact, getThreadID]);
 
@@ -19,11 +20,21 @@ const Chat = ({ sent }) => {
     if (threadID) {
       (async () => {
         const thread = await Utils.getInstance(Thread);
-        const _chats = await thread.getAll(threadID);
-        console.log('_chats', _chats);
+        const _chats = await thread.chat(threadID).getAll();
+        setChats(_chats);
       })();
     }
   }, [threadID]);
+
+  useEffect(() => {
+    if (threadID) {
+      (async () => {
+        const thread = await Utils.getInstance(Thread);
+        const close = thread.listen(listener, threadID);
+        return () => close();
+      })();
+    }
+  }, [threadID, listener]);
 
   const getThreadID = useCallback(async () => {
     const thread = await Utils.getInstance(Thread);
@@ -36,15 +47,19 @@ const Chat = ({ sent }) => {
     return dbInfo.threadID;
   }, [activeContact, sent]);
 
+  const listener = useCallback((reply, err) => !err && setChats(_chats => ([..._chats, reply.instance])), []);
+
   return (
     <>
       <Box mt={5} width="90%" height="65%">
         <SimpleBar style={{ height: '100%' }}>
-          <div>Hello World</div>
+          {chats.map(chat => (
+            <div key={chat._id}>{chat.from}, {chat.to}, {chat.message}</div>
+          ))}
         </SimpleBar>
       </Box>
       <Box position="absolute" bottom={80} width="90%">
-        <ChatBox />
+        <ChatBox threadID={threadID} />
       </Box>
     </>
   )

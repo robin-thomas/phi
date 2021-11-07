@@ -31,9 +31,23 @@ class Thread extends Textile {
     this.client.listen(threadID, filters, callback);
   }
 
-  async getAll(threadID) {
+  chat(threadID) {
+    const collection = process.env.TEXTILE_COLLECTION_CHAT;
     threadID = ThreadID.fromString(threadID);
-    return await this.client.find(threadID, process.env.TEXTILE_COLLECTION_CHAT, new Query());
+
+    return function(client) {
+      return {
+        getAll: async function() {
+          return await client.find(threadID, collection, new Query());
+        },
+
+        post: async function(to, message, attachments = []) {
+          const [from] = await window.ethereum.enable();
+          const params = { from, to, message, attachments };
+          await client.create(threadID, collection, [{...params, date: new Date().toISOString() }]);
+        },
+      }
+    }(this.client);
   }
 
   invite() {
