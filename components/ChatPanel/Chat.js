@@ -1,9 +1,8 @@
 import { useCallback, useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
-import SimpleBar from 'simplebar-react';
 
 import ChatBox from './ChatBox';
-import Message from './Message';
+import Messages from './Messages';
 
 import Utils from '../../utils';
 import Ceramic from '../../utils/ceramic';
@@ -53,9 +52,7 @@ const Chat = ({ sent }) => {
   return (
     <>
       <Box mt={5} width="90%" height="65%">
-        <SimpleBar style={{ height: '100%' }}>
-          {chats.map(chat => <Message key={chat._id} chat={chat} />)}
-        </SimpleBar>
+        <Messages chats={chats} />
       </Box>
       <Box position="absolute" bottom={80} width="90%">
         <ChatBox threadID={threadID} />
