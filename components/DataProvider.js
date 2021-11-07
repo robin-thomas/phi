@@ -37,8 +37,6 @@ const DataProvider = ({ children }) => {
         setContacts((_contacts) => [reply.instance.to, ..._contacts]);
         setLoadingContacts(false);
       }
-    } else {
-      console.error(err, reply);
     }
   }, []);
 
@@ -75,7 +73,9 @@ const DataProvider = ({ children }) => {
       ]);
 
       console.debug('Listening to chat invites thread');
-      return thread.listen(callback);
+      const close = thread.listen(callback);
+
+      return () => close();
     })();
   }, [callback]);
 

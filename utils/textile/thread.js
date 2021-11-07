@@ -20,13 +20,9 @@ class Thread extends Textile {
   }
 
   async join(callback, info = null) {
-    try {
-      await this.client.joinFromInfo(info?.dbInfo || invites.dbInfo);
-    } catch (err) {
-      // fails if tries to join again. Hence ignoring.
-    }
-
-    this.listen(callback, info?.threadID);
+    this.client.joinFromInfo(info?.dbInfo || invites.dbInfo)
+      .then(() => this.listen(callback, info?.threadID))
+      .catch();
   }
 
   listen(callback, threadId = null) {
