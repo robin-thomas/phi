@@ -47,10 +47,17 @@ class Ceramic {
     return await this.self.set('basicProfile', profile);
   }
 
+  setDefaults(profile) {
+    profile.name = profile?.name || 'John Doe';
+    profile.description = profile?.description || 'Available';
+    return profile;
+  }
+
   async getProfile(address = null) {
     if (!address) {
       console.debug('Retrieving authenticated ceramic basicProfile');
-      return await this.self.get('basicProfile');
+      const profile = await this.self.get('basicProfile');
+      return this.setDefaults(profile);
     }
 
     console.debug('Searching ceramic profile for: ', address);
@@ -68,12 +75,7 @@ class Ceramic {
     console.debug('Retrieving un-authenticated ceramic basicProfile');
     const profile = await this.client.get('basicProfile', did);
 
-    // first time.
-    profile.name = profile?.name || 'John Doe';
-    profile.description = profile.description || 'Available';
-
-    this.cache.set(address, profile);
-
+    this.cache.set(address, this.setDefaults(profile));
     return this.cache.get(address);
   }
 

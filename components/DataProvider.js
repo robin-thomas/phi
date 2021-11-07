@@ -17,67 +17,9 @@ const DataProvider = ({ children }) => {
   const [activeContact, setActiveContact] = useState(null);
   const [loadingContacts, setLoadingContacts] = useState(false);
 
-  useEffect(() => authenticated && getProfileKey(), [authenticated]);
+  useEffect(() => getProfileKey(), []);
   useEffect(() => authenticated && getProfile(), [authenticated]);
-
-  const callback = useCallback(async (reply, err) => {
-    const [address] = await window.ethereum.enable();
-
-    if (!err && reply?.collectionName === process.env.TEXTILE_COLLECTION_INVITE) {
-      // chat request received.
-      if (reply?.instance?.to === address.toLowerCase()) {
-        setContacts((_contacts) => [reply.instance.from, ..._contacts]);
-
-        // Perform decryption.
-        const ceramic = await Utils.getInstance(Ceramic);
-        const dbInfo = await ceramic.decrypt(reply.instance.dbInfo);
-        console.debug('dbInfo', dbInfo);
-
-      } else if (reply?.instance?.from === address.toLowerCase()) {
-        setContacts((_contacts) => [reply.instance.to, ..._contacts]);
-        setLoadingContacts(false);
-      }
-    }
-  }, []);
-
-  const getProfile = async () => {
-    const ceramic = await Utils.getInstance(Ceramic);
-    const _profile = await ceramic.getProfile();
-
-    // first time.
-    _profile.name = _profile?.name || 'John Doe';
-    _profile.description = _profile.description || 'Available';
-
-    setProfile(_profile);
-  }
-
-  const getProfileKey = async () => {
-    const bucket = await Utils.getInstance(Bucket);
-    const key = await bucket.getKey(process.env.TEXTILE_BUCKET_PROFILE);
-    console.debug('Retrieved textile key for profile bucket');
-    setProfileKey(key);
-  }
-
-  useEffect(() => {
-    (async () => {
-      const thread = await Utils.getInstance(Thread);
-      const { sent, received } = await thread.invite().get();
-
-      // const ids = [...sent.map(c => c._id), ...received.map(c => c._id)];
-      // console.log('ids', ids);
-      // await thread.invite().delete(ids);
-
-      setContacts([
-        ...sent.map(c => c.to),
-        ...received.map(c => c.from),
-      ]);
-
-      console.debug('Listening to chat invites thread');
-      const close = thread.listen(callback);
-
-      return () => close();
-    })();
-  }, [callback]);
+  useEffect(() => authenticated && getContacts(), [authenticated]);
 
   useEffect(() => {
     (async () => {
@@ -102,6 +44,61 @@ const DataProvider = ({ children }) => {
       return () => window.ethereum.removeListener('chainChanged', callback)
     }
   }, []);
+
+  const callback = useCallback(async (reply, err) => {
+    const [address] = await window.ethereum.enable();
+
+    if (!err && reply?.collectionName === process.env.TEXTILE_COLLECTION_INVITE) {
+      // chat request received.
+      if (reply?.instance?.to === address.toLowerCase()) {
+        setContacts((_contacts) => [reply.instance.from, ..._contacts]);
+
+        // Perform decryption.
+        const ceramic = await Utils.getInstance(Ceramic);
+        const dbInfo = await ceramic.decrypt(reply.instance.dbInfo);
+        console.debug('dbInfo', dbInfo);
+
+      } else if (reply?.instance?.from === address.toLowerCase()) {
+        setContacts((_contacts) => [reply.instance.to, ..._contacts]);
+        setLoadingContacts(false);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (authenticated) {
+      console.debug('Listening to chat invites thread');
+
+      Utils.getInstance(Thread)
+        .then((thread) => {
+          const close = thread.listen(callback);
+          return () => close();
+        });
+    }
+  }, [authenticated, callback]);
+
+  const getProfileKey = async () => {
+    const bucket = await Utils.getInstance(Bucket);
+    const key = await bucket.getKey(process.env.TEXTILE_BUCKET_PROFILE);
+    console.debug('Retrieved textile key for profile bucket');
+    setProfileKey(key);
+  }
+
+  const getProfile = async () => {
+    const ceramic = await Utils.getInstance(Ceramic);
+    const _profile = await ceramic.getProfile();
+    setProfile(_profile);
+  }
+
+  const getContacts = async () => {
+    const thread = await Utils.getInstance(Thread);
+    const { sent, received } = await thread.invite().get();
+
+    setContacts([
+      ...sent.map(c => c.to),
+      ...received.map(c => c.from),
+    ]);
+  }
 
   return (
     <DataContext.Provider
