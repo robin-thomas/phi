@@ -109,6 +109,7 @@ const ChatBox = ({ threadID }) => {
         value={formik.values.message}
         onChange={formik.handleChange}
         onBlur={formik.handleBlur}
+        onKeyDown={(e) => e.key === 'Enter' && formik.handleSubmit()}
         placeholder="Type a message"
         autoComplete='off'
         variant="filled"

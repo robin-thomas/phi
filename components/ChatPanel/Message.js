@@ -1,0 +1,64 @@
+import { useState, useEffect } from 'react';
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Avatar from '@mui/material/Avatar';
+import format from 'date-fns/format';
+
+import Utils from '../../utils';
+import Ceramic from '../../utils/ceramic';
+import Bucket from '../../utils/textile/bucket';
+import { useAppContext } from '../hooks';
+import styles from './Message.module.css';
+
+const Message = ({ chat }) => {
+  const [name, setName] = useState('');
+  const [profilePic, setProfilePic] = useState('');
+  const { profileKey } = useAppContext();
+
+  useEffect(() => {
+    (async () => {
+      const ceramic = await Utils.getInstance(Ceramic);
+
+      const [me] = await window.ethereum.enable();
+      const profile = await ceramic.getProfile(me === chat.from ? undefined : chat.from);
+      setName(me === chat.from ? 'You' : profile?.name);
+
+      if (profile?.image) {
+        const bucket = await Utils.getInstance(Bucket);
+        setProfilePic(await bucket.getImage(profileKey, chat.from, profile.image.original.mimeType));
+      }
+    })();
+  }, [chat, profileKey]);
+
+  return name !== '' ? (
+    <Box sx={{ mb: 3 }}>
+      <Grid container alignItems="center" justifyContent={name === 'You' ? 'flex-end': 'flex-start'}>
+        {name !== 'You' && (
+          <Grid item xs={1}>
+            <Avatar src={profilePic} width={50} height={50} />
+          </Grid>
+        )}
+        <Grid container item xs={11} justifyContent={name === 'You' ? 'flex-end': 'flex-start'}>
+          <Grid item xs="auto">
+            <div className={`${styles.message} ${name === 'You' ? styles.self : ''}`}>{chat.message}</div>
+          </Grid>
+        </Grid>
+        {name === 'You' && (
+          <Grid container item xs={1} justifyContent="flex-end">
+            <Avatar src={profilePic} width={50} height={50} />
+          </Grid>
+        )}
+        <Grid item xs={1} />
+        <Grid item xs="auto">
+          <div className={styles.name}>
+            {name}
+            &nbsp;&nbsp;•&nbsp;&nbsp;
+            {format(new Date(chat.date), 'MMM d HH:mm aaa')}
+          </div>
+        </Grid>
+      </Grid>
+    </Box>
+  ) : null;
+}
+
+export default Message;

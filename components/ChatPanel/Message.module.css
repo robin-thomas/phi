@@ -1,0 +1,17 @@
+.message {
+  border-radius: 6px;
+  padding: 20px;
+  font-size: 13px;
+  font-weight: 800;
+  background: white;
+}
+
+.self {
+  background: #9c4ad5;
+  color: white;
+}
+
+.name {
+  margin-top: 10px;
+  font-size: 12px;
+}

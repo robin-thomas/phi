@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import SimpleBar from 'simplebar-react';
 
 import ChatBox from './ChatBox';
+import Message from './Message';
 
 import Utils from '../../utils';
 import Ceramic from '../../utils/ceramic';
@@ -47,15 +48,13 @@ const Chat = ({ sent }) => {
     return dbInfo.threadID;
   }, [activeContact, sent]);
 
-  const listener = useCallback((reply, err) => !err && setChats(_chats => ([..._chats, reply.instance])), []);
+  const listener = useCallback((reply, err) => !err && reply?.instance && setChats(_chats => ([..._chats, reply.instance])), []);
 
   return (
     <>
       <Box mt={5} width="90%" height="65%">
         <SimpleBar style={{ height: '100%' }}>
-          {chats.map(chat => (
-            <div key={chat._id}>{chat.from}, {chat.to}, {chat.message}</div>
-          ))}
+          {chats.map(chat => <Message key={chat._id} chat={chat} />)}
         </SimpleBar>
       </Box>
       <Box position="absolute" bottom={80} width="90%">

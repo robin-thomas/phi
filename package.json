@@ -31,6 +31,7 @@
     "@mui/styles": "^5.0.2",
     "@self.id/web": "^0.1.0",
     "@textile/hub": "^6.3.0",
+    "date-fns": "^2.25.0",
     "formik": "^2.2.9",
     "lru-cache": "^6.0.0",
     "moralis": "^0.0.105",
