@@ -33,15 +33,23 @@ const DataProvider = ({ children }) => {
   }, [profile.image, profileKey]);
 
   useEffect(() => {
-    const callback = (chainId) => {
+    const networkChanged = (chainId) => {
       if (chainId !== process.env.ETH_CHAIN_ID) {
         window.location.reload();
       }
     }
 
+    const accountChanged = () => window.location.reload();
+
+    // Metamask callback for changes.
     if (window.ethereum) {
-      window.ethereum.on('chainChanged', callback);
-      return () => window.ethereum.removeListener('chainChanged', callback)
+      window.ethereum.on('chainChanged', networkChanged);
+      window.ethereum.on('accountsChanged', accountChanged);
+
+      return () => {
+        window.ethereum.removeListener('chainChanged', networkChanged);
+        window.ethereum.removeListener('accountsChanged', accountChanged);
+      };
     }
   }, []);
 

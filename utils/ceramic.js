@@ -48,6 +48,7 @@ class Ceramic {
   }
 
   setDefaults(profile) {
+    profile = profile || {};
     profile.name = profile?.name || 'John Doe';
     profile.description = profile?.description || 'Available';
     return profile;

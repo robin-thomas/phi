@@ -82,7 +82,7 @@ const Contact = ({ address, active, close, onClick, checkingContact, setChecking
         backgroundColor: 'transparent',
         boxShadow: 'none',
         ...(active ? {
-          backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.1))',
+          backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2))',
         } : {}),
         ...(!close ? {
           cursor: 'pointer',
