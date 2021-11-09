@@ -24,7 +24,7 @@ const Content = () => {
   const [error, setError] = useState(null);
 
   const { authenticate, isAuthenticated } = useMoralis();
-  const { profile, activeContact, setAuthenticated } = useAppContext();
+  const { profile, activeContact, setAuthenticated, setNetwork } = useAppContext();
 
   useEffect(() => {
     (async () => {
@@ -45,13 +45,17 @@ const Content = () => {
         const chainId = await window.ethereum.request({ method: 'eth_chainId' });
         if (chainId === process.env.ETH_CHAIN_ID) {
           setAuthenticated(true);
+          setNetwork(process.env.ETH_CHAIN_NAME);
         } else {
+          setNetwork('Wrong Network');
+
           try {
             await window.ethereum.request({
               method: 'wallet_switchEthereumChain',
               params: [{ chainId: process.env.ETH_CHAIN_ID }]
             });
 
+            setNetwork(process.env.ETH_CHAIN_NAME);
             setAuthenticated(true);
           } catch (err) {
             console.error(err);
@@ -59,7 +63,7 @@ const Content = () => {
         }
       }
     })();
-  }, [isAuthenticated, setAuthenticated]);
+  }, [isAuthenticated, setAuthenticated, setNetwork]);
 
   useEffect(() => profile?.name && setName(profile?.name), [profile]);
 

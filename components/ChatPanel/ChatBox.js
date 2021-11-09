@@ -8,7 +8,7 @@ import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
-import MessageIcon from '@mui/icons-material/Message';
+import SendIcon from '@mui/icons-material/Send';
 import CloseIcon from '@mui/icons-material/Close';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
@@ -132,7 +132,7 @@ const ChatBox = ({ threadID }) => {
                   onClick={formik.handleSubmit}
                   disabled={!formik.values.message || formik.values.message?.length === 0}
                 >
-                  <MessageIcon fontSize="small" />
+                  <SendIcon fontSize="small" />
                 </Button>
               </>
             </InputAdornment>

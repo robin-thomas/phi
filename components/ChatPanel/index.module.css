@@ -1,10 +1,11 @@
 .panel {
   border-radius: 8px;
-  margin-top: 14vh;
   height: 67vh;
-  margin-right: 15vw;
-  margin-left: calc(10vw + 400px);
+  right: 15vw;
   background: white;
   box-shadow: -5px 15px 35px -26px black;
   overflow: hidden;
+  position: absolute;
+  top: 14vh;
+  left: calc(10vw + 400px);
 }

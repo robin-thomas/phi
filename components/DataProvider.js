@@ -8,6 +8,7 @@ import Thread from '../utils/textile/thread';
 const DataContext = createContext();
 
 const DataProvider = ({ children }) => {
+  const [network, setNetwork] = useState(null);
   const [profile, setProfile] = useState({});
   const [profilePic, setProfilePic] = useState(null);
   const [showProfile, setShowProfile] = useState(false);
@@ -36,6 +37,8 @@ const DataProvider = ({ children }) => {
     const networkChanged = (chainId) => {
       if (chainId !== process.env.ETH_CHAIN_ID) {
         window.location.reload();
+      } else {
+        setNetwork(process.env.ETH_CHAIN_NAME);
       }
     }
 
@@ -111,6 +114,8 @@ const DataProvider = ({ children }) => {
   return (
     <DataContext.Provider
       value={{
+        network,
+        setNetwork,
         profile,
         setProfile,
         profilePic,

@@ -1,30 +1,39 @@
+import { useState, useEffect } from 'react';
 import Grid from '@mui/material/Grid';
-import CircleIcon from '@mui/icons-material/Circle';
 
+import Utils from '../../utils';
+import Ceramic from '../../utils/ceramic';
+import { useAppContext } from '../hooks';
 import styles from './Header.module.css';
 
-const Circle = () => (
-  <Grid item>
-    <CircleIcon style={{ fill: "grey" }}/>
-  </Grid>
-)
+const Header = () => {
+  const { activeContact } = useAppContext();
+  const [name, setName] = useState('');
 
-const Header = () => (
-  <Grid
-    container
-    spacing={3}
-    alignItems='center'
-    justifyContent="center"
-    className={styles.header}
-  >
-    <Grid item xs="auto" sx={{ pr: 2 }}>
-      <span className={styles.appName}>{process.env.APP_NAME}</span>
+  useEffect(() => {
+    if (activeContact) {
+      (async () => {
+        const ceramic = await Utils.getInstance(Ceramic);
+        const profile = await ceramic.getProfile(activeContact);
+        setName(profile?.name);
+      })();
+    } else {
+      setName('');
+    }
+  }, [activeContact]);
+
+  return (
+    <Grid
+      container
+      spacing={3}
+      alignItems='center'
+      className={styles.header}
+    >
+      <Grid item xs="auto" sx={{ ml: 18 }}>
+        <span className={styles.appName}>{name}</span>
+      </Grid>
     </Grid>
-    <Circle />
-    <Circle />
-    <Circle />
-    <Grid item xs={6} />
-  </Grid>
-)
+  )
+}
 
 export default Header;
