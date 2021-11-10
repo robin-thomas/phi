@@ -47,7 +47,13 @@ const Chat = ({ sent }) => {
     return dbInfo.threadID;
   }, [activeContact, sent]);
 
-  const listener = useCallback((reply, err) => !err && reply?.instance && setChats(_chats => ([..._chats, reply.instance])), []);
+  const listener = useCallback(async (reply, err) => {
+    if (!err && reply?.instance) {
+      const ceramic = await Utils.getInstance(Ceramic);
+      reply.instance.message = await ceramic.decrypt(reply.instance.message);
+      setChats(_chats => ([..._chats, reply.instance]));
+    }
+  }, []);
 
   return (
     <>

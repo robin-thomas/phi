@@ -38,12 +38,26 @@ class Thread extends Textile {
     return function(client) {
       return {
         getAll: async function() {
-          return await client.find(threadID, collection, new Query());
+          const chats = await client.find(threadID, collection, new Query());
+
+          if (chats?.length > 0) {
+            const ceramic = await Utils.getInstance(Ceramic);
+
+            for (const chat of chats) {
+              chat.message = await ceramic.decrypt(chat.message);
+            }
+          }
+
+          return chats;
         },
 
         post: async function(to, message, attachments = []) {
+          // Encrypt the message.
+          const ceramic = await Utils.getInstance(Ceramic);
+          const encrypted = await ceramic.encrypt(message, to);
+
           const [from] = await window.ethereum.enable();
-          const params = { from, to, message, attachments };
+          const params = { from, to, message: encrypted, attachments };
           await client.create(threadID, collection, [{...params, date: new Date().toISOString() }]);
         },
       }
