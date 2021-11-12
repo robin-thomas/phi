@@ -18,20 +18,20 @@ const ActiveContact = () => {
 
   const { profile, activeContact, setActiveContact, setContacts } = useAppContext();
 
-  useEffect(() => loadProfile() && loadAck(), [loadProfile, loadAck]);
+  useEffect(() => setAccepted(-1), [activeContact]);
+  useEffect(() => Promise.all([ loadProfile(), loadAck() ]), [activeContact]);
 
-  const loadProfile = useCallback(async () => {
+  const loadProfile = async () => {
     const ceramic = await Utils.getInstance(Ceramic);
     const _profile = await ceramic.getProfile(activeContact);
     setContact(_profile);
-  }, [activeContact]);
+  };
 
-  const loadAck = useCallback(async () => {
+  const loadAck = async () => {
     const thread = await Utils.getInstance(Thread);
 
     const received = await thread.ack().get(activeContact);
     if (received) {
-      // await thread.ack().delete(received._id);
       setAccepted(1);
     } else {
       const [from] = await window.ethereum.enable();
@@ -47,7 +47,7 @@ const ActiveContact = () => {
         setAccepted(result ? 2 : 0);
       }
     }
-  }, [activeContact]);
+  };
 
   const accept = useCallback(async () => {
     if (window.confirm('Are you sure you want to accept?')) {

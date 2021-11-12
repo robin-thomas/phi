@@ -18,21 +18,16 @@ const Chat = ({ sent }) => {
 
   useEffect(() => {
     if (threadID) {
-      (async () => {
-        const thread = await Utils.getInstance(Thread);
-        const _chats = await thread.chat(threadID).getAll();
-        setChats(_chats);
-      })();
+      Utils.getInstance(Thread)
+        .then(thread => thread.chat(threadID).getAll())
+        .then(setChats);
     }
   }, [threadID]);
 
   useEffect(() => {
     if (threadID) {
-      (async () => {
-        const thread = await Utils.getInstance(Thread);
-        const close = thread.listen(listener, threadID);
-        return () => close();
-      })();
+      Utils.getInstance(Thread)
+        .then((thread) => thread.listen(listener, threadID));
     }
   }, [threadID, listener]);
 
@@ -43,8 +38,13 @@ const Chat = ({ sent }) => {
     const from = sent ? ceramic.address : activeContact;
     const to = sent ? activeContact : ceramic.address;
 
-    const { dbInfo } = await thread.invite().findBy({ from, to });
-    return dbInfo.threadID;
+    try {
+      const { dbInfo } = await thread.invite().findBy({ from, to });
+      return dbInfo.threadID;
+    } catch (err) {
+      const { dbInfo } = await thread.invite().findBy({ from: to, to: from });
+      return dbInfo.threadID;
+    }
   }, [activeContact, sent]);
 
   const listener = useCallback(async (reply, err) => {

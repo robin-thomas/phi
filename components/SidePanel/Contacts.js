@@ -11,6 +11,7 @@ import Backdrop from '../Backdrop';
 import SearchContact from './SearchContact';
 
 import { useAppContext } from '../hooks';
+import styles from './Contacts.module.css';
 
 const Contacts = () => {
   const { isAuthenticated } = useMoralis();
@@ -24,7 +25,7 @@ const Contacts = () => {
 
   return (
     <>
-      <Box sx={{ px: 2, height: 'calc(100% - 120px)' }}>
+      <Box className={styles.box}>
         <Backdrop open={loadingContacts} />
         {addContact ? <AddContact close={() => setAddContact(false)} /> : (
           <>
@@ -35,16 +36,16 @@ const Contacts = () => {
             ) : contacts !== null && (
               <>
                 <Divider />
-                <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                  <h2 style={{ color: 'rgba(255,255,255,0.8)', fontWeight: 900 }}>No friends yet.</h2>
-                  <h4 style={{ marginTop: '-10px', color: 'rgba(255, 255, 255, 0.6)' }}>Go ahead and add a friend!</h4>
+                <Box className={styles.nofriendBox}>
+                  <h2>No friends yet.</h2>
+                  <h4>Go ahead and add a friend!</h4>
                 </Box>
               </>
             )}
           </>
         )}
       </Box>
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mr: 2, mt: -10 }}>
+      <Box className={styles.addfriendBox}>
         <Tooltip title="Add New Contact" arrow placement="top">
           <Fab onClick={() => setAddContact(true)}>
             <AddIcon />

@@ -11,7 +11,13 @@
     "attachments": {
       "type": "array",
       "items": {
-        "type": "string"
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "size": { "type": "number" },
+          "mimeType": { "type": "string" },
+          "location": { "type": "string" }
+        }
       }
     }
   }

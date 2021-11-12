@@ -1,0 +1,29 @@
+.box {
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+  height: calc(100% - 120px) !important;
+}
+
+.nofriendBox {
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+}
+
+.nofriendBox > h2 {
+  color: rgba(255,255,255,0.8) !important;
+  font-weight: 900 !important;
+}
+
+.nofriendBox > h4 {
+  margin-top: -10px !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.addfriendBox {
+  display: flex !important;
+  justify-content: flex-end !important;
+  margin-right: 16px !important;
+  margin-top: -80px !important;
+}
