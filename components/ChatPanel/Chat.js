@@ -10,7 +10,7 @@ import Thread from '../../utils/textile/thread';
 import { useAppContext } from '../hooks';
 
 const Chat = ({ sent }) => {
-  const [chats, setChats] = useState([]);
+  const [chats, setChats] = useState(null);
   const [threadID, setThreadID] = useState(null);
   const { activeContact } = useAppContext();
 
