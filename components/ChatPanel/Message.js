@@ -4,6 +4,8 @@ import Grid from '@mui/material/Grid';
 import Avatar from '@mui/material/Avatar';
 import format from 'date-fns/format';
 
+import MessageImage from './MessageImage';
+
 import Utils from '../../utils';
 import Ceramic from '../../utils/ceramic';
 import Bucket from '../../utils/textile/bucket';
@@ -32,7 +34,7 @@ const Message = ({ chat }) => {
 
   return name !== '' ? (
     <Box sx={{ mb: 3 }}>
-      <Grid container alignItems="center" justifyContent={name === 'You' ? 'flex-end': 'flex-start'}>
+      <Grid container justifyContent={name === 'You' ? 'flex-end': 'flex-start'}>
         {name !== 'You' && (
           <Grid item xs={1}>
             <Avatar src={profilePic} width={50} height={50} />
@@ -40,7 +42,16 @@ const Message = ({ chat }) => {
         )}
         <Grid container item xs={11} justifyContent={name === 'You' ? 'flex-end': 'flex-start'}>
           <Grid item xs="auto">
-            <div className={`${styles.message} ${name === 'You' ? styles.self : ''}`}>{chat.message}</div>
+            <div className={`${styles.message} ${name === 'You' ? styles.self : ''}`}>
+              <Grid item container xs={12}>
+                {chat.attachments.map(image => (
+                  <Grid item xs={!2} key={image.name}>
+                    <MessageImage address={chat.to} attachment={image} />
+                  </Grid>
+                ))}
+                <Grid item xs={12}>{chat.message}</Grid>
+              </Grid>
+            </div>
           </Grid>
         </Grid>
         {name === 'You' && (
@@ -48,7 +59,7 @@ const Message = ({ chat }) => {
             <Avatar src={profilePic} width={50} height={50} />
           </Grid>
         )}
-        <Grid item xs={1} />
+        {name !== 'You' && <Grid item xs={1} />}
         <Grid item xs="auto">
           <div className={styles.name}>
             {name}
@@ -56,6 +67,7 @@ const Message = ({ chat }) => {
             {format(new Date(chat.date), 'MMM d HH:mm aaa')}
           </div>
         </Grid>
+        {name === 'You' && <Grid item xs={1} />}
       </Grid>
     </Box>
   ) : null;

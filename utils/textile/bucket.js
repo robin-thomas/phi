@@ -42,10 +42,10 @@ class Bucket extends Textile {
     return this.keyCache.get(bucketName);
   }
 
-  async upload(bucketKey, path, file) {
+  async upload(bucketKey, path, file, options = {}) {
     console.debug(`Uploading to textile bucket with path: ${path}`);
     this.client.withThread(bucketKey.threadID);
-    return await this.client.pushPath(bucketKey.key, path, file);
+    return await this.client.pushPath(bucketKey.key, path, file, options);
   }
 
   async download(bucketKey, path) {

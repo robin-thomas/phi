@@ -2,15 +2,15 @@ import { useState } from 'react';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
 import Grid from '@mui/material/Grid';
-import Alert from '@mui/material/Alert';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import SendIcon from '@mui/icons-material/Send';
-import CloseIcon from '@mui/icons-material/Close';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
+
+import File from './File';
 
 import Utils from '../../utils';
 import Thread from '../../utils/textile/thread';
@@ -18,9 +18,11 @@ import { useAppContext } from '../hooks';
 
 const Button = ({ title, disabled, onClick, children }) => (
   <Tooltip title={title} placement="top" arrow>
-    <IconButton color="secondary" disabled={disabled} {...onClick ? {onClick}: {}}>
-      {children}
-    </IconButton>
+    <span>
+      <IconButton color="secondary" disabled={disabled} {...onClick ? {onClick}: {}}>
+        {children}
+      </IconButton>
+    </span>
   </Tooltip>
 )
 
@@ -52,11 +54,13 @@ const whiteTheme = createTheme({
 
 const ChatBox = ({ threadID }) => {
   const [files, setFiles] = useState([]);
+  const [attachments, setAttachments] = useState([]);
   const { activeContact } = useAppContext();
 
   const attachFile = () => {
     const input = document.createElement('input');
     input.type = 'file';
+    input.accept = 'image/*';
     input.onchange = (e) => {
       const file = e.target.files[0];
       setFiles(_files => ({..._files, [file.name]: file }));
@@ -75,10 +79,12 @@ const ChatBox = ({ threadID }) => {
     initialValues: { message: '' },
     validationSchema: yup.object({ message: yup.string() }),
     onSubmit: async (values, { resetForm }) => {
-      if (values.message) {
+      if (values.message || attachments.length > 0) {
         const thread = await Utils.getInstance(Thread);
-        await thread.chat(threadID).post(activeContact, values.message);
+        await thread.chat(threadID).post(activeContact, values.message, attachments);
         resetForm();
+        setFiles([]);
+        setAttachments([]);
       }
     },
     enableReinitialize: true,
@@ -88,19 +94,13 @@ const ChatBox = ({ threadID }) => {
     <ThemeProvider theme={whiteTheme}>
       <Grid container>
         {Object.keys(files).map(name => (
-          <Grid xs={4} key={name}>
-            <Alert
-              icon={<></>}
-              severity="info"
-              sx={{ mr: 2 }}
-              action={(
-                <IconButton color="inherit" onClick={removeFile(name)}>
-                  <CloseIcon fontSize="small"/>
-                </IconButton>
-              )}
-            >
-              {name.length > 30 ? `${name.substr(0, 10)}...${name.substr(name.length - 20)}` : name}
-            </Alert>
+          <Grid item xs={4} key={name}>
+            <File
+              file={files[name]}
+              address={activeContact}
+              removeFile={removeFile}
+              setAttachments={setAttachments}
+            />
           </Grid>
         ))}
       </Grid>
@@ -130,7 +130,7 @@ const ChatBox = ({ threadID }) => {
                 <Button
                   title="Send message"
                   onClick={formik.handleSubmit}
-                  disabled={!formik.values.message || formik.values.message?.length === 0}
+                  disabled={attachments.length == 0 && (!formik.values.message || formik.values.message?.length === 0)}
                 >
                   <SendIcon fontSize="small" />
                 </Button>

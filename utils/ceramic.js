@@ -113,6 +113,23 @@ class Ceramic {
     const jwe = Buffer.from(payload, 'hex').toString();
     return await this.did.decryptDagJWE(JSON.parse(jwe));
   }
+
+  file() {
+    return function(did) {
+      return {
+        encrypt: async function(ab, address) {
+          const _did = await address2did(address);
+          const jwe = await did.createJWE(new Uint8Array(ab), [_did, did.id]);
+          return Buffer.from(JSON.stringify(jwe)).toString('hex');
+        },
+
+        decrypt: async function(hex) {
+          const jwe = Buffer.from(hex, 'hex').toString();
+          return await did.decryptJWE(JSON.parse(jwe));
+        },
+      }
+    }(this.did);
+  }
 }
 
 export default Ceramic;

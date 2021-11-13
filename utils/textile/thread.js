@@ -37,6 +37,10 @@ class Thread extends Textile {
 
     return function(client) {
       return {
+        delete: async function(ids) {
+          await client.delete(threadID, collection, ids);
+        },
+
         getAll: async function() {
           const chats = await client.find(threadID, collection, new Query());
 
