@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
+import Skeleton from '@mui/material/Skeleton';
 
 import Utils from '../../utils';
 import Ceramic from '../../utils/ceramic';
@@ -38,7 +39,7 @@ const MessageImage = ({ attachment }) => {
 
   return image ? (
     <Image src={image.src} alt="" width={image.width} height={image.height} />
-  ) : null;
+  ) : <Skeleton variant="rectangular" width={150} height={250} />;
 }
 
 export default MessageImage;
