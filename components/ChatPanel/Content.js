@@ -10,6 +10,7 @@ import ActiveContact from './ActiveContact';
 
 import styles from './Content.module.css';
 import { useAppContext } from '../hooks';
+import Metamask from '../../utils/metamask';
 import MetamaskLogo from '../../assets/metamask.png';
 
 const Skeleton = () => (
@@ -42,7 +43,7 @@ const Content = () => {
   useEffect(() => {
     (async () => {
       if (isAuthenticated) {
-        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+        const chainId = await Metamask.chainId().get();
         if (chainId === process.env.ETH_CHAIN_ID) {
           setAuthenticated(true);
           setNetwork(process.env.ETH_CHAIN_NAME);
@@ -50,11 +51,7 @@ const Content = () => {
           setNetwork('Wrong Network');
 
           try {
-            await window.ethereum.request({
-              method: 'wallet_switchEthereumChain',
-              params: [{ chainId: process.env.ETH_CHAIN_ID }]
-            });
-
+            await Metamask.chainId().switchTo(process.env.ETH_CHAIN_ID);
             setNetwork(process.env.ETH_CHAIN_NAME);
             setAuthenticated(true);
           } catch (err) {

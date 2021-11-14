@@ -10,7 +10,7 @@ module.exports = {
     TEXTILE_COLLECTION_INVITE: 'invite',
     TEXTILE_COLLECTION_INVITE_ACK: 'invite-ack',
     TEXTILE_COLLECTION_CHAT: 'chat',
-    ETH_CHAIN_ID: '0x4',
-    ETH_CHAIN_NAME: 'Rinkeby',
+    ETH_CHAIN_ID: '0x13881',
+    ETH_CHAIN_NAME: 'Polygon Mumbai',
   },
 }

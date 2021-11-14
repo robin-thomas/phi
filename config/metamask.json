@@ -1,0 +1,12 @@
+{
+  "0x13881": {
+    "chainId": "0x13881",
+    "chainName": "Polygon Mumbai Testnet",
+    "nativeCurrency": {
+      "name": "MATIC",
+      "symbol": "MATIC",
+      "decimals": 18
+    },
+    "rpcUrls": ["https://rpc-endpoints.superfluid.dev/mumbai"]
+  }
+}

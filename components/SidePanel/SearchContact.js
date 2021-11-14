@@ -17,7 +17,7 @@ import Ceramic from '../../utils/ceramic';
 
 const SearchContact = () => {
   const { user } = useMoralis();
-  const { profileKey, contacts, activeContact, setActiveContact } = useAppContext();
+  const { contacts, activeContact, setActiveContact } = useAppContext();
 
   const [profiles, setProfiles] = useState(contacts);
   const [checkingContact, setCheckingContact] = useState(false);
