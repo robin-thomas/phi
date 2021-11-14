@@ -6,6 +6,7 @@ import Tooltip from '@mui/material/Tooltip';
 import AddIcon from '@mui/icons-material/Add';
 import Divider from '@mui/material/Divider';
 
+import About from './About';
 import AddContact from './AddContact';
 import Backdrop from '../Backdrop';
 import SearchContact from './SearchContact';
@@ -20,7 +21,7 @@ const Contacts = () => {
   const [addContact, setAddContact] = useState(false);
 
   if (!isAuthenticated) {
-    return null;
+    return <About />;
   }
 
   return (

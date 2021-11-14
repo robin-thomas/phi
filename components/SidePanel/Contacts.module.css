@@ -11,9 +11,16 @@
   justify-content: center !important;
 }
 
+.nofriendBox > h1,
 .nofriendBox > h2 {
   color: rgba(255,255,255,0.8) !important;
   font-weight: 900 !important;
+}
+
+.nofriendBox > h3 {
+  margin-top: -5px !important;
+  color: rgba(255,255,255,0.67) !important;
+  font-weight: 800 !important;
 }
 
 .nofriendBox > h4 {
