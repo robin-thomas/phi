@@ -47,9 +47,11 @@ const Contacts = () => {
       </Box>
       <Box className={styles.addfriendBox}>
         <Tooltip title="Add New Contact" arrow placement="top">
-          <Fab onClick={() => setAddContact(true)} disabled={!profileKey}>
-            <AddIcon />
-          </Fab>
+          <span>
+            <Fab onClick={() => setAddContact(true)} disabled={!profileKey}>
+              <AddIcon />
+            </Fab>
+            </span>
         </Tooltip>
       </Box>
     </>

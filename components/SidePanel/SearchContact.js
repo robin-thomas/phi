@@ -49,15 +49,15 @@ const SearchContact = () => {
 
   return (
     <>
-      {profileKey ? (
+      {contacts?.length > 0 ? (
         <Search
           name="search"
           placeholder="Ethereum address"
           formik={formik}
           onChange={formik.handleSubmit}
-          disabled={contacts?.length === 0 || checkingContact}
+          disabled={checkingContact}
         />
-      ) : (
+      ) : !contacts && (
         <Skeleton variant="rect" animation="wave" height={41} sx={{ bgcolor: "#c57e9e", borderRadius: 5 }} />
       )}
       <Divider sx={{ mt: 2, mb: 2 }}/>
