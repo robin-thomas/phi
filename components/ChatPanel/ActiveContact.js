@@ -4,7 +4,7 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 
 import Chat from './Chat';
-import Backdrop from '../Backdrop';
+import Skeleton from './Skeleton';
 
 import Utils from '../../utils';
 import Ceramic from '../../utils/ceramic';
@@ -70,8 +70,8 @@ const ActiveContact = () => {
 
   if (accepted === -1) {
     return (
-      <Grid item style={{ position: 'relative', height: '100%' }} sx={{ ml: -20, mt: -10 }}>
-        <Backdrop open />
+      <Grid item sx={{ mt: -5, pr: 11.75 }}>
+        <Skeleton />
       </Grid>
     );
   }

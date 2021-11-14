@@ -1,3 +1,16 @@
+.card {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  background-image: none !important;
+  padding-top: 16px !important;
+}
+
+.avatar {
+  width: 50px !important;
+  height: 50px !important;
+  background-color: #c57e9e !important;
+}
+
 .title {
   color: white;
   font-weight: 700 !important;

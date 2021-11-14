@@ -1,3 +1,4 @@
+import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
@@ -73,7 +74,9 @@ const SidePanel = () => {
   return (
     <ThemeProvider theme={darkTheme}>
       <div className={styles.panel}>
-        <Header />
+        <Box sx={{ px: 2 }}>
+          <Header />
+        </Box>
         <Contacts />
         <Drawer
           anchor="left"

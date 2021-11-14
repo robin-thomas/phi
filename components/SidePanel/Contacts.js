@@ -19,7 +19,7 @@ const Contacts = () => {
 
   const [addContact, setAddContact] = useState(false);
 
-  if (!isAuthenticated || !profileKey) {
+  if (!isAuthenticated) {
     return null;
   }
 
@@ -29,11 +29,10 @@ const Contacts = () => {
         <Backdrop open={loadingContacts} />
         {addContact ? <AddContact close={() => setAddContact(false)} /> : (
           <>
-            {contacts?.length > 0 ? (
-              <Box sx={{ px: 2, mt: 1 }}>
-                <SearchContact />
-              </Box>
-            ) : contacts !== null && (
+            <Box sx={{ px: 2, mt: 1 }}>
+              <SearchContact />
+            </Box>
+            {contacts?.length === 0 && (
               <>
                 <Divider />
                 <Box className={styles.nofriendBox}>
@@ -47,7 +46,7 @@ const Contacts = () => {
       </Box>
       <Box className={styles.addfriendBox}>
         <Tooltip title="Add New Contact" arrow placement="top">
-          <Fab onClick={() => setAddContact(true)}>
+          <Fab onClick={() => setAddContact(true)} disabled={!profileKey}>
             <AddIcon />
           </Fab>
         </Tooltip>

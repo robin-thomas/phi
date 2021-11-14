@@ -13,6 +13,8 @@ const Button = ({ children }) => (
       background: 'black',
       color: 'white',
       fontWeight: 600,
+      fontFamily: '"Orbitron", sans-serif',
+      textTransform: 'capitalize',
       borderColor: 'black',
       borderRadius: 25,
       cursor: 'none',
