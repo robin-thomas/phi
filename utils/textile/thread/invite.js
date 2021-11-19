@@ -1,3 +1,4 @@
+import LRU from 'lru-cache';
 import { ThreadID, Query } from '@textile/hub';
 
 import Utils from '../../index';
@@ -11,40 +12,58 @@ class Invite {
     this._address = address;
     this._collection = process.env.TEXTILE_COLLECTION_INVITE;
     this._threadID = ThreadID.fromString(invites.threadID);
+
+    this._cache = new LRU({
+      max: 50,
+      maxAge: 60 * 60 * 1000,
+    });
   }
 
-  async delete(ids) {
-    await this._client.delete(this._threadID, this._collection, ids);
+  async load() {
+    // Retrieve all sent/received invites..
+    const results = await this._client.find(this._threadID, this._collection, new Query());
+    const invites = results.filter(result => result.from === this._address || result.to === this._address);
+
+    // Store it in cache.
+    for (const invite of invites) {
+      const key = invite.from + invite.to;
+      const value = await this._decrypt(invite);
+      this._cache.set(key, value);
+    }
   }
 
   async findBy({ from, to }) {
     console.debug(`Retrieving chat request from: ${from}, and to: ${to}`);
 
-    const results = await this._find(Query.where('from').eq(from).and('to').eq(to));
-    if (results?.length === 0) {
-      return null;
+    if (this._cache.has(from + to)) {
+      return this._cache.get(from + to);
     }
 
-    return await this._decrypt(results.pop());
+    return null;
   }
 
   async get() {
     console.debug('Retrieving all received/(approved sent) chat requests');
 
-    // received/sent chat requests (rejected filtered out).
-    const [received, sent] = await Promise.all([
-      this._getRequests('to', this._address),
-      this._getRequests('from', this._address),
-    ]);
+    const sent = [], received = [];
+    for (const key of this._cache.keys()) {
+      if (key.startsWith(this._address)) {
+        sent.push(this._cache.get(key));
+      }
+
+      if (key.endsWith(this._address)) {
+        received.push(this._cache.get(key));
+      }
+    }
 
     return { received, sent };
   }
 
   async post(to) {
+    const key = this._address + to;
+
     // Verify whether a request has been sent before.
-    const query = Query.where('to').eq(to).and('from').eq(this._address);
-    const results = await this._find(query);
-    if (results?.length > 0) {
+    if (this._cache.has(key)) {
       throw new Error('Have already sent a chat request to this address before');
     }
 
@@ -53,7 +72,9 @@ class Invite {
     const encrypted = await this._encrypt(payload, to);
 
     console.debug('Sending chat request to: ', to);
-    await this._client.create(this._threadID, this._collection, [{ to, from: this._address, date: new Date().toISOString(), dbInfo: encrypted }]);
+    const params = { to, from: this._address, date: new Date().toISOString(), dbInfo: encrypted };
+    this._client.create(this._threadID, this._collection, [params]);
+    this._cache.set(key, {...params, dbInfo: payload });
   }
 
   //
@@ -71,33 +92,6 @@ class Invite {
       threadID: thread.toString(),
       dbInfo,
     };
-  }
-
-  async _find(query) {
-    return await this._client.find(this._threadID, this._collection, query);
-  }
-
-  _getValue(key, value) {
-    return key === 'to' ? value.from : value.to;
-  }
-
-  _filter(results, key) {
-    results = results.reduce((p, result) => ({ ...p, [this._getValue(key, result)]: result }), {});
-    return Object.keys(results).map(from => results[from]);
-  }
-
-  async _getRequests(key, value) {
-    let results = await this._find(Query.where(key).eq(value));
-    results = this._filter(results, key);
-
-    // retrieve rejected requests.
-    const query = Query.where(key).eq(value).and('accepted').eq(false);
-    const rejected = await this._client.find(this._threadID, process.env.TEXTILE_COLLECTION_INVITE_ACK, query);
-    const rejectedAddresses = rejected.map(reject => this._getValue(key, reject));
-
-    results = results.filter(result => !rejectedAddresses.includes(this._getValue(key, result)));
-
-    return await Promise.all(results.map(this._decrypt));
   }
 
   async _decrypt(result) {

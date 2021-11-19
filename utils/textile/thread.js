@@ -22,6 +22,9 @@ class Thread extends Textile {
       obj._chat = new Chat(obj.client, ceramic.address);
       obj._invite = new Invite(obj.client, ceramic.address);
 
+      await obj._ack.load();
+      await obj._invite.load();
+
       return obj;
     })();
   }
