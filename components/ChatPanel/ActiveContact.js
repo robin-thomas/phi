@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 
 import Chat from './Chat';
+import Loan from './Loan';
 import Skeleton from './Skeleton';
 
 import Utils from '../../utils';
@@ -16,7 +17,7 @@ const ActiveContact = () => {
   const [contact, setContact] = useState(null);
   const [accepted, setAccepted] = useState(-1);
 
-  const { profile, activeContact, setActiveContact, setContacts } = useAppContext();
+  const { page, profile, activeContact, setActiveContact, setContacts } = useAppContext();
 
   useEffect(() => setAccepted(-1), [activeContact]);
   useEffect(() => Promise.all([ loadProfile(), loadAck() ]), [activeContact]);
@@ -68,26 +69,6 @@ const ActiveContact = () => {
     }
   }, [activeContact, setContacts, setActiveContact]);
 
-  if (accepted === -1) {
-    return (
-      <Grid item sx={{ mt: -5, pr: 11.75 }}>
-        <Skeleton />
-      </Grid>
-    );
-  }
-
-  if (accepted == 1) {
-    return (
-      <Grid
-        item
-        sx={{ mt: -10 }}
-        style={{ position: 'relative', height: '100%' }}
-      >
-        <Chat sent={sent} />
-      </Grid>
-    );
-  }
-
   const getAccepted = (_accepted) => {
     switch (_accepted) {
       case 3:
@@ -101,24 +82,46 @@ const ActiveContact = () => {
 
   return (
     <>
-      <h2>Hi, {profile.name}!</h2>
-      <h4 style={{ marginTop: '-15px' }}>
-        <Tooltip arrow placement="bottom" title={activeContact}>
-          <Button variant="text" color="info" size="large" sx={{ ml: '-10px' }}>
-            <b style={{ fontSize: 21 }}>{contact.name}</b>
-          </Button>
-        </Tooltip>
-        {getAccepted(accepted)}
-      </h4>
-      {accepted === 0 && (
-        <Grid container spacing={3}>
-          <Grid item xs="auto">
-            <Button variant="contained" color="success" size="large" onClick={accept}>Accept</Button>
-          </Grid>
-          <Grid item xs="auto">
-            <Button variant="outlined" color="error" size="large" onClick={reject}>Reject</Button>
-          </Grid>
-        </Grid>
+      {page === 'chat' ? (
+        <>
+          {accepted === -1 ? (
+            <Grid item sx={{ mt: -5, pr: 11.75 }}>
+              <Skeleton />
+            </Grid>
+          ) : accepted === 1 ? (
+            <Grid
+              item
+              sx={{ mt: -10 }}
+              style={{ position: 'relative', height: '100%' }}
+            >
+              <Chat sent={sent} />
+            </Grid>
+          ) : (
+            <>
+              <h2>Hi, {profile.name}!</h2>
+              <h4 style={{ marginTop: '-15px' }}>
+                <Tooltip arrow placement="bottom" title={activeContact}>
+                  <Button variant="text" color="info" size="large" sx={{ ml: '-10px' }}>
+                    <b style={{ fontSize: 21 }}>{contact.name}</b>
+                  </Button>
+                </Tooltip>
+                {getAccepted(accepted)}
+              </h4>
+              {accepted === 0 && (
+                <Grid container spacing={3}>
+                  <Grid item xs="auto">
+                    <Button variant="contained" color="success" size="large" onClick={accept}>Accept</Button>
+                  </Grid>
+                  <Grid item xs="auto">
+                    <Button variant="outlined" color="error" size="large" onClick={reject}>Reject</Button>
+                  </Grid>
+                </Grid>
+              )}
+            </>
+          )}
+        </>
+      ) : (
+        <Loan />
       )}
     </>
   )
