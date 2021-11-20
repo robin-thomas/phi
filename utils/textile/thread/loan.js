@@ -22,11 +22,13 @@ class Loan {
     const threadID = this._threadID.toString();
 
     if (this._cache.has(threadID)) {
-      return this._cache.get(threadID);
+      const values = this._cache.get(threadID);
+      return Object.keys(values).reduce((p, c) => [...p, values[c]], []);
     }
 
     const loans = await this._client.find(this._threadID, this._collection, new Query());
-    this._cache.set(threadID, loans);
+    const values = loans.reduce((p, c) => ({ ...p, [c._id]: c }), {});
+    this._cache.set(threadID, values);
     return loans;
   }
 
@@ -40,10 +42,10 @@ class Loan {
   async listen(reply, err) {
     if (!err && reply?.collectionName === this._collection) {
       if ([reply?.instance?.from, reply?.instance.to].includes(this._address)) {
-        const key = reply.instance.from + reply.instance.to;
+        const threadID = this._threadID.toString();
 
-        const loans = this._cache.has(key) ? this._cache.get(key) : [];
-        this._cache.set(key, [...loans, reply.instance]);
+        const loans = this._cache.has(threadID) ? this._cache.get(threadID) : [];
+        this._cache.set(threadID, ({...loans, [reply.instance._id]: reply.instance }));
 
         return reply.instance;
       }
