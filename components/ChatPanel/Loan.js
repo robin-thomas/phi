@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import Grid from '@mui/material/Grid';
@@ -20,18 +21,29 @@ const Loan = () => {
 
   const months = [...Array(12).keys()].map(i => i + 1);
 
+  useEffect(() => {
+    (async () => {
+      if (threadID) {
+        const thread = await Utils.getInstance(Thread);
+        const loans = await thread.loan(threadID).getAll();
+
+        // TODO.
+      }
+    })();
+  }, [threadID]);
+
   const formik = useFormik({
     initialValues: { amount: '', tenure: '' },
     validationSchema: yup.object({
-      amount: yup.string().required(),
-      tenure: yup.string().required(),
+      amount: yup.string().matches(/^[1-9][0-9]{2}$/, 'Amount should be $1-999').required('Required field'),
+      tenure: yup.string().required('Required field'),
     }),
     onSubmit: async (values) => {
       if (window.confirm('Are you sure?')) {
         const thread = await Utils.getInstance(Thread);
         await thread.loan(threadID).post({
           to: activeContact,
-          amount: values.amount,
+          amount: parseInt(values.amount),
           months: values.tenure,
         });
       }
@@ -43,7 +55,15 @@ const Loan = () => {
     <>
       <Grid container alignItems="center" spacing={2}>
         <Grid item xs="auto">
-          <Button color="info" variant="contained" sx={{ fontWeight:900 }} onClick={formik.handleSubmit}>Request</Button>
+          <Button
+            color="info"
+            variant="contained"
+            sx={{ fontWeight:900 }}
+            onClick={formik.handleSubmit}
+            disabled={Object.keys(formik.touched).length === 0 || Object.keys(formik.errors).length > 0}
+          >
+            Request
+          </Button>
         </Grid>
         <Grid item xs="auto">
           <FormControl sx={{ maxWidth: 100 }}>
@@ -65,7 +85,7 @@ const Loan = () => {
                 ),
               }}
               inputProps={{
-                maxLength: 3,
+                maxLength: 5,
               }}
             />
           </FormControl>
@@ -92,6 +112,7 @@ const Loan = () => {
           <h4>from {activeContactProfile.name}</h4>
         </Grid>
       </Grid>
+      <h3>Loan Requests</h3>
     </>
   )
 }

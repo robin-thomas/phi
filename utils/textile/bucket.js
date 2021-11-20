@@ -5,7 +5,7 @@ import Textile from './base';
 
 class Bucket extends Textile {
   constructor() {
-    super(Buckets);
+    super(Buckets, Bucket);
 
     this.keyCache = new LRU({
       max: 50,

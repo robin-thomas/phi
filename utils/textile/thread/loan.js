@@ -31,6 +31,8 @@ class Loan {
   }
 
   async post({ to, amount, months }) {
+    console.debug(`Sending loan request to ${to}, for $${amount} and ${months} months`);
+
     const params = { from: this._address, to, amount, months, currency: "USD", date: new Date().toISOString() };
     await this._client.create(this._threadID, this._collection, [params]);
   }
@@ -38,9 +40,12 @@ class Loan {
   async listen(reply, err) {
     if (!err && reply?.collectionName === this._collection) {
       if ([reply?.instance?.from, reply?.instance.to].includes(this._address)) {
-        const result = await this._decrypt(reply.instance);
-        this._cache.set(result.from + result.to, result);
-        return result;
+        const key = reply.instance.from + reply.instance.to;
+
+        const loans = this._cache.has(key) ? this._cache.get(key) : [];
+        this._cache.set(key, [...loans, reply.instance]);
+
+        return reply.instance;
       }
     }
   }

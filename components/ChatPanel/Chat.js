@@ -14,16 +14,21 @@ const Chat = ({ sent }) => {
 
   useEffect(() => {
     if (activeContact) {
-      Utils.getInstance(Thread)
-        .then((thread) => {
-          const me = thread.invite()._address;
-          const [from, to] = sent ? [me, activeContact] : [activeContact, me];
+      (async () => {
+        const thread = await Utils.getInstance(Thread);
 
-          thread.invite().get(from, to)
-            .then(({ dbInfo }) => setThreadID(dbInfo.threadID))
-            .catch(() => thread.invite().get(to, from))
-            .then(({ dbInfo }) => setThreadID(dbInfo.threadID))
-        });
+        const me = thread.invite()._address;
+        const [from, to] = sent ? [me, activeContact] : [activeContact, me];
+
+        let result = null;
+        try {
+          result = await thread.invite().get(from, to);
+        } catch (err) {
+          result = await thread.invite().get(to, from);
+        }
+
+        setThreadID(result.dbInfo.threadID);
+      })();
     }
   }, [activeContact]);
 
@@ -44,7 +49,7 @@ const Chat = ({ sent }) => {
 
   const listener = useCallback(async (reply, err) => {
     const thread = await Utils.getInstance(Thread);
-    const result = await thread.chat().listen(reply, err);
+    const result = await thread.chat(threadID).listen(reply, err);
 
     if (result?.from) {
       setChats(_chats => ([..._chats, result]));

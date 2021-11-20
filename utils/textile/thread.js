@@ -11,7 +11,7 @@ import invites from '../../config/invites.json';
 
 class Thread extends Textile {
   constructor() {
-    super(Client);
+    super(Client, Thread);
   }
 
   static getInstance() {

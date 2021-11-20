@@ -1,8 +1,9 @@
 import { PrivateKey } from '@textile/hub';
 
 class Base {
-  constructor(clientClass) {
+  constructor(clientClass, childClass) {
     this.clientClass = clientClass;
+    this.childClass = childClass;
   }
 
   async build() {
@@ -13,7 +14,7 @@ class Base {
   }
 
   async getIdentity() {
-    console.debug(`[${this.constructor.name}]: Retrieving textile identity`);
+    console.debug(`[${this.childClass.getClassName()}]: Retrieving textile identity`);
     const key = `${process.env.APP_NAME}_identity`;
 
     const stored = localStorage.getItem(key);
