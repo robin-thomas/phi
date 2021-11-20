@@ -15,6 +15,7 @@ import File from './File';
 import Utils from '../../utils';
 import Thread from '../../utils/textile/thread';
 import { useAppContext } from '../hooks';
+import { whitetheme } from '../../globals/theme';
 
 const Button = ({ title, disabled, onClick, children }) => (
   <Tooltip title={title} placement="top" arrow>
@@ -26,31 +27,7 @@ const Button = ({ title, disabled, onClick, children }) => (
   </Tooltip>
 )
 
-const whiteTheme = createTheme({
-  components: {
-    MuiFilledInput: {
-      styleOverrides: {
-        root: {
-          borderRadius: '12px',
-          paddingTop: '0px',
-          fontSize: '14px',
-          background: 'white',
-          '&:hover': {
-            background: 'white',
-          },
-        },
-        input: {
-          paddingTop: '20px',
-          paddingBottom: '15px',
-          paddingLeft: '20px',
-          fontSize: '14px',
-          color: 'black',
-          fontWeight: 900,
-        },
-      },
-    },
-  },
-});
+const whiteTheme = createTheme(whitetheme);
 
 const ChatBox = ({ threadID }) => {
   const [files, setFiles] = useState([]);

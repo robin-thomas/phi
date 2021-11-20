@@ -5,6 +5,7 @@ import Utils from '../index';
 import Ceramic from '../ceramic';
 import Ack from './thread/ack';
 import Chat from './thread/chat';
+import Loan from './thread/loan';
 import Invite from './thread/invite';
 import invites from '../../config/invites.json';
 
@@ -21,6 +22,7 @@ class Thread extends Textile {
       obj._ack = new Ack(obj.client, ceramic.address);
       obj._chat = new Chat(obj.client, ceramic.address);
       obj._invite = new Invite(obj.client, ceramic.address);
+      obj._loan = new Loan(obj.client, ceramic.address);
 
       await obj._ack.load();
       await obj._invite.load();
@@ -56,6 +58,11 @@ class Thread extends Textile {
 
   ack() {
     return this._ack;
+  }
+
+  loan(threadID) {
+    this._loan.setThreadId(threadID);
+    return this._loan;
   }
 };
 

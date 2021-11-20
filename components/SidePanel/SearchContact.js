@@ -27,7 +27,7 @@ const SearchContact = () => {
   const formik = useFormik({
     initialValues: { search: '' },
     validationSchema: yup.object({
-      address: yup
+      search: yup
         .string()
         .notOneOf([user?.attributes?.ethAddress], 'That\'s your address!')
     }),

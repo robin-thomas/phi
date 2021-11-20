@@ -5,16 +5,27 @@ import ChatBox from './ChatBox';
 import Messages from './Messages';
 
 import Utils from '../../utils';
-import Ceramic from '../../utils/ceramic';
 import Thread from '../../utils/textile/thread';
 import { useAppContext } from '../hooks';
 
 const Chat = ({ sent }) => {
   const [chats, setChats] = useState(null);
-  const [threadID, setThreadID] = useState(null);
-  const { activeContact } = useAppContext();
+  const { activeContact, threadID, setThreadID } = useAppContext();
 
-  useEffect(() => activeContact && getThreadID().then(setThreadID), [activeContact, getThreadID]);
+  useEffect(() => {
+    if (activeContact) {
+      Utils.getInstance(Thread)
+        .then((thread) => {
+          const me = thread.invite()._address;
+          const [from, to] = sent ? [me, activeContact] : [activeContact, me];
+
+          thread.invite().get(from, to)
+            .then(({ dbInfo }) => setThreadID(dbInfo.threadID))
+            .catch(() => thread.invite().get(to, from))
+            .then(({ dbInfo }) => setThreadID(dbInfo.threadID))
+        });
+    }
+  }, [activeContact]);
 
   useEffect(() => {
     if (threadID) {
@@ -26,25 +37,10 @@ const Chat = ({ sent }) => {
 
   useEffect(() => {
     if (threadID) {
-      Utils.getInstance(Thread).then((thread) => thread.listen(listener, threadID));
+      Utils.getInstance(Thread)
+        .then(thread => thread.listen(listener, threadID));
     }
   }, [threadID, listener]);
-
-  const getThreadID = useCallback(async () => {
-    const thread = await Utils.getInstance(Thread);
-    const ceramic = await Utils.getInstance(Ceramic);
-
-    const from = sent ? ceramic.address : activeContact;
-    const to = sent ? activeContact : ceramic.address;
-
-    try {
-      const { dbInfo } = await thread.invite().get(from, to);
-      return dbInfo.threadID;
-    } catch (err) {
-      const { dbInfo } = await thread.invite().get(to, from);
-      return dbInfo.threadID;
-    }
-  }, [activeContact, sent]);
 
   const listener = useCallback(async (reply, err) => {
     const thread = await Utils.getInstance(Thread);

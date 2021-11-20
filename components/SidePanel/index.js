@@ -8,63 +8,9 @@ import Contacts from './Contacts';
 
 import styles from './index.module.css';
 import { useAppContext } from '../hooks';
+import { darktheme } from '../../globals/theme';
 
-const darkTheme = createTheme({
-  palette: {
-    mode: 'dark',
-    text: {
-      disabled: 'white',
-    },
-  },
-  components: {
-    MuiFab: {
-      styleOverrides: {
-        root: {
-          background: '#c57e7e',
-          transition: '0.3s all',
-          '&:hover': {
-            background: '#c57e9e',
-          },
-        },
-      },
-    },
-    MuiIconButton: {
-      styleOverrides: {
-        root: {
-          color: '#c57e9e',
-        },
-      },
-    },
-    MuiInputLabel: {
-      styleOverrides: {
-        root: {
-          color: '#d47256',
-          fontWeight: 900,
-          marginTop: '-20px !important',
-        },
-      },
-    },
-    MuiFilledInput: {
-      styleOverrides: {
-        root: {
-          borderRadius: '20px',
-          paddingTop: '0px',
-          fontSize: '16px',
-        },
-        input: {
-          paddingTop: '10px',
-        },
-      },
-    },
-    MuiInputAdornment: {
-      styleOverrides: {
-        root: {
-          marginTop: '5px !important',
-        },
-      },
-    },
-  },
-});
+const darkTheme = createTheme(darktheme);
 
 const SidePanel = () => {
   const { showProfile, setShowProfile } = useAppContext();
