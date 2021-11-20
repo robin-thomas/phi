@@ -21,9 +21,8 @@ const Message = ({ chat }) => {
     (async () => {
       const ceramic = await Utils.getInstance(Ceramic);
 
-      const [me] = await window.ethereum.enable();
-      const profile = await ceramic.getProfile(me === chat.from ? undefined : chat.from);
-      setName(me === chat.from ? 'You' : profile?.name);
+      const profile = await ceramic.getProfile(ceramic.address === chat.from ? undefined : chat.from);
+      setName(ceramic.address === chat.from ? 'You' : profile?.name);
 
       if (profile?.image) {
         const bucket = await Utils.getInstance(Bucket);

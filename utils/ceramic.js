@@ -24,7 +24,7 @@ class Ceramic {
       maxAge: 60 * 60 * 1000,
     });
 
-    this.address = (await window.ethereum.enable())[0];
+    this.address = (await window.ethereum.enable())[0].toLowerCase();
 
     this.self = await SelfID.authenticate({
       authProvider: new EthereumAuthProvider(window.ethereum, this.address),

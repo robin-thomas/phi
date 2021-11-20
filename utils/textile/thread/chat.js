@@ -38,12 +38,17 @@ class Chat {
   async post(to, message, attachments = []) {
     const encrypted = await this._encrypt(message, to);
     const params = { from: this._address, to, message: encrypted, attachments, date: new Date().toISOString() };
+    await this._client.create(this._threadID, this._collection, [params]);
+  }
 
-    this._client.create(this._threadID, this._collection, [params]);
-
-    const threadID = this._threadID.toString();
-    const results = this._cache.has(threadID) ? this._cache.get(threadID) : [];
-    this._cache.set(threadID, [...results, { ...params, message }]);
+  async listen(reply, err) {
+    if (!err && reply?.collectionName === this._collection) {
+      if ([reply?.instance?.from, reply?.instance.to].includes(this._address)) {
+        const result = await this._decrypt(reply.instance);
+        this._cache.set(result.from + result.to, result);
+        return result;
+      }
+    }
   }
 
   //

@@ -26,8 +26,7 @@ const Chat = ({ sent }) => {
 
   useEffect(() => {
     if (threadID) {
-      Utils.getInstance(Thread)
-        .then((thread) => thread.listen(listener, threadID));
+      Utils.getInstance(Thread).then((thread) => thread.listen(listener, threadID));
     }
   }, [threadID, listener]);
 
@@ -39,19 +38,20 @@ const Chat = ({ sent }) => {
     const to = sent ? activeContact : ceramic.address;
 
     try {
-      const { dbInfo } = await thread.invite().findBy({ from, to });
+      const { dbInfo } = await thread.invite().get(from, to);
       return dbInfo.threadID;
     } catch (err) {
-      const { dbInfo } = await thread.invite().findBy({ from: to, to: from });
+      const { dbInfo } = await thread.invite().get(to, from);
       return dbInfo.threadID;
     }
   }, [activeContact, sent]);
 
   const listener = useCallback(async (reply, err) => {
-    if (!err && reply?.instance) {
-      const ceramic = await Utils.getInstance(Ceramic);
-      reply.instance.message = await ceramic.decrypt(reply.instance.message);
-      setChats(_chats => ([..._chats, reply.instance]));
+    const thread = await Utils.getInstance(Thread);
+    const result = await thread.chat().listen(reply, err);
+
+    if (result?.from) {
+      setChats(_chats => ([..._chats, result]));
     }
   }, []);
 

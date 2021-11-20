@@ -19,23 +19,18 @@ class Ack {
   async load() {
     // Retrieve all acks.
     const results = await this._client.find(this._threadID, this._collection, new Query());
+    const acks = results.filter(result => result.from === this._address || result.to === this._address);
 
     // Store it in cache.
-    for (const result of results) {
+    for (const result of acks) {
       const key = result.from + result.to;
       this._cache.set(key, result);
     }
   }
 
   async get(from, to = null) {
-    to = to || this._address;
-
-    const key = from + to;
-    if (this._cache.has(key)) {
-      return this._cache.get(key);
-    }
-
-    return null;
+    const key = from + (to || this._address);
+    return this._cache.has(key) ? this._cache.get(key) : null;
   }
 
   async post(accepted, from) {
@@ -43,7 +38,17 @@ class Ack {
 
     const params = { to: this._address, from, date: new Date().toISOString(), accepted };
     await this._client.create(this._threadID, this._collection, [params]);
-    this._cache.set(from + this._address, params);
+  }
+
+  async listener(reply) {
+    if (reply?.collectionName === this._collection) {
+      if (!err && [reply?.instance?.from, reply?.instance.to].includes(this._address)) {
+        console.debug('Received a chat ack from: ', reply.instance.from);
+        this._cache.set(reply.instance.from + reply.instance.to, reply.instance);
+      }
+
+      return { ack: true };
+    }
   }
 }
 

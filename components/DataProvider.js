@@ -8,6 +8,7 @@ import Thread from '../utils/textile/thread';
 const DataContext = createContext();
 
 const DataProvider = ({ children }) => {
+  const [page, setPage] = useState('chat');
   const [network, setNetwork] = useState(null);
   const [profile, setProfile] = useState({});
   const [profilePic, setProfilePic] = useState(null);
@@ -16,6 +17,7 @@ const DataProvider = ({ children }) => {
   const [authenticated, setAuthenticated] = useState(false);
   const [contacts, setContacts] = useState(null);
   const [activeContact, setActiveContact] = useState(null);
+  const [activeContactProfile, setActiveContactProfile] = useState(null);
   const [loadingContacts, setLoadingContacts] = useState(false);
 
   useEffect(() => getProfileKey(), []);
@@ -57,20 +59,17 @@ const DataProvider = ({ children }) => {
   }, []);
 
   const callback = useCallback(async (reply, err) => {
-    const [address] = await window.ethereum.enable();
+    const thread = await Utils.getInstance(Thread);
 
-    if (!err && reply?.collectionName === process.env.TEXTILE_COLLECTION_INVITE) {
-      // chat request received.
-      if (reply?.instance?.to === address.toLowerCase()) {
-        setContacts((_contacts) => [reply.instance.from, ..._contacts]);
+    // Verify if invite or ack.
+    const response = await thread.ack().listen(reply, err);
+    if (!response?.ack) {
+      const invite = await thread.invite().listen(reply, err);
 
-        // Perform decryption.
-        const ceramic = await Utils.getInstance(Ceramic);
-        const dbInfo = await ceramic.decrypt(reply.instance.dbInfo);
-        console.debug('dbInfo', dbInfo);
-
-      } else if (reply?.instance?.from === address.toLowerCase()) {
-        setContacts((_contacts) => [reply.instance.to, ..._contacts]);
+      if (invite?.sent === false) {
+        setContacts((_contacts) => [invite.address, ..._contacts]);
+      } else if (response?.sent === true) {
+        setContacts((_contacts) => [invite.address, ..._contacts]);
         setLoadingContacts(false);
       }
     }
@@ -88,6 +87,16 @@ const DataProvider = ({ children }) => {
     }
   }, [authenticated, callback]);
 
+  useEffect(() => {
+    if (activeContact) {
+      Utils.getInstance(Ceramic)
+        .then(ceramic => ceramic.getProfile(activeContact))
+        .then(setActiveContactProfile);
+    } else {
+      setActiveContactProfile(null);
+    }
+  }, [activeContact]);
+
   const getProfileKey = async () => {
     const bucket = await Utils.getInstance(Bucket);
     const key = await bucket.getKey(process.env.TEXTILE_BUCKET_PROFILE);
@@ -103,7 +112,7 @@ const DataProvider = ({ children }) => {
 
   const getContacts = async () => {
     const thread = await Utils.getInstance(Thread);
-    const { sent, received } = await thread.invite().get();
+    const { sent, received } = await thread.invite().getAll();
 
     setContacts([
       ...sent.map(c => c.to),
@@ -114,6 +123,8 @@ const DataProvider = ({ children }) => {
   return (
     <DataContext.Provider
       value={{
+        page,
+        setPage,
         network,
         setNetwork,
         profile,
@@ -128,6 +139,7 @@ const DataProvider = ({ children }) => {
         setAuthenticated,
         activeContact,
         setActiveContact,
+        activeContactProfile,
         loadingContacts,
         setLoadingContacts,
       }}

@@ -32,17 +32,12 @@ class Invite {
     }
   }
 
-  async findBy({ from, to }) {
+  async get(from, to) {
     console.debug(`Retrieving chat request from: ${from}, and to: ${to}`);
-
-    if (this._cache.has(from + to)) {
-      return this._cache.get(from + to);
-    }
-
-    return null;
+    return this._cache.has(from + to) ? this._cache.get(from + to) : null;
   }
 
-  async get() {
+  async getAll() {
     console.debug('Retrieving all received/(approved sent) chat requests');
 
     const sent = [], received = [];
@@ -73,8 +68,19 @@ class Invite {
 
     console.debug('Sending chat request to: ', to);
     const params = { to, from: this._address, date: new Date().toISOString(), dbInfo: encrypted };
-    this._client.create(this._threadID, this._collection, [params]);
-    this._cache.set(key, {...params, dbInfo: payload });
+    await this._client.create(this._threadID, this._collection, [params]);
+  }
+
+  async listen(reply, err) {
+    if (!err && reply?.collectionName === this._collection) {
+      if ([reply?.instance?.from, reply?.instance.to].includes(this._address)) {
+        const result = await this._decrypt(reply.instance);
+        this._cache.set(result.from + result.to, result);
+
+        const sent = this._address === result.from;
+        return { sent, address: sent ? result.to : result.from };
+      }
+    }
   }
 
   //
