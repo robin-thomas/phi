@@ -33,10 +33,10 @@ const Tabs = ({ loans }) => {
         <MUITab label="Sent" />
       </MUITabs>
       <TabPanel value={value} index={0}>
-        <Table rows={received} />
+        <Table rows={received} sent={false} />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <Table rows={sent} />
+        <Table rows={sent} sent={true} />
       </TabPanel>
     </>
   )

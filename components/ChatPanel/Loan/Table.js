@@ -12,7 +12,7 @@ import Thread from '../../../utils/textile/thread';
 import { useAppContext } from '../../hooks';
 import styles from './Table.module.css';
 
-const Table = ({ rows }) => {
+const Table = ({ rows, sent }) => {
   const { threadID } = useAppContext();
 
   const deleteLoan = (id) => async () => {
@@ -32,11 +32,13 @@ const Table = ({ rows }) => {
               <MUITableCell>{row.months} month(s)</MUITableCell>
               <MUITableCell>{row.date.substr(0,10)}</MUITableCell>
               <MUITableCell>
-                <Tooltip arrow title="Delete this loan request">
-                  <IconButton color="error" onClick={deleteLoan(row._id)}>
-                    <DeleteOutlineIcon />
-                  </IconButton>
-                </Tooltip>
+                {sent && (
+                  <Tooltip arrow title="Delete this loan request">
+                    <IconButton color="error" onClick={deleteLoan(row._id)}>
+                      <DeleteOutlineIcon />
+                    </IconButton>
+                  </Tooltip>
+                )}
               </MUITableCell>
             </MUITableRow>
           ))}
