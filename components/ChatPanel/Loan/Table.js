@@ -10,6 +10,7 @@ import SimpleBar from 'simplebar-react';
 import Utils from '../../../utils';
 import Thread from '../../../utils/textile/thread';
 import { useAppContext } from '../../hooks';
+import styles from './Table.module.css';
 
 const Table = ({ rows }) => {
   const { threadID } = useAppContext();
@@ -22,8 +23,8 @@ const Table = ({ rows }) => {
   }
 
   return (
-    <SimpleBar style={{ height: '250px', marginBottom: '25px' }}>
-      <MUITable>
+    <SimpleBar style={{ height: '275px', marginBottom: '25px'}}>
+      <MUITable className={styles.table}>
         <MUITableBody>
           {rows.map((row) => (
             <MUITableRow key={row._id}>

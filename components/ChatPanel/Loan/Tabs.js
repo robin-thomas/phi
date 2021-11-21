@@ -5,6 +5,7 @@ import MUITab from '@mui/material/Tab';
 
 import Table from './Table';
 
+import styles from './Tabs.module.css';
 import Utils from '../../../utils';
 import Thread from '../../../utils/textile/thread';
 
@@ -27,7 +28,7 @@ const Tabs = ({ loans }) => {
 
   return (
     <>
-      <MUITabs value={value} onChange={onChange}>
+      <MUITabs value={value} onChange={onChange} className={styles.tabs}>
         <MUITab label="Received" />
         <MUITab label="Sent" />
       </MUITabs>

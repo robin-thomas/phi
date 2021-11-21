@@ -39,7 +39,39 @@ class Loan {
     await this._client.create(this._threadID, this._collection, [params]);
   }
 
-  async listen(reply, err) {
+  listen(_callback, filter = 'CREATE') {
+    const _this = this;
+
+    function callback(reply, err) {
+      const response = _this._handler(filter).bind(_this)(reply, err);
+      _callback(response);
+    }
+
+    const filters = [{ actionTypes: [filter] }];
+    return this._client.listen(this._threadID, filters, callback);
+  }
+
+  async delete(id) {
+    await this._client.delete(this._threadID, this._collection, [id]);
+  }
+
+  //
+  //////////////////////////////////////////////////////////////////////////////
+  // PRIVATE METHODS
+  //////////////////////////////////////////////////////////////////////////////
+  //
+
+  _handler(filter) {
+    switch(filter) {
+      case 'CREATE':
+        return this._createHandler;
+
+      case 'DELETE':
+        return this._deleteHandler;
+    }
+  }
+
+  _createHandler(reply, err) {
     if (!err && reply?.collectionName === this._collection) {
       if ([reply?.instance?.from, reply?.instance.to].includes(this._address)) {
         const threadID = this._threadID.toString();
@@ -49,6 +81,18 @@ class Loan {
 
         return reply.instance;
       }
+    }
+  }
+
+  _deleteHandler(reply, err) {
+    if (!err && reply?.collectionName === this._collection) {
+      const threadID = this._threadID.toString();
+
+      const loans = this._cache.has(threadID) ? this._cache.get(threadID) : [];
+      delete loans[reply.instanceID];
+      this._cache.set(threadID, loans);
+
+      return reply.instanceID;
     }
   }
 }

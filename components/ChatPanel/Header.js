@@ -32,7 +32,9 @@ const Header = () => {
       justifyContent="space-between"
     >
       <Grid item xs="auto" sx={{ ml: 18 }}>
-        <span className={styles.appName}>{activeContactProfile?.name}</span>
+        {activeContactProfile?.name && (
+          <span className={styles.appName}>{activeContactProfile?.name}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;{page}</span>
+        )}
       </Grid>
       {activeContact && (
         <Grid item xs="auto" sx={{ mr: 10 }}>

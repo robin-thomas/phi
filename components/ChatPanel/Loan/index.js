@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 
 import Tabs from './Tabs';
@@ -23,27 +23,34 @@ const Index = () => {
   }, [threadID]);
 
   useEffect(() => {
+    const createHandler = (response) => {
+      if (response?.from) {
+        setLoans(_loans => [..._loans, response]);
+      }
+    };
+
+    const deleteHandler = (id) => setLoans(_loans => _loans.filter(e => e._id !== id));
+
     (async () => {
       if (threadID) {
         const thread = await Utils.getInstance(Thread);
-        return thread.listen(callback, threadID);
+
+        const [createClose, deleteClose] = await Promise.all([
+          thread.loan(threadID).listen(createHandler, 'CREATE'),
+          thread.loan(threadID).listen(deleteHandler, 'DELETE'),
+        ]);
+
+        return () => {
+          createClose();
+          deleteClose();
+        }
       }
     })();
-  }, [threadID, callback]);
-
-  const callback = useCallback(async (reply, err) => {
-    const thread = await Utils.getInstance(Thread);
-    const response = await thread.loan(threadID).listen(reply, err);
-
-    if (response?.from) {
-      setLoans(_loans => [..._loans, response]);
-    }
   }, [threadID]);
 
   return (
     <>
-      <Box sx={{ mt: -10 }}>
-        <h4>Loan Requests</h4>
+      <Box sx={{ mt: -8 }}>
         <Tabs loans={loans} />
       </Box>
       <Loan />
