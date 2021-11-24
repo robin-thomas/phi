@@ -36,7 +36,7 @@ class Loan {
     console.debug(`Sending loan request to ${to}, for $${amount} and ${months} months`);
 
     const params = { from: this._address, to, amount, months, currency: "USD", date: new Date().toISOString() };
-    await this._client.create(this._threadID, this._collection, [params]);
+    return await this._client.create(this._threadID, this._collection, [params]);
   }
 
   listen(_callback, filter = 'CREATE') {

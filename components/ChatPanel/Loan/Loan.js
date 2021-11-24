@@ -14,6 +14,7 @@ import FormHelperText from '@mui/material/FormHelperText';
 import { useAppContext } from '../../hooks';
 import styles from './Loan.module.css';
 import Utils from '../../../utils';
+import Contract from '../../../utils/contract';
 import Thread from '../../../utils/textile/thread';
 
 const Loan = () => {
@@ -30,8 +31,17 @@ const Loan = () => {
     onSubmit: async (values) => {
       if (window.confirm('Are you sure?')) {
         const thread = await Utils.getInstance(Thread);
-        await thread.loan(threadID).post({
+        const [id] = await thread.loan(threadID).post({
           to: activeContact,
+          amount: parseInt(values.amount),
+          months: values.tenure,
+        });
+
+        const contract = await Utils.getInstance(Contract);
+        await contract.createLoan({
+          loanId: id,
+          from: activeContact,
+          to: thread.loan(threadID)._address,
           amount: parseInt(values.amount),
           months: values.tenure,
         });
