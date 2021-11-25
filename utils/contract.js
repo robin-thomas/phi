@@ -33,7 +33,9 @@ class Contract {
   }
 
   async createLoan(loan) {
-    loan.amount = ethers.utils.parseEther(loan.amount.toString());
+    console.log('create loan', loan);
+
+    loan.amount = ethers.BigNumber.from(loan.amount);
     loan.months = ethers.BigNumber.from(loan.months);
 
     loan.block = ethers.BigNumber.from(0); // default vakue. will be overwritten in contract.
@@ -44,6 +46,8 @@ class Contract {
 
   async getLoan(loanId) {
     const loan = await this.rcontract.getLoan(loanId);
+
+    console.log('contract loan', loan, loanId);
 
     if (loan[0] === loan[1]) {
       return null;

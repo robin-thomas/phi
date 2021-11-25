@@ -6,7 +6,7 @@ module.exports = {
     CERAMIC_NETWORK: 'testnet-clay',
     ETH_CHAIN_ID: '0x13881',
     ETH_CHAIN_NAME: 'Polygon Mumbai',
-    ETH_CONTRACT_ADDRESS: '0x0cBFa4491C6D4DA852621a381d66827A128399DD',
+    ETH_CONTRACT_ADDRESS: '0x50BcFCdbEb5C8CeB56d0913ac52De45b9bE27d0a',
     MORALIS_APP_ID: '52Tn6kiB5rAV0OC6GPN53MAwDOJ1TVz7NuW7CxRn',
     MORALIS_SERVER_URL: 'https://jgxkpmagifdn.usemoralis.com:2053/server',
     TEXTILE_BUCKET_PROFILE: 'profiles',

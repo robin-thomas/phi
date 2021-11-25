@@ -31,6 +31,8 @@ const Row = ({ row, sent }) => {
     const contract = await Utils.getInstance(Contract);
     const loan = await contract.getLoan(loanId);
 
+    console.log('get loan', loan, loanId);
+
     if (!loan) {
       setStatus('CREATING');
     } else {
