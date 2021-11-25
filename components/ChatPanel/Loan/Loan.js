@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import Grid from '@mui/material/Grid';
@@ -18,33 +19,48 @@ import Contract from '../../../utils/contract';
 import Thread from '../../../utils/textile/thread';
 
 const Loan = () => {
-  const { threadID, activeContact, activeContactProfile } = useAppContext();
+  const [disabled, setDisabled] = useState(false);
+  const { threadID, activeContact, activeContactProfile, setLoanIdUpdate } = useAppContext();
 
   const months = [...Array(12).keys()].map(i => i + 1);
 
   const formik = useFormik({
     initialValues: { amount: '', tenure: '' },
     validationSchema: yup.object({
-      amount: yup.string().matches(/^[1-9]?[0-9]{0,2}$/, 'Amount should be $1-999').required('Required field'),
+      amount: yup.number().positive().required('Required field'),
       tenure: yup.string().required('Required field'),
     }),
     onSubmit: async (values) => {
       if (window.confirm('Are you sure?')) {
-        const thread = await Utils.getInstance(Thread);
-        const [id] = await thread.loan(threadID).post({
-          to: activeContact,
-          amount: parseInt(values.amount),
-          months: values.tenure,
-        });
+        const amount = parseFloat(values.amount).toFixed(2);
 
-        const contract = await Utils.getInstance(Contract);
-        await contract.createLoan({
-          loanId: id,
-          from: activeContact,
-          to: thread.loan(threadID)._address,
-          amount: parseInt(values.amount),
-          months: values.tenure,
-        });
+        setDisabled(true);
+
+        let tx = null;
+        try {
+          const thread = await Utils.getInstance(Thread);
+          const [id] = await thread.loan(threadID).post({
+            to: activeContact,
+            amount: parseFloat(amount),
+            months: values.tenure,
+          });
+
+          const contract = await Utils.getInstance(Contract);
+          tx = await contract.createLoan({
+            loanId: id,
+            from: activeContact,
+            to: thread.loan(threadID)._address,
+            amount: parseFloat(amount),
+            months: values.tenure,
+          });
+
+          tx && await tx.wait();
+          setLoanIdUpdate(id);
+        } catch (err) {
+          console.error(err);
+        }
+
+        setDisabled(false);
       }
     },
     enableReinitialize: true,
@@ -58,7 +74,7 @@ const Loan = () => {
           variant="contained"
           sx={{ fontWeight:900 }}
           onClick={formik.handleSubmit}
-          disabled={Object.keys(formik.touched).length === 0 || Object.keys(formik.errors).length > 0}
+          disabled={disabled || Object.keys(formik.touched).length === 0 || Object.keys(formik.errors).length > 0}
         >
           Request
         </Button>
@@ -72,6 +88,7 @@ const Loan = () => {
             onBlur={formik.handleBlur}
             error={formik.touched.amount && Boolean(formik.errors.amount)}
             helperText={formik.touched.amount && formik.errors.amount}
+            disabled={disabled}
             placeholder="10"
             variant="standard"
             sx={{ input: { fontWeight: 900 , fontSize: 22 } }}
@@ -100,6 +117,7 @@ const Loan = () => {
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             sx={{ fontWeight: 900 , fontSize: 22 }}
+            disabled={disabled}
           >
             {months.map(month => <MenuItem key={month} value={month}>{month}</MenuItem>)}
           </Select>

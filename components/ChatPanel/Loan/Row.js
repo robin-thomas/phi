@@ -7,6 +7,7 @@ import Tooltip from '@mui/material/Tooltip';
 import CheckIcon from '@mui/icons-material/Check';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import CircularProgress from '@mui/material/CircularProgress';
+import LocalAtmIcon from '@mui/icons-material/LocalAtm';
 
 import Utils from '../../../utils';
 import Contract from '../../../utils/contract';
@@ -22,29 +23,32 @@ const RowButton = ({ title, onClick, color, children }) => (
 )
 
 const Row = ({ row, sent }) => {
-  const { threadID } = useAppContext();
+  const { threadID, loanIdUpdate, setLoanIdUpdate } = useAppContext();
   const [status, setStatus] = useState(null);
 
-  useEffect(() => getLoan(row._id), []);
+  useEffect(() => {
+    if (loanIdUpdate !== null && loanIdUpdate !== row._id) {
+      return;
+    }
+
+    setStatus(null);
+    getLoan(row._id);
+  }, [loanIdUpdate]);
 
   const getLoan = async (loanId) => {
     const contract = await Utils.getInstance(Contract);
     const loan = await contract.getLoan(loanId);
 
     console.log('get loan', loan, loanId);
-
-    if (!loan) {
-      setStatus('CREATING');
-    } else {
-      // TODO. verify status.
-      setStatus('PENDING');
-    }
+    setStatus(loan.status);
   }
 
   const approveLoan = async () => {
     if (window.confirm('Are you sure you want to approve this loan?')) {
       const contract = await Utils.getInstance(Contract);
-      await contract.approveLoan(row._id, row.to);
+      const tx = await contract.approvaLoan(row._id, row.amount);
+      await tx.wait();
+      setLoanIdUpdate(row._id);
     }
   }
 
@@ -52,6 +56,41 @@ const Row = ({ row, sent }) => {
     if (window.confirm('Are you sure you want to delete this loan?')) {
       const thread = await Utils.getInstance(Thread);
       await thread.loan(threadID).delete(row._id);
+    }
+  }
+
+  const receiveLoan = async () => {
+    if (window.confirm('Are you sure you want to receive this loan?')) {
+      const contract = await Utils.getInstance(Contract);
+      const tx = await contract.receiveLoan(row._id);
+      await tx.wait();
+      setLoanIdUpdate(row._id);
+    }
+  }
+
+  const getButton = () => {
+    if (sent) {
+      if ([Contract.STATUS_CREATING, Contract.STATUS_PENDING].includes(status)) {
+        return (
+          <RowButton color="error" title="Delete this loan request" onClick={deleteLoan}>
+            <DeleteOutlineIcon />
+          </RowButton>
+        )
+      } else if (status === Contract.STATUS_APPROVED) {
+        return (
+          <RowButton color="error" title="Receive loan" onClick={receiveLoan}>
+            <LocalAtmIcon />
+          </RowButton>
+        )
+      }
+    } else {
+      if (status ===  Contract.STATUS_PENDING) {
+        return (
+          <RowButton color="error" title="Approve this loan request" onClick={approveLoan}>
+            <CheckIcon />
+          </RowButton>
+        )
+      }
     }
   }
 
@@ -68,15 +107,7 @@ const Row = ({ row, sent }) => {
       </MUITableCell>
       <MUITableCell>{row.date.substr(0,10)}</MUITableCell>
       <MUITableCell>
-        {sent ? (
-          <RowButton color="error" title="Delete this loan request" onClick={deleteLoan}>
-            <DeleteOutlineIcon />
-          </RowButton>
-        ) : status === 'PENDING' && (
-          <RowButton color="error" title="Approve this loan request" onClick={approveLoan}>
-            <CheckIcon />
-          </RowButton>
-        )}
+        {getButton()}
       </MUITableCell>
     </MUITableRow>
   )

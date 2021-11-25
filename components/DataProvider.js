@@ -20,6 +20,7 @@ const DataProvider = ({ children }) => {
   const [activeContactProfile, setActiveContactProfile] = useState(null);
   const [loadingContacts, setLoadingContacts] = useState(false);
   const [threadID, setThreadID] = useState(null);
+  const [loanIdUpdate, setLoanIdUpdate] = useState(null);
 
   useEffect(() => getProfileKey(), []);
   useEffect(() => authenticated && getProfile(), [authenticated]);
@@ -145,6 +146,8 @@ const DataProvider = ({ children }) => {
         setLoadingContacts,
         threadID,
         setThreadID,
+        loanIdUpdate,
+        setLoanIdUpdate,
       }}
     >
       {children}
