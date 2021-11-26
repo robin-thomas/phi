@@ -47,6 +47,17 @@ class Thread extends Textile {
     this.client.listen(threadID, filters, callback);
   }
 
+  async getDBInfo(threadID) {
+    const dbInfo = await this.client.getDBInfo(ThreadID.fromString(threadID));
+
+    const result = {
+      threadID,
+      dbInfo
+    };
+
+    return Buffer.from(JSON.stringify(result)).toString('hex');
+  }
+
   chat(threadID) {
     this._chat.setThreadId(threadID);
     return this._chat;

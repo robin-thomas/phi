@@ -52,7 +52,7 @@ const Loan = () => {
             to: thread.loan(threadID)._address,
             amount: parseFloat(amount),
             months: values.tenure,
-          });
+          }, threadID);
 
           tx && await tx.wait();
           setLoanIdUpdate(id);
@@ -108,7 +108,7 @@ const Loan = () => {
       <Grid item xs="auto">
         <h5>loan for</h5>
       </Grid>
-      <Grid item xs="2" sx={{ mt: -2 }}>
+      <Grid item xs={2} sx={{ mt: -2 }}>
         <FormControl fullWidth variant="standard" error={formik.touched.tenure && Boolean(formik.errors.tenure)}>
           <InputLabel sx={{ fontWeight:900, fontSize: 22 }}>months</InputLabel>
           <Select

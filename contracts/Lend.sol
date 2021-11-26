@@ -16,15 +16,11 @@ contract Lend {
   }
 
   mapping(string => Ledger) ledger;
-
-  event CreateLoan(string loanId, uint amount, uint months, address from, address to);
-  event ApproveLoan(string loanId);
-  event ReceiveLoan(string loanId);
-  event CloseLoan(string loanId);
+  mapping(string => string) metadata;
 
   constructor() {}
 
-  function createLoan(Ledger memory _loan) public {
+  function createLoan(Ledger memory _loan, string memory _metadata) public {
     require(_loan.amount >= 1, 'Loan amount should be gte 1');
     require(_loan.to == msg.sender, 'Loan receiver should be msg sender');
     require(_loan.months > 0 && _loan.months <= 12, 'Loan tenure should be between 1-12 months');
@@ -33,7 +29,7 @@ contract Lend {
     _loan.status = LendStatus.CREATE;
     ledger[_loan.loanId] = _loan;
 
-    emit CreateLoan(_loan.loanId, _loan.amount, _loan.months, _loan.from, _loan.to);
+    metadata[_loan.loanId] = _metadata;
   }
 
   function approvaLoan(string memory _loanId) public payable {
@@ -45,8 +41,6 @@ contract Lend {
 
     _loan.status = LendStatus.SENDER_SENT;
     ledger[_loanId] = _loan;
-
-    emit ApproveLoan(_loanId);
   }
 
   function getLoan(string memory _loanId) public view returns (Ledger memory _loan) {
@@ -61,23 +55,26 @@ contract Lend {
 
     _loan.status = LendStatus.RECEIVER_RECEIVED;
     ledger[_loanId] = _loan;
-    emit ReceiveLoan(_loanId);
 
-    // Transfer the eth to receiver.
+    // transfer to the lendee.
     address payable _to = payable(_loan.to);
     (bool _sent, ) = _to.call{value: _loan.amount}("");
-    require(_sent, 'Failed to send ether');
+    require(_sent, 'Failed to send the loan to lendee');
   }
 
-  function closeLoan(string memory _loanId) public {
+  function closeLoan(string memory _loanId) public payable {
     Ledger memory _loan = ledger[_loanId];
 
     require(_loan.status == LendStatus.RECEIVER_RECEIVED, 'Loan not in receiver received status');
-    require(_loan.from == msg.sender, 'Only lender can close the loan');
+    require(_loan.to == msg.sender, 'Only lendee can close the loan');
+    require(msg.value >= _loan.amount, 'Loan amount should match msg value');
 
     _loan.status = LendStatus.CLOSED;
     ledger[_loanId] = _loan;
 
-    emit CloseLoan(_loanId);
+    // transfer to the lender.
+    address payable _to = payable(_loan.from);
+    (bool _sent, ) = _to.call{value: _loan.amount}("");
+    require(_sent, 'Failed to pay back the loan to lender');
   }
 }

@@ -38,8 +38,6 @@ const Row = ({ row, sent }) => {
   const getLoan = async (loanId) => {
     const contract = await Utils.getInstance(Contract);
     const loan = await contract.getLoan(loanId);
-
-    console.log('get loan', loan, loanId);
     setStatus(loan.status);
   }
 
@@ -68,6 +66,15 @@ const Row = ({ row, sent }) => {
     }
   }
 
+  const closeLoan = async () => {
+    if (window.confirm('Are you sure you want to close this loan?')) {
+      const contract = await Utils.getInstance(Contract);
+      const tx = await contract.closeLoan(row._id, row.amount);
+      await tx.wait();
+      setLoanIdUpdate(row._id);
+    }
+  }
+
   const getButton = () => {
     if (sent) {
       if ([Contract.STATUS_CREATING, Contract.STATUS_PENDING].includes(status)) {
@@ -79,6 +86,12 @@ const Row = ({ row, sent }) => {
       } else if (status === Contract.STATUS_APPROVED) {
         return (
           <RowButton color="error" title="Receive loan" onClick={receiveLoan}>
+            <LocalAtmIcon />
+          </RowButton>
+        )
+      } else if (status === Contract.STATUS_RECEIVED) {
+        return (
+          <RowButton color="error" title="Close loan" onClick={closeLoan}>
             <LocalAtmIcon />
           </RowButton>
         )

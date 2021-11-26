@@ -1,5 +1,7 @@
 import { ethers, utils } from 'ethers';
 
+import Utils from './index';
+import Thread from './textile/thread';
 import contract from '../artifacts/contracts/Lend.sol/Lend.json';
 
 class Contract {
@@ -32,8 +34,8 @@ class Contract {
     return this;
   }
 
-  async createLoan(loan) {
-    console.log('create loan', loan);
+  async createLoan(loan, threadID) {
+    console.debug('Creating loan in smart contract', loan);
 
     loan.amount = utils.parseEther(loan.amount.toString());
     loan.months = ethers.BigNumber.from(loan.months);
@@ -41,7 +43,10 @@ class Contract {
     loan.block = ethers.BigNumber.from(0); // default vakue. will be overwritten in contract.
     loan.status = ethers.BigNumber.from(0); // default vakue. will be overwritten in contract.
 
-    return await this.wcontract.createLoan(loan);
+    const thread = await Utils.getInstance(Thread);
+    const metadata = await thread.getDBInfo(threadID);
+
+    return await this.wcontract.createLoan(loan, metadata);
   }
 
   async getLoan(loanId) {
@@ -73,12 +78,21 @@ class Contract {
   async receiveLoan(loanId) {
     return await this.wcontract.receiveLoan(loanId);
   }
+
+  async closeLoan(loanId, amount) {
+    const overrides = {
+      value: utils.parseEther(amount.toString()),
+    }
+
+    return await this.wcontract.closeLoan(loanId, overrides);
+  }
 }
 
 Contract.STATUS_CREATING = 'CREATING';
 Contract.STATUS_PENDING = 'PENDING';
 Contract.STATUS_APPROVED = 'APPROVED';
 Contract.STATUS_RECEIVED = 'RECEIVED';
+Contract.STATUS_CLOSED = 'CLOSED';
 
 Contract.getStatus = (status) => {
   switch (status) {
@@ -90,6 +104,9 @@ Contract.getStatus = (status) => {
 
     case 2:
       return Contract.STATUS_RECEIVED;
+
+    case 3:
+      return Contract.STATUS_CLOSED;
 
     default:
       return Contract.STATUS_CREATING;

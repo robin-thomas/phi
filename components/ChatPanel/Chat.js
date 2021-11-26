@@ -54,7 +54,7 @@ const Chat = ({ sent }) => {
     if (result?.from) {
       setChats(_chats => ([..._chats, result]));
     }
-  }, []);
+  }, [threadID]);
 
   return (
     <>
