@@ -9,7 +9,7 @@ import Utils from '../../../utils';
 import Thread from '../../../utils/textile/thread';
 
 const Index = () => {
-  const { threadID } = useAppContext();
+  const { threadID, setLoanIdUpdate } = useAppContext();
   const [loans, setLoans] = useState([]);
 
   useEffect(() => {
@@ -29,19 +29,22 @@ const Index = () => {
       }
     };
 
+    const updateHandler = (id) => setLoanIdUpdate(id);
     const deleteHandler = (id) => setLoans(_loans => _loans.filter(e => e._id !== id));
 
     (async () => {
       if (threadID) {
         const thread = await Utils.getInstance(Thread);
 
-        const [createClose, deleteClose] = await Promise.all([
+        const [createClose, updateClose, deleteClose] = await Promise.all([
           thread.loan(threadID).listen(createHandler, 'CREATE'),
+          thread.loan(threadID).listen(updateHandler, 'UPDATE'),
           thread.loan(threadID).listen(deleteHandler, 'DELETE'),
         ]);
 
         return () => {
           createClose();
+          updateClose();
           deleteClose();
         }
       }

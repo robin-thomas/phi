@@ -95,6 +95,12 @@ class Loan {
       return reply.instanceID;
     }
   }
+
+  _updateHandler(reply, err) {
+    if (!err && reply?.collectionName === this._collection) {
+      return reply.instanceID;
+    }
+  }
 }
 
 export default Loan;

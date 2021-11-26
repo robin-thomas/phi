@@ -51,7 +51,7 @@ contract Lend is ChainlinkClient {
 
     metadata[_loan.loanId] = _metadata;
 
-    _helper(_loanId, metadata[_loanId], CREATE_LOAN_URL);
+    _helper(_loan.loanId, metadata[_loan.loanId], CREATE_LOAN_URL);
   }
 
   function approvaLoan(string memory _loanId) public payable {
