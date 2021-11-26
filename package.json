@@ -46,6 +46,7 @@
     "yup": "^0.32.11"
   },
   "devDependencies": {
+    "@chainlink/contracts": "^0.2.2",
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-waffle": "^2.0.1",
     "dotenv": "^10.0.0",

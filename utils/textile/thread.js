@@ -1,4 +1,4 @@
-import { Client, ThreadID } from '@textile/hub';
+import { Client, PrivateKey, ThreadID } from '@textile/hub';
 
 import Textile from './base';
 import Utils from '../index';
@@ -78,3 +78,20 @@ class Thread extends Textile {
 };
 
 export default Thread;
+
+const TextileClient = {
+  client: null,
+
+  getClient: async () => {
+    if (!TextileClient.client) {
+      TextileClient.client = await Client.withKeyInfo({ key: process.env.TEXTILE_KEY, secret: '' });
+      const identity = await PrivateKey.fromRandom();
+      await TextileClient.client.getToken(identity);
+    }
+
+    return TextileClient.client;
+  }
+}
+
+
+export const getTextileClient = TextileClient.getClient;

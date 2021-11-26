@@ -9,6 +9,7 @@
     "amount": { "type": "number" },
     "currency": { "type": "string" },
     "months": { "type": "number" },
-    "date": { "type": "string" }
+    "created": { "type": "string" },
+    "modified": { "type": "number" }
   }
 }
