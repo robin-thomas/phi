@@ -35,11 +35,11 @@ class Loan {
   async post({ to, amount, months }) {
     console.debug(`Sending loan request to ${to}, for $${amount} and ${months} months`);
 
-    const params = { from: this._address, to, amount, months, currency: "USD", date: new Date().toISOString() };
+    const params = { from: this._address, to, amount, months, currency: "USD", created: new Date().toISOString() };
     return await this._client.create(this._threadID, this._collection, [params]);
   }
 
-  listen(_callback, filter = 'CREATE') {
+  listen(_callback, filter) {
     const _this = this;
 
     function callback(reply, err) {
@@ -66,13 +66,16 @@ class Loan {
       case 'CREATE':
         return this._createHandler;
 
+      case 'UPDATE':
+        return this._updateHandler;
+
       case 'DELETE':
         return this._deleteHandler;
     }
   }
 
   _createHandler(reply, err) {
-    if (!err && reply?.collectionName === this._collection) {
+    if (!err && reply?.collectionName === this._collection && reply?.action === 'CREATE') {
       if ([reply?.instance?.from, reply?.instance.to].includes(this._address)) {
         const threadID = this._threadID.toString();
 
@@ -97,7 +100,7 @@ class Loan {
   }
 
   _updateHandler(reply, err) {
-    if (!err && reply?.collectionName === this._collection) {
+    if (!err && reply?.collectionName === this._collection && reply?.action === 'SAVE') {
       return reply.instanceID;
     }
   }

@@ -29,7 +29,11 @@ const Index = () => {
       }
     };
 
-    const updateHandler = (id) => setLoanIdUpdate(id);
+    const updateHandler = (id) => {
+      setLoanIdUpdate(undefined);
+      setTimeout(() => setLoanIdUpdate(id), 1500);
+    }
+
     const deleteHandler = (id) => setLoans(_loans => _loans.filter(e => e._id !== id));
 
     (async () => {
@@ -49,7 +53,7 @@ const Index = () => {
         }
       }
     })();
-  }, [threadID]);
+  }, [threadID, setLoanIdUpdate]);
 
   return (
     <>

@@ -23,7 +23,7 @@ const RowButton = ({ title, onClick, color, children }) => (
 )
 
 const Row = ({ row, sent }) => {
-  const { threadID, loanIdUpdate, setLoanIdUpdate } = useAppContext();
+  const { threadID, loanIdUpdate } = useAppContext();
   const [status, setStatus] = useState(null);
 
   useEffect(() => {
@@ -44,9 +44,7 @@ const Row = ({ row, sent }) => {
   const approveLoan = async () => {
     if (window.confirm('Are you sure you want to approve this loan?')) {
       const contract = await Utils.getInstance(Contract);
-      const tx = await contract.approvaLoan(row._id, row.amount);
-      await tx.wait();
-      setLoanIdUpdate(row._id);
+      await contract.approvaLoan(row._id, row.amount);
     }
   }
 
@@ -60,18 +58,14 @@ const Row = ({ row, sent }) => {
   const receiveLoan = async () => {
     if (window.confirm('Are you sure you want to receive this loan?')) {
       const contract = await Utils.getInstance(Contract);
-      const tx = await contract.receiveLoan(row._id);
-      await tx.wait();
-      setLoanIdUpdate(row._id);
+      await contract.receiveLoan(row._id);
     }
   }
 
   const closeLoan = async () => {
     if (window.confirm('Are you sure you want to close this loan?')) {
       const contract = await Utils.getInstance(Contract);
-      const tx = await contract.closeLoan(row._id, row.amount);
-      await tx.wait();
-      setLoanIdUpdate(row._id);
+      await contract.closeLoan(row._id, row.amount);
     }
   }
 
@@ -118,7 +112,7 @@ const Row = ({ row, sent }) => {
           <Chip color="primary" label={status} />
         )}
       </MUITableCell>
-      <MUITableCell>{row.date.substr(0,10)}</MUITableCell>
+      <MUITableCell>{row.created.substr(0,10)}</MUITableCell>
       <MUITableCell>
         {getButton()}
       </MUITableCell>

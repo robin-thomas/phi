@@ -20,7 +20,7 @@ import Thread from '../../../utils/textile/thread';
 
 const Loan = () => {
   const [disabled, setDisabled] = useState(false);
-  const { threadID, activeContact, activeContactProfile, setLoanIdUpdate } = useAppContext();
+  const { threadID, activeContact, activeContactProfile } = useAppContext();
 
   const months = [...Array(12).keys()].map(i => i + 1);
 
@@ -36,7 +36,6 @@ const Loan = () => {
 
         setDisabled(true);
 
-        let tx = null;
         try {
           const thread = await Utils.getInstance(Thread);
           const [id] = await thread.loan(threadID).post({
@@ -46,16 +45,13 @@ const Loan = () => {
           });
 
           const contract = await Utils.getInstance(Contract);
-          tx = await contract.createLoan({
+          await contract.createLoan({
             loanId: id,
             from: activeContact,
             to: thread.loan(threadID)._address,
             amount: parseFloat(amount),
             months: values.tenure,
           }, threadID);
-
-          tx && await tx.wait();
-          setLoanIdUpdate(id);
         } catch (err) {
           console.error(err);
         }
