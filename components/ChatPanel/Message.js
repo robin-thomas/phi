@@ -33,7 +33,7 @@ const Message = ({ chat }) => {
   }, [chat, profileKey]);
 
   return name !== '' ? (
-    <Box sx={{ mb: 3 }}>
+    <Box sx={{ mb: 1 }}>
       <Grid container justifyContent={name === 'You' ? 'flex-end': 'flex-start'}>
         {name !== 'You' && (
           <Grid item xs={1}>

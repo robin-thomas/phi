@@ -7,7 +7,6 @@ import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
-import ContactPageIcon from '@mui/icons-material/ContactPage';
 import Divider from '@mui/material/Divider';
 
 import Contact from './Contact';
@@ -24,7 +23,7 @@ const AddContact = ({ close }) => {
         .string()
         .matches(/^(0x){1}[0-9a-fA-F]{40}$/, 'Not valid ethereum address')
         .notOneOf([user?.attributes?.ethAddress], 'That\'s your address!')
-        .required()
+        .required('We need this!')
     }),
     onSubmit: () => setCheckingContact(true),
     enableReinitialize: true,
@@ -34,17 +33,17 @@ const AddContact = ({ close }) => {
 
   return (
     <>
-      <Divider />
+      <Divider sx={{ mb: 2 }}/>
       <Card
-        sx={{ pt: 4 }}
+        sx={{ pb: 2 }}
         style={{
-          backgroundColor: 'transparent',
+          backgroundColor: 'rgba(0,0,0,0.8)',
           backgroundImage: 'none',
+          borderRadius: '10px',
         }}
       >
         <CardHeader
-          title="Add New Contact"
-          avatar={<ContactPageIcon fontSize="large" />}
+          title={<h6 style={{ margin: 0, color: 'rgba(255,255,255,0.8)' }}>Add New Contact</h6>}
           action={(
             <IconButton onClick={onClose} disabled={checkingContact}>
               <CloseIcon />
@@ -58,7 +57,7 @@ const AddContact = ({ close }) => {
             formik={formik}
             disabled={checkingContact}
           />
-          <Divider sx={{ mt: 4 }}/>
+          <Divider sx={{ my: 2 }}/>
           <Contact
             address={formik.values.address}
             close={onClose}

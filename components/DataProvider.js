@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useState, useEffect } from 'react';
 
 import Utils from '../utils';
 import Ceramic from '../utils/ceramic';
@@ -60,34 +60,29 @@ const DataProvider = ({ children }) => {
     }
   }, []);
 
-  const callback = useCallback(async (reply, err) => {
-    const thread = await Utils.getInstance(Thread);
-
-    // Verify if invite or ack.
-    const response = await thread.ack().listen(reply, err);
-    if (!response?.ack) {
-      const invite = await thread.invite().listen(reply, err);
-
-      if (invite?.sent === false) {
-        setContacts((_contacts) => [invite.address, ..._contacts]);
-      } else if (response?.sent === true) {
-        setContacts((_contacts) => [invite.address, ..._contacts]);
-        setLoadingContacts(false);
-      }
-    }
-  }, []);
-
   useEffect(() => {
+    const callback = (thread) => async (reply, err) => {
+      // Verify if invite or ack.
+      const response = await thread.ack().listen(reply, err);
+      if (!response?.ack) {
+        const invite = await thread.invite().listen(reply, err);
+
+        if (invite?.sent === false) {
+          setContacts((_contacts) => [invite.address, ..._contacts]);
+        } else if (response?.sent === true) {
+          setContacts((_contacts) => [invite.address, ..._contacts]);
+          setLoadingContacts(false);
+        }
+      }
+    };
+
     if (authenticated) {
       console.debug('Listening to chat invites thread');
 
       Utils.getInstance(Thread)
-        .then((thread) => {
-          const close = thread.listen(callback);
-          return () => close();
-        });
+        .then((thread) => thread.listen(callback(thread)))
     }
-  }, [authenticated, callback]);
+  }, [authenticated]);
 
   useEffect(() => {
     if (activeContact) {
@@ -116,10 +111,13 @@ const DataProvider = ({ children }) => {
     const thread = await Utils.getInstance(Thread);
     const { sent, received } = await thread.invite().getAll();
 
-    setContacts([
-      ...sent.map(c => c.to),
-      ...received.map(c => c.from),
-    ]);
+    setContacts(
+      [
+        ...sent.map(c => c?.to),
+        ...received.map(c => c?.from),
+      ]
+      .filter(e => e !== undefined && e !== null)
+    );
   }
 
   return (

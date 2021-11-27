@@ -4,7 +4,6 @@ import Fab from '@mui/material/Fab';
 import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 import AddIcon from '@mui/icons-material/Add';
-import Divider from '@mui/material/Divider';
 
 import About from './About';
 import AddContact from './AddContact';
@@ -35,7 +34,6 @@ const Contacts = () => {
             </Box>
             {contacts?.length === 0 && (
               <>
-                <Divider />
                 <Box className={styles.nofriendBox}>
                   <h2>No friends yet.</h2>
                   <h4>Go ahead and add a friend!</h4>

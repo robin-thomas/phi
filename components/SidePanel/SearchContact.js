@@ -60,7 +60,7 @@ const SearchContact = () => {
       ) : !contacts && (
         <Skeleton variant="rect" animation="wave" height={41} sx={{ bgcolor: "#c57e9e", borderRadius: 5 }} />
       )}
-      <Divider sx={{ mt: 2, mb: 2 }}/>
+      <Divider sx={{ mt: contacts?.length > 0 ? 2 : 0, mb: 2 }}/>
       {profiles?.length > 0 ? (
         <SimpleBar style={{ height: '425px' }}>
           {profiles.map((profile) => (
