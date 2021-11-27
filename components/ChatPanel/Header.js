@@ -10,7 +10,7 @@ import styles from './Header.module.css';
 const Button = ({ title, disabled, onClick, children }) => (
   <Tooltip title={title} arrow placement="top">
     <span>
-      <IconButton color="secondary" disabled={disabled} onClick={onClick}>
+      <IconButton size="large" disabled={disabled} onClick={onClick}>
         {children}
       </IconButton>
     </span>
@@ -38,11 +38,11 @@ const Header = () => {
       </Grid>
       {activeContact && (
         <Grid item xs="auto" sx={{ mr: 10 }}>
-          <Button title="Chat" onClick={selectChat} disabled={page === 'chat'}>
-            <ChatIcon fontSize="large" />
+          <Button title="Chats" onClick={selectChat} disabled={page === 'chat'}>
+            <ChatIcon />
           </Button>
-          <Button title="Loan" onClick={selectLoan} disabled={page === 'loan'}>
-            <RequestQuoteIcon fontSize="large" />
+          <Button title="Loans" onClick={selectLoan} disabled={page === 'loan'}>
+            <RequestQuoteIcon  />
           </Button>
         </Grid>
       )}

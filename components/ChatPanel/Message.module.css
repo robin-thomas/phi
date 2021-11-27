@@ -1,9 +1,22 @@
 .message {
-  border-radius: 6px;
   padding: 20px;
+  width: max-content;
   font-size: 13px;
   font-weight: 800;
+}
+
+.message,
+.messageImage {
+  border-radius: 6px;
   background: white;
+  margin-bottom: 10px;
+}
+
+.messageImage {
+  border-width: 3px;
+  border-style: solid;
+  width: max-content;
+  line-height: 0;
 }
 
 .self {
@@ -11,7 +24,14 @@
   color: white;
 }
 
+.selfImage {
+  border-color: #9c4ad5;
+}
+
 .name {
-  margin-top: 10px;
   font-size: 12px;
+}
+
+.nameRight {
+  text-align: right;
 }

@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Avatar from '@mui/material/Avatar';
 import format from 'date-fns/format';
+import Stack from '@mui/material/Stack';
 
 import MessageImage from './MessageImage';
 
@@ -39,34 +40,32 @@ const Message = ({ chat }) => {
             <Avatar src={profilePic} width={50} height={50} />
           </Grid>
         )}
-        <Grid container item xs={11} justifyContent={name === 'You' ? 'flex-end': 'flex-start'}>
-          <Grid item xs="auto">
-            <div className={`${styles.message} ${name === 'You' ? styles.self : ''}`}>
-              <Grid item container xs={12}>
-                {chat.attachments.map(image => (
-                  <Grid item xs={!2} key={image.name}>
-                    <MessageImage address={chat.to} attachment={image} />
-                  </Grid>
-                ))}
-                <Grid item xs={12}>{chat.message}</Grid>
+        <Grid container item xs={7} justifyContent={name === 'You' ? 'flex-end': 'flex-start'}>
+          <Stack>
+            {chat.messages.map(message => (
+              <Grid key={message} container justifyContent={name === 'You' ? 'flex-end': 'flex-start'}>
+                <div className={`${styles.message} ${name === 'You' ? styles.self : ''}`}>
+                  {message}
+                </div>
               </Grid>
+            ))}
+            {chat.attachments.map(image => (
+              <div key={image.name} className={`${styles.messageImage} ${name === 'You' ? styles.selfImage : ''}`}>
+                <MessageImage address={chat.to} attachment={image} />
+              </div>
+            ))}
+            <div className={`${styles.name} ${name === 'You' ? styles.nameRight : ''}`}>
+              {name}
+              &nbsp;&nbsp;•&nbsp;&nbsp;
+              {format(new Date(chat.date), 'MMM d HH:mm aaa')}
             </div>
-          </Grid>
+          </Stack>
         </Grid>
         {name === 'You' && (
           <Grid container item xs={1} justifyContent="flex-end">
             <Avatar src={profilePic} width={50} height={50} />
           </Grid>
         )}
-        {name !== 'You' && <Grid item xs={1} />}
-        <Grid item xs="auto">
-          <div className={styles.name}>
-            {name}
-            &nbsp;&nbsp;•&nbsp;&nbsp;
-            {format(new Date(chat.date), 'MMM d HH:mm aaa')}
-          </div>
-        </Grid>
-        {name === 'You' && <Grid item xs={1} />}
       </Grid>
     </Box>
   ) : null;
