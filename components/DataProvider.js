@@ -61,11 +61,13 @@ const DataProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    const callback = (thread) => async (reply, err) => {
+    const callback = async (reply, err) => {
+      const thread = await Utils.getInstance(Thread);
+
       // Verify if invite or ack.
-      const response = await thread.ack().listen(reply, err);
+      const response = await thread.ack().callback(reply, err);
       if (!response?.ack) {
-        const invite = await thread.invite().listen(reply, err);
+        const invite = await thread.invite().callback(reply, err);
 
         if (invite?.sent === false) {
           setContacts((_contacts) => [invite.address, ..._contacts]);
@@ -80,7 +82,7 @@ const DataProvider = ({ children }) => {
       console.debug('Listening to chat invites thread');
 
       Utils.getInstance(Thread)
-        .then((thread) => thread.listen(callback(thread)))
+        .then((thread) => thread.listen(callback))
     }
   }, [authenticated]);
 

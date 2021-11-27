@@ -72,7 +72,7 @@ class Invite {
     await this._client.create(this._threadID, this._collection, [params]);
   }
 
-  async listen(reply, err) {
+  async callback(reply, err) {
     if (!err && reply?.collectionName === this._collection) {
       if ([reply?.instance?.from, reply?.instance.to].includes(this._address)) {
         const result = await this._decrypt(reply.instance);

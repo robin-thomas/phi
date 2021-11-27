@@ -6,6 +6,10 @@ import CeramicClient from '@ceramicnetwork/http-client';
 const address2did = async (address) => {
   const ceramic = new CeramicClient(process.env.CERAMIC_NODE_URL);
   const { did } = await Caip10Link.fromAccount(ceramic, `${address.toLowerCase()}@eip155:4`);
+  if (!did) {
+    const result = await Caip10Link.fromAccount(ceramic, `${address.toLowerCase()}@eip155:80001`);
+    return result.did;
+  }
   return did;
 }
 

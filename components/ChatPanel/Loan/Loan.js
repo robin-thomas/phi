@@ -9,7 +9,6 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import FormHelperText from '@mui/material/FormHelperText';
 import Image from 'next/image';
 

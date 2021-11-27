@@ -40,7 +40,7 @@ class Ack {
     await this._client.create(this._threadID, this._collection, [params]);
   }
 
-  async listener(reply) {
+  async callback(reply, err) {
     if (reply?.collectionName === this._collection) {
       if (!err && [reply?.instance?.from, reply?.instance.to].includes(this._address)) {
         console.debug('Received a chat ack from: ', reply.instance.from);
