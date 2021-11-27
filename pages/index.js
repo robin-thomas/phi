@@ -1,3 +1,4 @@
+import Head from 'next/head'
 import Grid from '@mui/material/Grid';
 import MUIButton from '@mui/material/Button';
 
@@ -32,6 +33,9 @@ function Index() {
 
   return (
     <>
+      <Head>
+        <title>{process.env.APP_NAME} | A decentralized, end-to-end encrypted chat engine</title>
+      </Head>
       <Grid container sx={{ pt: 2, px: 3 }} justifyContent="space-between">
         <Grid item>
           <Button>{process.env.APP_NAME}</Button>

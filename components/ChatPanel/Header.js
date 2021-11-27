@@ -1,3 +1,4 @@
+import { useMoralis } from 'react-moralis';
 import Grid from '@mui/material/Grid';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
@@ -18,6 +19,7 @@ const Button = ({ title, disabled, onClick, children }) => (
 )
 
 const Header = () => {
+  const { isAuthenticated } = useMoralis();
   const { page, setPage, activeContact, activeContactProfile } = useAppContext();
 
   const selectChat = () => setPage('chat');
@@ -31,20 +33,24 @@ const Header = () => {
       className={styles.header}
       justifyContent="space-between"
     >
-      <Grid item xs="auto" sx={{ ml: 18 }}>
-        {activeContactProfile?.name && (
-          <span className={styles.appName}>{activeContactProfile?.name}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;{page}</span>
-        )}
-      </Grid>
-      {activeContact && (
-        <Grid item xs="auto" sx={{ mr: 10 }}>
-          <Button title="Chats" onClick={selectChat} disabled={page === 'chat'}>
-            <ChatIcon />
-          </Button>
-          <Button title="Loans" onClick={selectLoan} disabled={page === 'loan'}>
-            <RequestQuoteIcon  />
-          </Button>
-        </Grid>
+      {isAuthenticated && (
+        <>
+          <Grid item xs="auto" sx={{ ml: 18 }}>
+            {activeContactProfile?.name && (
+              <span className={styles.appName}>{activeContactProfile?.name}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;{page}</span>
+            )}
+          </Grid>
+          {activeContact && (
+            <Grid item xs="auto" sx={{ mr: 10 }}>
+              <Button title="Chats" onClick={selectChat} disabled={page === 'chat'}>
+                <ChatIcon />
+              </Button>
+              <Button title="Loans" onClick={selectLoan} disabled={page === 'loan'}>
+                <RequestQuoteIcon  />
+              </Button>
+            </Grid>
+          )}
+        </>
       )}
     </Grid>
   )
