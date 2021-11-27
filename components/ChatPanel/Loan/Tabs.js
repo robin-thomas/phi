@@ -44,7 +44,7 @@ const Tabs = ({ loans }) => {
 
 const TabPanel = ({ value, index, children }) => (
   <div role="tabpanel" hidden={value !== index}>
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ pt: 3, pr: 6 }}>
       {children}
     </Box>
   </div>

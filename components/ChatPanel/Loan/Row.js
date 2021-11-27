@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import Chip from '@mui/material/Chip';
+import Button from '@mui/material/Button';
 import MUITableCell from '@mui/material/TableCell';
 import MUITableRow from '@mui/material/TableRow';
 import IconButton from '@mui/material/IconButton';
@@ -8,11 +8,21 @@ import CheckIcon from '@mui/icons-material/Check';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import CircularProgress from '@mui/material/CircularProgress';
 import LocalAtmIcon from '@mui/icons-material/LocalAtm';
+import format from 'date-fns/format';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import CreateIcon from '@mui/icons-material/Create';
+import CallReceivedIcon from '@mui/icons-material/CallReceived';
+import PendingIcon from '@mui/icons-material/Pending';
+import CloseIcon from '@mui/icons-material/Close';
+import Image from 'next/image';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 import Utils from '../../../utils';
 import Contract from '../../../utils/contract';
 import Thread from '../../../utils/textile/thread';
 import { useAppContext } from '../../hooks';
+import styles from './Row.module.css';
+import logo from '../../../assets/polygon.png';
 
 const RowButton = ({ title, onClick, color, children }) => (
   <Tooltip arrow title={title}>
@@ -33,7 +43,7 @@ const Row = ({ row, sent }) => {
 
     setStatus(null);
     getLoan(row._id);
-  }, [loanIdUpdate]);
+  }, [loanIdUpdate, row._id]);
 
   const getLoan = async (loanId) => {
     const contract = await Utils.getInstance(Contract);
@@ -86,7 +96,7 @@ const Row = ({ row, sent }) => {
       } else if (status === Contract.STATUS_RECEIVED) {
         return (
           <RowButton color="error" title="Close loan" onClick={closeLoan}>
-            <LocalAtmIcon />
+            <CancelIcon />
           </RowButton>
         )
       }
@@ -101,18 +111,58 @@ const Row = ({ row, sent }) => {
     }
   }
 
+  const getStatusButton = () => {
+    let color = 'primary';
+    let icon = <CreateIcon />
+
+    switch (status) {
+      case Contract.STATUS_PENDING:
+        color = 'secondary';
+        icon = <PendingIcon />;
+        break;
+
+      case Contract.STATUS_APPROVED:
+        color = 'success';
+        icon = <CheckBoxIcon />
+        break;
+
+      case Contract.STATUS_RECEIVED:
+        color = 'warning';
+        icon = <CallReceivedIcon />;
+        break;
+
+      case Contract.STATUS_CLOSED:
+        color = 'error';
+        icon = <CloseIcon />;
+        break;
+    }
+
+    return (
+      <Button
+        className={styles.button}
+        size="small"
+        variant="contained"
+        color={color}
+        startIcon={icon}
+      >
+        {status.toLowerCase()}
+      </Button>
+    )
+  }
+
   return (
     <MUITableRow>
-      <MUITableCell>${row.amount}</MUITableCell>
-      <MUITableCell>{row.months} month(s)</MUITableCell>
+      <MUITableCell>
+        <Image src={logo} width={30} height={30} alt="" />
+      </MUITableCell>
+      <MUITableCell>{row.amount}</MUITableCell>
       <MUITableCell>
         {status === null ? (
           <CircularProgress size={25} />
-        ) : (
-          <Chip color="primary" label={status} />
-        )}
+        ) : getStatusButton()}
       </MUITableCell>
-      <MUITableCell>{row.created.substr(0,10)}</MUITableCell>
+      <MUITableCell>{row.months} month(s)</MUITableCell>
+      <MUITableCell>{format(new Date(row.created), 'MMM d HH:mm aaa')}</MUITableCell>
       <MUITableCell>
         {getButton()}
       </MUITableCell>

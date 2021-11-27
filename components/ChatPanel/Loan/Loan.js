@@ -11,12 +11,14 @@ import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import FormHelperText from '@mui/material/FormHelperText';
+import Image from 'next/image';
 
 import { useAppContext } from '../../hooks';
 import styles from './Loan.module.css';
 import Utils from '../../../utils';
 import Contract from '../../../utils/contract';
 import Thread from '../../../utils/textile/thread';
+import logo from '../../../assets/polygon.png';
 
 const Loan = () => {
   const [disabled, setDisabled] = useState(false);
@@ -63,7 +65,7 @@ const Loan = () => {
   });
 
   return (
-    <Grid container alignItems="center" spacing={2} className={styles.box}>
+    <Grid container alignItems="center" justifyContent="space-between" className={styles.box} sx={{ px: 5 }}>
       <Grid item xs="auto">
         <Button
           color="info"
@@ -87,11 +89,11 @@ const Loan = () => {
             disabled={disabled}
             placeholder="10"
             variant="standard"
-            sx={{ input: { fontWeight: 900 , fontSize: 22 } }}
+            sx={{ input: { fontWeight: 900 , fontSize: 20 } }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <AttachMoneyIcon />
+                  <Image src={logo} width={40} height={40} alt="" />
                 </InputAdornment>
               ),
             }}
@@ -106,13 +108,13 @@ const Loan = () => {
       </Grid>
       <Grid item xs={2} sx={{ mt: -2 }}>
         <FormControl fullWidth variant="standard" error={formik.touched.tenure && Boolean(formik.errors.tenure)}>
-          <InputLabel sx={{ fontWeight:900, fontSize: 22 }}>months</InputLabel>
+          <InputLabel sx={{ fontWeight:900, fontSize: 20 }}>months</InputLabel>
           <Select
             name="tenure"
             value={formik.values.tenure}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            sx={{ fontWeight: 900 , fontSize: 22 }}
+            sx={{ fontWeight: 900 , fontSize: 20 }}
             disabled={disabled}
           >
             {months.map(month => <MenuItem key={month} value={month}>{month}</MenuItem>)}

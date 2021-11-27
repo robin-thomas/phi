@@ -6,7 +6,7 @@ import Row from './Row';
 import styles from './Table.module.css';
 
 const Table = ({ rows, sent }) => (
-  <SimpleBar style={{ height: '275px', marginBottom: '25px'}}>
+  <SimpleBar style={{ height: '325px', marginBottom: '50px' }}>
     <MUITable className={styles.table}>
       <MUITableBody>
         {rows.map((row) => (
