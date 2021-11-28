@@ -1,8 +1,6 @@
 import { Client, PrivateKey, ThreadID } from '@textile/hub';
 
 import Textile from './base';
-import Utils from '../index';
-import Ceramic from '../ceramic';
 import Ack from './thread/ack';
 import Chat from './thread/chat';
 import Loan from './thread/loan';
@@ -31,18 +29,13 @@ class Thread extends Textile {
     return 'Thread';
   }
 
-  async join(callback, info = null) {
-    this.client.joinFromInfo(info?.dbInfo || invites.dbInfo)
-      .then(() => this.listen(callback, info?.threadID))
-      .catch();
-  }
-
   listen(callback, threadId = null) {
     const filters = [{ actionTypes: ['CREATE'] }];
     const threadID = ThreadID.fromString(threadId || invites.threadID);
     this.client.listen(threadID, filters, callback);
   }
 
+  // get the thread info to be sent over chat invite.
   async getDBInfo(threadID) {
     const dbInfo = await this.client.getDBInfo(ThreadID.fromString(threadID));
 
@@ -66,7 +59,7 @@ class Thread extends Textile {
   }
 
   ack(address) {
-    this._invite.setAddress(address);
+    this._ack.setAddress(address);
     return this._ack;
   }
 
@@ -79,6 +72,7 @@ class Thread extends Textile {
 
 export default Thread;
 
+// TextileClient for the server.
 const TextileClient = {
   client: null,
 

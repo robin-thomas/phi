@@ -104,6 +104,7 @@ class Invite {
     const thread = await this._client.newDB();
     const dbInfo = await this._client.getDBInfo(thread);
 
+    // Create chat and loan collection in the new thread.
     await this._client.newCollection(thread, { name: process.env.TEXTILE_COLLECTION_CHAT, schema: chatSchema });
     await this._client.newCollection(thread, { name: process.env.TEXTILE_COLLECTION_LOAN, schema: loanSchema });
 

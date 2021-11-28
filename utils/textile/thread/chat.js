@@ -28,9 +28,11 @@ class Chat {
     const threadID = this._threadID.toString();
 
     if (this._cache.has(threadID)) {
+      console.debug('Retrieving all chats from cache');
       return this._cache.get(threadID);
     }
 
+    console.debug('Retrieving all chat requests from textile, and decrypting it');
     const chats = await this._client.find(this._threadID, this._collection, new Query());
     const results = await Promise.all(chats.map(this._decrypt));
 
@@ -39,6 +41,8 @@ class Chat {
   }
 
   async post(to, message, attachments = []) {
+    console.debug('Sending chat message to: ', to);
+
     const encrypted = await this._encrypt(message, to);
     const params = { from: this._address, to, message: encrypted, attachments, date: new Date().toISOString() };
     await this._client.create(this._threadID, this._collection, [params]);
@@ -47,6 +51,8 @@ class Chat {
   async listen(reply, err) {
     if (!err && reply?.collectionName === this._collection) {
       if ([reply?.instance?.from, reply?.instance.to].includes(this._address)) {
+        console.debug('Received a chat message from: ', reply?.instance?.from);
+
         const result = await this._decrypt(reply.instance);
         this._cache.set(result.from + result.to, result);
         return result;

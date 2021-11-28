@@ -17,6 +17,7 @@ class Contract {
     const url = `${process.env.ALCHEMY_URL}${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`;
     const provider = new ethers.providers.JsonRpcProvider(url);
 
+    // create a contract object for pure, view functions.
     this.rcontract = new ethers.Contract(
       process.env.ETH_CONTRACT_ADDRESS,
       contract.abi,
@@ -25,6 +26,7 @@ class Contract {
 
     const signer = new ethers.providers.Web3Provider(window.ethereum).getSigner();
 
+    // create a contract object for transactions.
     this.wcontract = new ethers.Contract(
       process.env.ETH_CONTRACT_ADDRESS,
       contract.abi,
@@ -37,12 +39,15 @@ class Contract {
   async createLoan(loan, threadID) {
     console.debug('Creating loan in smart contract', loan);
 
+    // convert to big numbers.
     loan.amount = utils.parseEther(loan.amount.toString());
     loan.months = ethers.BigNumber.from(loan.months);
 
-    loan.block = ethers.BigNumber.from(0); // default vakue. will be overwritten in contract.
-    loan.status = ethers.BigNumber.from(0); // default vakue. will be overwritten in contract.
+    // default values. will be overwritten in contract.
+    loan.block = ethers.BigNumber.from(0);
+    loan.status = ethers.BigNumber.from(0);
 
+    // get the thread dbInfo object (which is required to join a thread).
     const thread = await Utils.getInstance(Thread);
     const metadata = await thread.getDBInfo(threadID);
 
@@ -52,6 +57,7 @@ class Contract {
   async getLoan(loanId) {
     const loan = await this.rcontract.getLoan(loanId);
 
+    // loan doesnt exist in contract.
     if (loan[0] === loan[1]) {
       return { status: Contract.STATUS_CREATING };
     }
@@ -68,6 +74,7 @@ class Contract {
   }
 
   async approvaLoan(loanId, amount) {
+    // send the loan amount to approve the loan
     const overrides = {
       value: utils.parseEther(amount.toString()),
     }
@@ -80,6 +87,7 @@ class Contract {
   }
 
   async closeLoan(loanId, amount) {
+    // send the loan amount to close the loan
     const overrides = {
       value: utils.parseEther(amount.toString()),
     }

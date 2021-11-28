@@ -25,9 +25,12 @@ class Loan {
     const threadID = this._threadID.toString();
 
     if (this._cache.has(threadID)) {
+      console.debug('Retrieving all loans for current contact from cache');
       const values = this._cache.get(threadID);
       return Object.keys(values).reduce((p, c) => [...p, values[c]], []);
     }
+
+    console.debug('Retrieving all loans for current contact from textile');
 
     const loans = await this._client.find(this._threadID, this._collection, new Query());
     const values = loans.reduce((p, c) => ({ ...p, [c._id]: c }), {});
@@ -80,6 +83,7 @@ class Loan {
   _createHandler(reply, err) {
     if (!err && reply?.collectionName === this._collection && reply?.action === 'CREATE') {
       if ([reply?.instance?.from, reply?.instance.to].includes(this._address)) {
+        console.debug('A new loan under the current contact was created');
         const threadID = this._threadID.toString();
 
         const loans = this._cache.has(threadID) ? this._cache.get(threadID) : [];
@@ -92,6 +96,7 @@ class Loan {
 
   _deleteHandler(reply, err) {
     if (!err && reply?.collectionName === this._collection) {
+      console.debug('A loan under the current contact was deleted');
       const threadID = this._threadID.toString();
 
       const loans = this._cache.has(threadID) ? this._cache.get(threadID) : [];
@@ -104,6 +109,7 @@ class Loan {
 
   _updateHandler(reply, err) {
     if (!err && reply?.collectionName === this._collection && reply?.action === 'SAVE') {
+      console.debug('Status of a loan under the current contact was updated');
       return reply.instanceID;
     }
   }

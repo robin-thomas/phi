@@ -4,10 +4,12 @@ const Metamask = {
   chainId: () => {
     return function() {
       return {
+        // get user's current metamask chainId.
         get: async function() {
           return await window.ethereum.request({ method: 'eth_chainId' });
         },
 
+        // add a chainId to user's metamask.
         add: async function(chainId) {
           await window.ethereum.request({
             method: 'wallet_addEthereumChain',
@@ -15,6 +17,7 @@ const Metamask = {
           });
         },
 
+        // switch to a different chainId.
         switchTo: async function(chainId) {
           try {
             await window.ethereum.request({

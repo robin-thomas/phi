@@ -30,17 +30,21 @@ class Ceramic {
 
     this.address = (await window.ethereum.enable())[0].toLowerCase();
 
+    // client used for retrieving details about self.
+    // hence should be authenticated.
     this.self = await SelfID.authenticate({
       authProvider: new EthereumAuthProvider(window.ethereum, this.address),
       ceramic: process.env.CERAMIC_NODE_URL,
       connectNetwork: process.env.CERAMIC_NETWORK,
     });
 
+    // client used for retrieving details about others.
     this.client = new WebClient({
       ceramic: process.env.CERAMIC_NODE_URL,
       connectNetwork: process.env.CERAMIC_NETWORK,
     });
 
+    // store the did of the authenticated profile.
     this.did = this.self.client.ceramic.did;
 
     return this;
@@ -85,6 +89,8 @@ class Ceramic {
   }
 
   searchProfiles(keyword) {
+    console.debug('Searching among contacts with keyword: ', keyword);
+
     const results = [];
     keyword = keyword.toLowerCase();
 
@@ -107,23 +113,26 @@ class Ceramic {
     return results;
   }
 
+  // encrypt a chat message.
   async encrypt(payload, address) {
     const did = await address2did(address);
-    const encrypted = await this.did.createDagJWE(payload, [did, this.did.id]);
+    const encrypted = await this.did.createDagJWE(payload, [did, this.did.id]); // end-to-end encryption.
     return Buffer.from(JSON.stringify(encrypted)).toString('hex');
   }
 
+  // decrypt a chat message.
   async decrypt(payload) {
     const jwe = Buffer.from(payload, 'hex').toString();
     return await this.did.decryptDagJWE(JSON.parse(jwe));
   }
 
+  // used to encrypt/decrypt image attachments in a chat.
   file() {
     return function(did) {
       return {
         encrypt: async function(ab, address) {
           const _did = await address2did(address);
-          const jwe = await did.createJWE(new Uint8Array(ab), [_did, did.id]);
+          const jwe = await did.createJWE(new Uint8Array(ab), [_did, did.id]); // end-to-end encryption.
           return Buffer.from(JSON.stringify(jwe)).toString('hex');
         },
 
