@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useMoralis } from 'react-moralis';
 import Box from '@mui/material/Box';
 
 import ChatBox from './ChatBox';
@@ -10,6 +11,7 @@ import { useAppContext } from '../hooks';
 
 const Chat = ({ sent }) => {
   const [chats, setChats] = useState(null);
+  const { user } = useMoralis();
   const { activeContact, threadID, setThreadID } = useAppContext();
 
   useEffect(() => {
@@ -17,14 +19,14 @@ const Chat = ({ sent }) => {
       (async () => {
         const thread = await Utils.getInstance(Thread);
 
-        const me = thread.invite()._address;
+        const me = user.get('ethAddress');
         const [from, to] = sent ? [me, activeContact] : [activeContact, me];
 
         let result = null;
         try {
-          result = await thread.invite().get(from, to);
+          result = await thread.invite(me).get(from, to);
         } catch (err) {
-          result = await thread.invite().get(to, from);
+          result = await thread.invite(me).get(to, from);
         }
 
         setThreadID(result.dbInfo.threadID);
@@ -35,7 +37,7 @@ const Chat = ({ sent }) => {
   useEffect(() => {
     if (threadID) {
       Utils.getInstance(Thread)
-        .then(thread => thread.chat(threadID).getAll())
+        .then(thread => thread.chat(threadID, user.get('ethAddress')).getAll())
         .then(chats => {
           const results = [];
 
@@ -78,7 +80,7 @@ const Chat = ({ sent }) => {
   useEffect(() => {
     const listener = async (reply, err) => {
       const thread = await Utils.getInstance(Thread);
-      const result = await thread.chat(threadID).listen(reply, err);
+      const result = await thread.chat(threadID, user.get('ethAddress')).listen(reply, err);
 
       if (result?.from) {
         setChats(_chats => ([..._chats, { ...result, messages: [result.message] } ]));

@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect } from 'react';
+import { useMoralis } from 'react-moralis';
 
 import Utils from '../utils';
 import Ceramic from '../utils/ceramic';
@@ -8,6 +9,8 @@ import Thread from '../utils/textile/thread';
 const DataContext = createContext();
 
 const DataProvider = ({ children }) => {
+  const { user } = useMoralis();
+
   const [page, setPage] = useState('chat');
   const [network, setNetwork] = useState(null);
   const [profile, setProfile] = useState({});
@@ -22,20 +25,45 @@ const DataProvider = ({ children }) => {
   const [threadID, setThreadID] = useState(null);
   const [loanIdUpdate, setLoanIdUpdate] = useState(null);
 
-  useEffect(() => getProfileKey(), []);
-  useEffect(() => authenticated && getProfile(), [authenticated]);
-  useEffect(() => authenticated && getContacts(), [authenticated]);
+  useEffect(() => {
+    Utils.getInstance(Bucket)
+      .then(bucket => bucket.getKey(process.env.TEXTILE_BUCKET_PROFILE))
+      .then(setProfileKey);
+  }, []);
 
   useEffect(() => {
-    (async () => {
-      if (profile.image && profileKey) {
-        const bucket = await Utils.getInstance(Bucket);
-        const ceramic = await Utils.getInstance(Ceramic);
-        const _profile = await bucket.getImage(profileKey, ceramic.address, profile.image.original.mimeType);
-        setProfilePic(_profile);
-      }
-    })();
-  }, [profile.image, profileKey]);
+    if (authenticated) {
+      Utils.getInstance(Ceramic)
+        .then(ceramic => ceramic.getProfile())
+        .then(setProfile);
+    }
+  }, [authenticated]);
+
+  useEffect(() => {
+    if (authenticated) {
+      Utils.getInstance(Thread)
+        .then(thread => {
+          thread.ack(user.get('ethAddress')).load();
+          return thread.invite(user.get('ethAddress')).getAll();
+        })
+        .then(({ received, sent }) => {
+          const _contacts = [
+            ...sent.map(c => c?.to),
+            ...received.map(c => c?.from),
+          ];
+
+          setContacts(_contacts.filter(e => e !== undefined && e !== null));
+        });
+    }
+  }, [authenticated]);
+
+  useEffect(() => {
+    if (profile?.image && profileKey) {
+      Utils.getInstance(Bucket)
+        .then(bucket => bucket.getImage(profileKey, user.get('ethAddress'), profile.image.original.mimeType))
+        .then(setProfilePic);
+    }
+  }, [profile.image, profileKey, user]);
 
   useEffect(() => {
     const networkChanged = (chainId) => {
@@ -65,9 +93,9 @@ const DataProvider = ({ children }) => {
       const thread = await Utils.getInstance(Thread);
 
       // Verify if invite or ack.
-      const response = await thread.ack().callback(reply, err);
+      const response = await thread.ack(user.get('ethAddress')).callback(reply, err);
       if (!response?.ack) {
-        const invite = await thread.invite().callback(reply, err);
+        const invite = await thread.invite(user.get('ethAddress')).callback(reply, err);
 
         if (invite?.sent === false) {
           setContacts((_contacts) => [invite.address, ..._contacts]);
@@ -78,13 +106,11 @@ const DataProvider = ({ children }) => {
       }
     };
 
-    if (authenticated) {
+    if (contacts !== null) {
       console.debug('Listening to chat invites thread');
-
-      Utils.getInstance(Thread)
-        .then((thread) => thread.listen(callback))
+      Utils.getInstance(Thread).then(thread => thread.listen(callback))
     }
-  }, [authenticated]);
+  }, [contacts]);
 
   useEffect(() => {
     if (activeContact) {
@@ -95,32 +121,6 @@ const DataProvider = ({ children }) => {
       setActiveContactProfile(null);
     }
   }, [activeContact]);
-
-  const getProfileKey = async () => {
-    const bucket = await Utils.getInstance(Bucket);
-    const key = await bucket.getKey(process.env.TEXTILE_BUCKET_PROFILE);
-    console.debug('Retrieved textile key for profile bucket');
-    setProfileKey(key);
-  }
-
-  const getProfile = async () => {
-    const ceramic = await Utils.getInstance(Ceramic);
-    const _profile = await ceramic.getProfile();
-    setProfile(_profile);
-  }
-
-  const getContacts = async () => {
-    const thread = await Utils.getInstance(Thread);
-    const { sent, received } = await thread.invite().getAll();
-
-    setContacts(
-      [
-        ...sent.map(c => c?.to),
-        ...received.map(c => c?.from),
-      ]
-      .filter(e => e !== undefined && e !== null)
-    );
-  }
 
   return (
     <DataContext.Provider

@@ -8,13 +8,13 @@ class Bucket extends Textile {
     super(Buckets, Bucket);
 
     this.keyCache = new LRU({
-      max: 50,
-      maxAge: 60 * 60 * 1000,
+      max: 20,
+      maxAge: 24 * 60 * 60 * 1000,
     });
 
     this.imageCache = new LRU({
       max: 50,
-      maxAge: 60 * 60 * 1000,
+      maxAge: 24 * 60 * 60 * 1000,
     });
   }
 

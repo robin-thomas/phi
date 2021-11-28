@@ -8,9 +8,8 @@ import chatSchema from '../../../config/schema/chat.json';
 import loanSchema from '../../../config/schema/loan.json';
 
 class Invite {
-  constructor(client, address) {
+  constructor(client) {
     this._client = client;
-    this._address = address;
     this._collection = process.env.TEXTILE_COLLECTION_INVITE;
     this._threadID = ThreadID.fromString(invites.threadID);
 
@@ -20,7 +19,13 @@ class Invite {
     });
   }
 
+  setAddress(address) {
+    this._address = address;
+  }
+
   async load() {
+    console.debug('Retrieving all chat requests from textile');
+
     // Retrieve all sent/received invites..
     const results = await this._client.find(this._threadID, this._collection, new Query());
     const invites = results.filter(result => result.from === this._address || result.to === this._address);
@@ -39,7 +44,12 @@ class Invite {
   }
 
   async getAll() {
-    console.debug('Retrieving all received/(approved sent) chat requests');
+    console.debug('Retrieving all received/(approved sent) chat requests from cache');
+
+    // if cache is empty, load all.
+    if (this._cache.keys().length === 0) {
+      await this.load();
+    }
 
     const sent = [], received = [];
     for (const key of this._cache.keys()) {

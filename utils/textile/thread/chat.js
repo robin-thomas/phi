@@ -5,9 +5,8 @@ import Utils from '../../index';
 import Ceramic from '../../ceramic';
 
 class Chat {
-  constructor(client, address) {
+  constructor(client) {
     this._client = client;
-    this._address = address;
     this._collection = process.env.TEXTILE_COLLECTION_CHAT;
     this._threadID = null;
 
@@ -19,6 +18,10 @@ class Chat {
 
   setThreadId(threadID) {
     this._threadID = ThreadID.fromString(threadID);
+  }
+
+  setAddress(address) {
+    this._address = address;
   }
 
   async getAll() {

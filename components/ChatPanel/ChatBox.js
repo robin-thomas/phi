@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import * as yup from 'yup';
+import { useMoralis } from 'react-moralis';
 import { useFormik } from 'formik';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
@@ -30,6 +31,7 @@ const Button = ({ title, disabled, onClick, children }) => (
 const whiteTheme = createTheme(whitetheme);
 
 const ChatBox = ({ threadID }) => {
+  const { user } = useMoralis();
   const [files, setFiles] = useState([]);
   const [attachments, setAttachments] = useState([]);
   const { activeContact } = useAppContext();
@@ -58,7 +60,7 @@ const ChatBox = ({ threadID }) => {
     onSubmit: async (values, { resetForm }) => {
       if (values.message || attachments.length > 0) {
         const thread = await Utils.getInstance(Thread);
-        await thread.chat(threadID).post(activeContact, values.message, attachments);
+        await thread.chat(threadID, user.get('ethAddress')).post(activeContact, values.message, attachments);
         resetForm();
         setFiles([]);
         setAttachments([]);

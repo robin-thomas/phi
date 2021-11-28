@@ -1,4 +1,5 @@
 import { useCallback, useState, useEffect } from 'react';
+import { useMoralis } from 'react-moralis';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
@@ -8,7 +9,6 @@ import Loan from './Loan';
 import Skeleton from './Skeleton';
 
 import Utils from '../../utils';
-import Ceramic from '../../utils/ceramic';
 import Thread from '../../utils/textile/thread';
 import { useAppContext } from '../hooks';
 
@@ -16,39 +16,41 @@ const ActiveContact = () => {
   const [sent, setSent] = useState(false);
   const [accepted, setAccepted] = useState(-1);
 
+  const { user } = useMoralis();
   const { page, profile, activeContact, activeContactProfile, setActiveContact, setContacts } = useAppContext();
 
   useEffect(() => setAccepted(-1), [activeContact]);
   useEffect(() => {
-    Promise.all([
-      Utils.getInstance(Thread),
-      Utils.getInstance(Ceramic)
-    ])
-      .then(([thread, ceramic]) =>
-        Promise.all([
-          thread.ack().get(activeContact),
-          thread.ack().get(ceramic.address, activeContact),
-          thread.invite().get(ceramic.address, activeContact),
-        ])
-      )
-      .then(([received, sent, invite]) => {
-        if (received) {
-          setAccepted(1);
-        } else if (sent) {
-          setSent(true);
-          setAccepted(sent.accepted ? 1 : 3);
-        } else {
-          // No ack.
-          // Check if user is the one who sent the request.
-          setAccepted(invite ? 2 : 0);
-        }
-      });
+    if (activeContact) {
+      const address = user.get('ethAddress');
+
+      Utils.getInstance(Thread)
+        .then(thread =>
+          Promise.all([
+            thread.ack(address).get(activeContact),
+            thread.ack(address).get(address, activeContact),
+            thread.invite(address).get(address, activeContact),
+          ])
+        )
+        .then(([received, sent, invite]) => {
+          if (received) {
+            setAccepted(1);
+          } else if (sent) {
+            setSent(true);
+            setAccepted(sent.accepted ? 1 : 3);
+          } else {
+            // No ack.
+            // Check if user is the one who sent the request.
+            setAccepted(invite ? 2 : 0);
+          }
+        });
+    }
   }, [activeContact]);
 
   const accept = useCallback(() => {
     if (window.confirm('Are you sure you want to accept?')) {
       Utils.getInstance(Thread)
-        .then(thread => thread.ack().post(true, activeContact))
+        .then(thread => thread.ack(user.get('ethAddress')).post(true, activeContact))
         .then(() => setAccepted(1));
     }
   }, [activeContact]);
@@ -56,10 +58,10 @@ const ActiveContact = () => {
   const reject = useCallback(() => {
     if (window.confirm('Are you sure you want to reject?')) {
       Utils.getInstance(Thread)
-        .then(thread => thread.ack().post(false, activeContact))
+        .then(thread => thread.ack(user.get('ethAddress')).post(false, activeContact))
         .then(() => {
           // Delete this contact from setContacts;
-          setContacts((_contacts) => _contacts.filter(c => c !== activeContact));
+          setContacts(_contacts => _contacts.filter(c => c !== activeContact));
           setActiveContact(null);
         });
     }

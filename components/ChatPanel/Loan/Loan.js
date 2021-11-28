@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useFormik } from 'formik';
+import { useMoralis } from 'react-moralis';
 import * as yup from 'yup';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
@@ -20,6 +21,7 @@ import Thread from '../../../utils/textile/thread';
 import logo from '../../../assets/polygon.png';
 
 const Loan = () => {
+  const { user } = useMoralis();
   const [disabled, setDisabled] = useState(false);
   const { threadID, activeContact, activeContactProfile } = useAppContext();
 
@@ -39,7 +41,7 @@ const Loan = () => {
 
         try {
           const thread = await Utils.getInstance(Thread);
-          const [id] = await thread.loan(threadID).post({
+          const [id] = await thread.loan(threadID, user.get('ethAddress')).post({
             to: activeContact,
             amount: parseFloat(amount),
             months: values.tenure,
@@ -49,7 +51,7 @@ const Loan = () => {
           await contract.createLoan({
             loanId: id,
             from: activeContact,
-            to: thread.loan(threadID)._address,
+            to: user.get('ethAddress'),
             amount: parseFloat(amount),
             months: values.tenure,
           }, threadID);

@@ -2,9 +2,8 @@ import LRU from 'lru-cache';
 import { ThreadID, Query } from '@textile/hub';
 
 class Loan {
-  constructor(client, address) {
+  constructor(client) {
     this._client = client;
-    this._address = address;
     this._collection = process.env.TEXTILE_COLLECTION_LOAN;
     this._threadID = null;
 
@@ -16,6 +15,10 @@ class Loan {
 
   setThreadId(threadID) {
     this._threadID = ThreadID.fromString(threadID);
+  }
+
+  setAddress(address) {
+    this._address = address;
   }
 
   async getAll() {

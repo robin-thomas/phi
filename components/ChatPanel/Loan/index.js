@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useMoralis } from 'react-moralis';
 import Box from '@mui/material/Box';
 
 import Tabs from './Tabs';
@@ -9,6 +10,7 @@ import Utils from '../../../utils';
 import Thread from '../../../utils/textile/thread';
 
 const Index = () => {
+  const { user } = useMoralis();
   const { threadID, setLoanIdUpdate } = useAppContext();
   const [loans, setLoans] = useState([]);
 
@@ -16,7 +18,7 @@ const Index = () => {
     (async () => {
       if (threadID) {
         const thread = await Utils.getInstance(Thread);
-        const _loans = await thread.loan(threadID).getAll();
+        const _loans = await thread.loan(threadID, user.get('ethAddress')).getAll();
         setLoans(_loans);
       }
     })();
@@ -39,11 +41,12 @@ const Index = () => {
     (async () => {
       if (threadID) {
         const thread = await Utils.getInstance(Thread);
+        const address = user.get('ethAddress');
 
         const [createClose, updateClose, deleteClose] = await Promise.all([
-          thread.loan(threadID).listen(createHandler, 'CREATE'),
-          thread.loan(threadID).listen(updateHandler, 'UPDATE'),
-          thread.loan(threadID).listen(deleteHandler, 'DELETE'),
+          thread.loan(threadID, address).listen(createHandler, 'CREATE'),
+          thread.loan(threadID, address).listen(updateHandler, 'UPDATE'),
+          thread.loan(threadID, address).listen(deleteHandler, 'DELETE'),
         ]);
 
         return () => {

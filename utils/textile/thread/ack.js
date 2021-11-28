@@ -4,9 +4,8 @@ import { ThreadID, Query } from '@textile/hub';
 import invites from '../../../config/invites.json';
 
 class Ack {
-  constructor(client, address) {
+  constructor(client) {
     this._client = client;
-    this._address = address;
     this._collection = process.env.TEXTILE_COLLECTION_INVITE_ACK;
     this._threadID = ThreadID.fromString(invites.threadID);
 
@@ -16,7 +15,13 @@ class Ack {
     });
   }
 
+  setAddress(address) {
+    this._address = address;
+  }
+
   async load() {
+    console.debug('Retrieving all chat acks from textile');
+
     // Retrieve all acks.
     const results = await this._client.find(this._threadID, this._collection, new Query());
     const acks = results.filter(result => result.from === this._address || result.to === this._address);

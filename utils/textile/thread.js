@@ -17,15 +17,11 @@ class Thread extends Textile {
   static getInstance() {
     return (async () => {
       const obj = await new Thread().build();
-      const ceramic = await Utils.getInstance(Ceramic);
 
-      obj._ack = new Ack(obj.client, ceramic.address);
-      obj._chat = new Chat(obj.client, ceramic.address);
-      obj._invite = new Invite(obj.client, ceramic.address);
-      obj._loan = new Loan(obj.client, ceramic.address);
-
-      await obj._ack.load();
-      await obj._invite.load();
+      obj._ack = new Ack(obj.client);
+      obj._chat = new Chat(obj.client);
+      obj._invite = new Invite(obj.client);
+      obj._loan = new Loan(obj.client);
 
       return obj;
     })();
@@ -58,20 +54,24 @@ class Thread extends Textile {
     return Buffer.from(JSON.stringify(result)).toString('hex');
   }
 
-  chat(threadID) {
+  chat(threadID, address) {
+    this._chat.setAddress(address);
     this._chat.setThreadId(threadID);
     return this._chat;
   }
 
-  invite() {
+  invite(address) {
+    this._invite.setAddress(address);
     return this._invite;
   }
 
-  ack() {
+  ack(address) {
+    this._invite.setAddress(address);
     return this._ack;
   }
 
-  loan(threadID) {
+  loan(threadID, address) {
+    this._loan.setAddress(address);
     this._loan.setThreadId(threadID);
     return this._loan;
   }

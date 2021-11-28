@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useMoralis } from 'react-moralis';
 import Button from '@mui/material/Button';
 import MUITableCell from '@mui/material/TableCell';
 import MUITableRow from '@mui/material/TableRow';
@@ -33,6 +34,7 @@ const RowButton = ({ title, onClick, color, children }) => (
 )
 
 const Row = ({ row, sent }) => {
+  const { user } = useMoralis();
   const { threadID, loanIdUpdate } = useAppContext();
   const [status, setStatus] = useState(null);
 
@@ -61,7 +63,7 @@ const Row = ({ row, sent }) => {
   const deleteLoan = async () => {
     if (window.confirm('Are you sure you want to delete this loan?')) {
       const thread = await Utils.getInstance(Thread);
-      await thread.loan(threadID).delete(row._id);
+      await thread.loan(threadID, user.get('ethAddress')).delete(row._id);
     }
   }
 

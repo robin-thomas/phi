@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useMoralis } from 'react-moralis';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Avatar from '@mui/material/Avatar';
@@ -15,6 +16,7 @@ import { useAppContext } from '../hooks';
 import styles from './Header.module.css';
 
 const Contact = ({ address, active, close, onClick, checkingContact, setCheckingContact }) => {
+  const { user } = useMoralis();
   const { profileKey, setLoadingContacts } = useAppContext();
 
   const [src, setSrc] = useState(null);
@@ -47,7 +49,7 @@ const Contact = ({ address, active, close, onClick, checkingContact, setChecking
 
     try {
       const thread = await Utils.getInstance(Thread);
-      await thread.invite().post(address.toLowerCase());
+      await thread.invite(user.get('ethAddress')).post(address.toLowerCase());
       close && close();
     } catch (err) {
       setLoadingContacts(false);
