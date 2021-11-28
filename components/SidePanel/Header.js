@@ -1,4 +1,3 @@
-import { useMoralis } from 'react-moralis';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 
@@ -10,10 +9,9 @@ import { useAppContext } from '../hooks';
 import styles from './Header.module.css';
 
 const Header = () => {
-  const { profile } = useAppContext();
-  const { isAuthenticated } = useMoralis();
+  const { profile, authenticated } = useAppContext();
 
-  if (!isAuthenticated) {
+  if (!authenticated) {
     return null;
   }
 

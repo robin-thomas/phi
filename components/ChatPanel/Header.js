@@ -1,4 +1,3 @@
-import { useMoralis } from 'react-moralis';
 import Grid from '@mui/material/Grid';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
@@ -19,8 +18,7 @@ const Button = ({ title, disabled, onClick, children }) => (
 )
 
 const Header = () => {
-  const { isAuthenticated } = useMoralis();
-  const { page, setPage, activeContact, activeContactProfile } = useAppContext();
+  const { page, setPage, activeContact, authenticated, activeContactProfile } = useAppContext();
 
   const selectChat = () => setPage('chat');
   const selectLoan = () => setPage('loan');
@@ -33,7 +31,7 @@ const Header = () => {
       className={styles.header}
       justifyContent="space-between"
     >
-      {isAuthenticated && (
+      {authenticated && (
         <>
           <Grid item xs="auto" sx={{ ml: 18 }}>
             {activeContactProfile?.name && (

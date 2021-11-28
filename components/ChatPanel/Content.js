@@ -25,7 +25,7 @@ const Content = () => {
   const [error, setError] = useState(null);
 
   const { authenticate, isAuthenticated } = useMoralis();
-  const { profile, activeContact, setAuthenticated, setNetwork } = useAppContext();
+  const { profile, activeContact, authenticated, setAuthenticated, setNetwork } = useAppContext();
 
   useEffect(() => {
     (async () => {
@@ -66,7 +66,7 @@ const Content = () => {
 
   return (
     <div className={styles.content}>
-      {!isAuthenticated ? (
+      {!authenticated ? (
         <>
           <div className={styles.metamask}>
             <Image alt="Metamask Wallet login" src={MetamaskLogo} width={336} height={450} />

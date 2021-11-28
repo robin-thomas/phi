@@ -69,7 +69,7 @@ const SearchContact = () => {
               address={profile}
               active={activeContact === profile}
               checkingContact
-              onClick={() => setActiveContact((_active) => (_active === profile ? null : profile))}
+              onClick={() => setActiveContact(_active => _active === profile ? null : profile)}
             />
           ))}
         </SimpleBar>

@@ -29,10 +29,12 @@ const Chat = ({ sent }) => {
           result = await thread.invite(me).get(to, from);
         }
 
-        setThreadID(result.dbInfo.threadID);
+        if (result) {
+          setThreadID(result.dbInfo.threadID);
+        }
       })();
     }
-  }, [activeContact]);
+  }, [activeContact, setThreadID]);
 
   useEffect(() => {
     if (threadID) {

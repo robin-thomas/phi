@@ -24,7 +24,7 @@ class Invite {
   }
 
   async load() {
-    console.debug('Retrieving all chat requests from textile');
+    console.debug('Retrieving all chat invites from textile');
 
     // Retrieve all sent/received invites..
     const results = await this._client.find(this._threadID, this._collection, new Query());
@@ -39,12 +39,12 @@ class Invite {
   }
 
   async get(from, to) {
-    console.debug(`Retrieving chat request from: ${from}, and to: ${to}`);
+    console.debug(`Retrieving chat invite from: ${from}, and to: ${to}`);
     return this._cache.has(from + to) ? this._cache.get(from + to) : null;
   }
 
   async getAll() {
-    console.debug('Retrieving all received/(approved sent) chat requests from cache');
+    console.debug('Retrieving all received/(approved sent) chat invites from cache');
 
     // if cache is empty, load all.
     if (this._cache.keys().length === 0) {

@@ -34,6 +34,7 @@ const ActiveContact = () => {
         )
         .then(([received, sent, invite]) => {
           if (received) {
+            setSent(false);
             setAccepted(1);
           } else if (sent) {
             setSent(true);
@@ -100,7 +101,7 @@ const ActiveContact = () => {
               <h4 style={{ marginTop: '-15px' }}>
                 <Tooltip arrow placement="bottom" title={activeContact}>
                   <Button variant="text" color="info" size="large" sx={{ ml: '-10px' }}>
-                    <b style={{ fontSize: 21 }}>{activeContactProfile.name}</b>
+                    <b style={{ fontSize: 21 }}>{activeContactProfile?.name}</b>
                   </Button>
                 </Tooltip>
                 {getAccepted(accepted)}

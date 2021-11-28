@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useMoralis } from 'react-moralis';
 import Fab from '@mui/material/Fab';
 import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
@@ -14,12 +13,11 @@ import { useAppContext } from '../hooks';
 import styles from './Contacts.module.css';
 
 const Contacts = () => {
-  const { isAuthenticated } = useMoralis();
-  const { contacts, profileKey, loadingContacts } = useAppContext();
+  const { contacts, profileKey, authenticated, loadingContacts } = useAppContext();
 
   const [addContact, setAddContact] = useState(false);
 
-  if (!isAuthenticated) {
+  if (!authenticated) {
     return <About />;
   }
 
