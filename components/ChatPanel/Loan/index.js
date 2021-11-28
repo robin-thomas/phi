@@ -33,7 +33,7 @@ const Index = () => {
 
     const updateHandler = (id) => {
       setLoanIdUpdate(undefined);
-      setTimeout(() => setLoanIdUpdate(id), 1500);
+      setTimeout(() => setLoanIdUpdate(id), 2000);
     }
 
     const deleteHandler = (id) => setLoans(_loans => _loans.filter(e => e._id !== id));

@@ -36,6 +36,8 @@ const DataProvider = ({ children }) => {
       Utils.getInstance(Ceramic)
         .then(ceramic => ceramic.getProfile())
         .then(setProfile);
+    } else {
+      setProfile({});
     }
   }, [authenticated]);
 
@@ -54,6 +56,8 @@ const DataProvider = ({ children }) => {
 
           setContacts(_contacts.filter(e => e !== undefined && e !== null));
         });
+    } else {
+      setContacts(null);
     }
   }, [authenticated]);
 

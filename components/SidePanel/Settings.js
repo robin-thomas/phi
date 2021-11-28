@@ -20,7 +20,7 @@ import { useAppContext } from '../hooks';
 const Settings = () => {
   const [anchorEl, setAnchorEl] = useState(null);
 
-  const { setShowProfile } = useAppContext();
+  const { setAuthenticated, setShowProfile } = useAppContext();
   const { logout, isAuthenticating } = useMoralis();
 
   const handleClick = (e) => setAnchorEl(e.currentTarget);
@@ -29,6 +29,11 @@ const Settings = () => {
   const showProfile = () => {
     setShowProfile(true);
     handleClose();
+  }
+
+  const onLogout = () => {
+    logout();
+    setAuthenticated(false);
   }
 
   return (
@@ -59,7 +64,7 @@ const Settings = () => {
             </ListItem>
             <Divider />
             <ListItem disablePadding>
-              <ListItemButton disabled={isAuthenticating} onClick={logout}>
+              <ListItemButton disabled={isAuthenticating} onClick={onLogout}>
                 <ListItemIcon>
                   <LogoutIcon />
                 </ListItemIcon>
