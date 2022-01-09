@@ -1,12 +1,12 @@
 {
-  "0x13881": {
-    "chainId": "0x13881",
-    "chainName": "Polygon Mumbai Testnet",
+  "0x4": {
+    "chainId": "0x4",
+    "chainName": "Rinkeby Testnet",
     "nativeCurrency": {
-      "name": "MATIC",
-      "symbol": "MATIC",
+      "name": "ETH",
+      "symbol": "ETH",
       "decimals": 18
     },
-    "rpcUrls": ["https://rpc-endpoints.superfluid.dev/mumbai"]
+    "rpcUrls": ["https://rinkeby-light.eth.linkpool.io/"]
   }
 }
