@@ -5,7 +5,6 @@ import Utils from '../../index';
 import Ceramic from '../../ceramic';
 import invites from '../../../config/invites.json';
 import chatSchema from '../../../config/schema/chat.json';
-import loanSchema from '../../../config/schema/loan.json';
 
 class Invite {
   constructor(client) {
@@ -104,9 +103,8 @@ class Invite {
     const thread = await this._client.newDB();
     const dbInfo = await this._client.getDBInfo(thread);
 
-    // Create chat and loan collection in the new thread.
+    // Create chat collection in the new thread.
     await this._client.newCollection(thread, { name: process.env.TEXTILE_COLLECTION_CHAT, schema: chatSchema });
-    await this._client.newCollection(thread, { name: process.env.TEXTILE_COLLECTION_LOAN, schema: loanSchema });
 
     return {
       threadID: thread.toString(),

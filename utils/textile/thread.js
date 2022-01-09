@@ -3,7 +3,6 @@ import { Client, PrivateKey, ThreadID } from '@textile/hub';
 import Textile from './base';
 import Ack from './thread/ack';
 import Chat from './thread/chat';
-import Loan from './thread/loan';
 import Invite from './thread/invite';
 import invites from '../../config/invites.json';
 
@@ -19,7 +18,6 @@ class Thread extends Textile {
       obj._ack = new Ack(obj.client);
       obj._chat = new Chat(obj.client);
       obj._invite = new Invite(obj.client);
-      obj._loan = new Loan(obj.client);
 
       return obj;
     })();
@@ -61,12 +59,6 @@ class Thread extends Textile {
   ack(address) {
     this._ack.setAddress(address);
     return this._ack;
-  }
-
-  loan(threadID, address) {
-    this._loan.setAddress(address);
-    this._loan.setThreadId(threadID);
-    return this._loan;
   }
 };
 

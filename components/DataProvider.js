@@ -11,7 +11,6 @@ const DataContext = createContext();
 const DataProvider = ({ children }) => {
   const { user } = useMoralis();
 
-  const [page, setPage] = useState('chat');
   const [network, setNetwork] = useState(null);
   const [profile, setProfile] = useState({});
   const [profilePic, setProfilePic] = useState(null);
@@ -23,7 +22,6 @@ const DataProvider = ({ children }) => {
   const [activeContactProfile, setActiveContactProfile] = useState(null);
   const [loadingContacts, setLoadingContacts] = useState(false);
   const [threadID, setThreadID] = useState(null);
-  const [loanIdUpdate, setLoanIdUpdate] = useState(null);
 
   useEffect(() => {
     Utils.getInstance(Bucket)
@@ -129,8 +127,6 @@ const DataProvider = ({ children }) => {
   return (
     <DataContext.Provider
       value={{
-        page,
-        setPage,
         network,
         setNetwork,
         profile,
@@ -150,8 +146,6 @@ const DataProvider = ({ children }) => {
         setLoadingContacts,
         threadID,
         setThreadID,
-        loanIdUpdate,
-        setLoanIdUpdate,
       }}
     >
       {children}
