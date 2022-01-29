@@ -6,6 +6,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Contacts from './Contacts';
 import Header from './Header';
 import styles from './index.module.css';
+import { APP_NAME, APP_DESCRIPTION } from '@/app/config/app';
 import { darktheme } from '@/app/styles/theme';
 import { useAppContext } from '@/modules/common/hooks';
 import Profile from '@/modules/profile/components';
@@ -14,8 +15,8 @@ const darkTheme = createTheme(darktheme);
 
 const About = () => (
   <Box className="nofriendBox" sx={{ px: 5 }}>
-    <h1>{process.env.APP_NAME}.</h1>
-    <h3>A decentralized, secure, end-to-end encrypted chat engine built on blockchain & IPFS.</h3>
+    <h1>{APP_NAME}.</h1>
+    <h3>{APP_DESCRIPTION}</h3>
     <Divider sx={{ mb: 4 }} />
     <h4>You can send chat requests to Ethereum addresses. Once they approve, they become your friends.</h4>
     <h4>You can then share text messages and image attachments securely.</h4>

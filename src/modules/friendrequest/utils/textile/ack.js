@@ -1,8 +1,9 @@
 import { cacheAckConfig } from '../../constants/cache';
+import { TEXTILE_COLLECTION_INVITE_ACK } from '../../constants/textile';
 import Base from './base';
 import { addThreadListener } from '@/modules/common/utils/textile';
 
-const base = new Base(cacheAckConfig, process.env.TEXTILE_COLLECTION_INVITE_ACK);
+const base = new Base(cacheAckConfig, TEXTILE_COLLECTION_INVITE_ACK);
 
 const Ack = {
   loadAcks: async (address) => {

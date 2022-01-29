@@ -2,11 +2,12 @@ import { Client, ThreadID, Query } from '@textile/hub';
 import LRU from 'lru-cache';
 
 import { cacheChatConfig } from '../../constants/cache';
+import { TEXTILE_COLLECTION_CHAT } from '../../constants/textile';
 import { encryptJSON, decryptJSON } from '@/modules/common/utils/ceramic';
 import { getClient, addThreadListener } from '@/modules/common/utils/textile';
 
 const cache = new LRU(cacheChatConfig);
-const collection = process.env.TEXTILE_COLLECTION_CHAT;
+const collection = TEXTILE_COLLECTION_CHAT;
 
 const _decrypt = (address) => async (chat) => {
   try {

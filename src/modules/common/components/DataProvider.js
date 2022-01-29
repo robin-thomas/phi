@@ -1,8 +1,10 @@
 import { createContext, useState, useEffect } from 'react';
 
+import { ETH_CHAIN_ID } from '@/app/config/app';
 import Bucket from '@/modules/file/utils/bucket';
 import { downloadProfilePictureFromBucket } from '@/modules/file/utils/image';
 import { Ack, Invite, loadFriendRequests, getAllInvites } from '@/modules/friendrequest/utils';
+import { TEXTILE_BUCKET_PROFILE } from '@/modules/profile/constants/textile';
 import { getProfile } from '@/modules/profile/utils/ceramic';
 
 const DataContext = createContext();
@@ -23,7 +25,7 @@ const DataProvider = ({ children }) => {
   const [checkingContact, setCheckingContact] = useState(false);
   const [provider, setProvider] = useState(null);
 
-  useEffect(() => Bucket.getKey(process.env.TEXTILE_BUCKET_PROFILE).then(setProfileKey), []);
+  useEffect(() => Bucket.getKey(TEXTILE_BUCKET_PROFILE).then(setProfileKey), []);
 
   useEffect(() => {
     if (address) {
@@ -67,10 +69,10 @@ const DataProvider = ({ children }) => {
 
   useEffect(() => {
     const networkChanged = (chainId) => {
-      if (chainId !== process.env.ETH_CHAIN_ID) {
+      if (chainId !== ETH_CHAIN_ID) {
         window.location.reload();
       } else {
-        setNetwork(process.env.ETH_CHAIN_NAME);
+        provider.getNetwork().then(_network => setNetwork(_network?.name || null));
       }
     }
 

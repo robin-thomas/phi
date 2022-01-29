@@ -1,17 +1,19 @@
 import { cacheInviteConfig } from '../../constants/cache';
+import { TEXTILE_COLLECTION_INVITE } from '../../constants/textile';
 import Base from './base';
 import chatSchema from '@/config/schema/chat.json';
 import { encryptJSON, decryptJSON } from '@/modules/common/utils/ceramic';
 import { addThreadListener } from '@/modules/common/utils/textile';
+import { TEXTILE_COLLECTION_CHAT } from '@/modules/message/constants/textile';
 
-const base = new Base(cacheInviteConfig, process.env.TEXTILE_COLLECTION_INVITE);
+const base = new Base(cacheInviteConfig, TEXTILE_COLLECTION_INVITE);
 
 const _newThread = async (client) => {
   const thread = await client.newDB();
   const dbInfo = await client.getDBInfo(thread);
 
   // Create chat collection in the new thread.
-  await client.newCollection(thread, { name: process.env.TEXTILE_COLLECTION_CHAT, schema: chatSchema });
+  await client.newCollection(thread, { name: TEXTILE_COLLECTION_CHAT, schema: chatSchema });
 
   return {
     threadID: thread.toString(),

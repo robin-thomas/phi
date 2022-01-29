@@ -1,6 +1,7 @@
 import Grid from '@mui/material/Grid';
 import Head from 'next/head';
 
+import { APP_NAME, APP_SHORT_DESCRIPTION } from '@/app/config/app';
 import { PillButton } from '@/layouts/core/Button';
 import { ChatPanel, SidePanel } from '@/modules/common/components';
 import { useAppContext } from '@/modules/common/hooks';
@@ -11,11 +12,11 @@ function Index() {
   return (
     <>
       <Head>
-        <title>{process.env.APP_NAME} | A decentralized, end-to-end encrypted chat engine</title>
+        <title>{APP_NAME} | {APP_SHORT_DESCRIPTION}</title>
       </Head>
       <Grid container sx={{ pt: 2, px: 3 }} justifyContent="space-between">
         <Grid item>
-          <PillButton>{process.env.APP_NAME}</PillButton>
+          <PillButton>{APP_NAME}</PillButton>
         </Grid>
         {network && (
           <Grid item>

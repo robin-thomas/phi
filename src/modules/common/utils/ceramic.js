@@ -2,11 +2,13 @@ import CeramicClient from '@ceramicnetwork/http-client';
 import { Caip10Link } from '@ceramicnetwork/stream-caip10-link';
 import { WebClient, EthereumAuthProvider, SelfID } from '@self.id/web';
 
+import { CERAMIC_NETWORK, CERAMIC_NODE_URL } from '../constants/ceramic';
+
 let webClient = null;
 let authenticatedClient = null;
 
 export const address2did = async (address) => {
-  const ceramic = new CeramicClient(process.env.CERAMIC_NODE_URL);
+  const ceramic = new CeramicClient(CERAMIC_NODE_URL);
   const { did } = await Caip10Link.fromAccount(ceramic, `${address.toLowerCase()}@eip155:4`);
   if (!did) {
     const result = await Caip10Link.fromAccount(ceramic, `${address.toLowerCase()}@eip155:80001`);
@@ -19,8 +21,8 @@ export const self = async (address) => {
   if (!authenticatedClient) {
     authenticatedClient = await SelfID.authenticate({
       authProvider: new EthereumAuthProvider(window.ethereum, address),
-      ceramic: process.env.CERAMIC_NODE_URL,
-      connectNetwork: process.env.CERAMIC_NETWORK,
+      ceramic: CERAMIC_NODE_URL,
+      connectNetwork: CERAMIC_NETWORK,
     });
   }
 
@@ -30,8 +32,8 @@ export const self = async (address) => {
 export const client = () => {
   if (!webClient) {
     webClient = new WebClient({
-      ceramic: process.env.CERAMIC_NODE_URL,
-      connectNetwork: process.env.CERAMIC_NETWORK,
+      ceramic: CERAMIC_NODE_URL,
+      connectNetwork: CERAMIC_NETWORK,
     });
   }
 
