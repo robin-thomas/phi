@@ -1,0 +1,17 @@
+.container {
+  background-color: transparent;
+  box-shadow: none;
+  margin-top: 8px !important;
+}
+
+.active {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2));
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:hover {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)) !important;
+}

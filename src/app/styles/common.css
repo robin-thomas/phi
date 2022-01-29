@@ -1,0 +1,31 @@
+body {
+  background: #e0caef;
+  font-family: 'Roboto', sans-serif;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.nofriendBox {
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+}
+
+.nofriendBox > h1,
+.nofriendBox > h2 {
+  color: rgba(255,255,255,0.8) !important;
+  font-weight: 900 !important;
+}
+
+.nofriendBox > h3 {
+  margin-top: -5px !important;
+  color: rgba(255,255,255,0.67) !important;
+  font-weight: 800 !important;
+}
+
+.nofriendBox > h4 {
+  margin-top: -10px !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+}

@@ -1,0 +1,41 @@
+.panel {
+  box-shadow: -5px 10px 24px -8px black;
+  border-radius: 8px;
+  background: #271a33;
+  width: 400px;
+  height: 66vh;
+  position: absolute;
+  top: 17.9vh;
+  left: 15vw;
+  z-index: 2;
+}
+
+.drawer {
+  color: white;
+}
+
+.box {
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+  height: calc(100% - 120px) !important;
+}
+
+.addfriendBox {
+  display: flex !important;
+  justify-content: flex-end !important;
+  margin-right: 16px !important;
+  margin-top: -80px !important;
+}
+
+.avatar {
+  width: 50px !important;
+  height: 50px !important;
+  background-color: #c57e9e !important;
+}
+
+.container {
+  display: flex !important;
+  justify-content: flex-end !important;
+  margin-right: 16px !important;
+  margin-top: -80px !important;
+}

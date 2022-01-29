@@ -1,6 +1,43 @@
 {
   "extends": "next/core-web-vitals",
+  "env": {
+    "browser": true,
+    "es6": true
+  },
   "rules": {
-    "no-unused-vars": ["error"]
+    "import/no-anonymous-default-export": [
+      "off"
+    ],
+    "import/order": [
+      "warn",
+      {
+        "groups": [
+          "builtin",
+          "external",
+          "internal"
+        ],
+        "pathGroups": [
+          {
+            "pattern": "react",
+            "group": "external",
+            "position": "before"
+          }
+        ],
+        "pathGroupsExcludedImportTypes": [
+          "react"
+        ],
+        "newlines-between": "always",
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        }
+      }
+    ],
+    "no-undef": [
+      "error"
+    ],
+    "no-unused-vars": [
+      "error"
+    ]
   }
 }
