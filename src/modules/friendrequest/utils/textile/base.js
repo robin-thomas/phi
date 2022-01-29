@@ -41,7 +41,7 @@ class Base {
 
     // Retrieve all messages.
     const results = await this._client.find(this._threadID, this._collection, new Query());
-    const filtered = results.filter(result => result.from === address || result.to === address);
+    const filtered = results.filter(result => [result.from, result.to].includes(address));
 
     // Store it in cache.
     for (const result of filtered) {

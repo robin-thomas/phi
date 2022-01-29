@@ -19,10 +19,10 @@ const _newThread = async (client) => {
   };
 }
 
-const _decrypt = async (result) => {
+const _decrypt = (address) => async (result) => {
   try {
-    result.dbInfo = await decryptJSON(result.dbInfo);
-  } catch (err) { }
+    result.dbInfo = await decryptJSON(result.dbInfo, address);
+  } catch (err) {}
 
   return result;
 }
@@ -30,7 +30,7 @@ const _decrypt = async (result) => {
 const Invite = {
   loadInvites: async (address) => {
     console.debug('Retrieving all chat invites from textile');
-    await base.loadMessages(address, _decrypt);
+    await base.loadMessages(address, _decrypt(address));
   },
 
   get: (from, to) => {
@@ -56,7 +56,7 @@ const Invite = {
 
     // Create a new thread for chat.
     const payload = await _newThread(base.client());
-    const encrypted = await encryptJSON(payload, to);
+    const encrypted = await encryptJSON(payload, base.address(), to);
 
     console.debug('Sending chat request to: ', to);
     const params = { to, from: base.address(), date: new Date().toISOString(), dbInfo: encrypted };

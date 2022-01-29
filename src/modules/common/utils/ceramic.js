@@ -38,20 +38,20 @@ export const client = () => {
   return webClient;
 }
 
-export const encryptJSON = async (payload, address) => {
-  const receiverDid = await address2did(address);
+export const encryptJSON = async (payload, sender, receiver) => {
+  const receiverDid = await address2did(receiver);
 
-  const { client } = await self();
+  const { client } = await self(sender);
   const did = client.ceramic.did;
 
   const encrypted = await did.createDagJWE(payload, [receiverDid, did.id]); // end-to-end encryption.
   return Buffer.from(JSON.stringify(encrypted)).toString('hex');
 }
 
-export const decryptJSON = async (hex) => {
+export const decryptJSON = async (hex, receiver) => {
   const jwe = Buffer.from(hex, 'hex').toString();
 
-  const { client } = await self();
+  const { client } = await self(receiver);
   const did = client.ceramic.did;
 
   return await did.decryptDagJWE(JSON.parse(jwe));
