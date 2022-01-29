@@ -1,34 +1,39 @@
 import { useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
-import { useMoralis } from 'react-moralis';
 
 import Messages from '.';
 import ChatBox from '../../chatbox/components/ChatBox';
 import { messageGrouper } from '../utils/list';
 import ChatUtil from '../utils/textile/chat';
 import { useAppContext } from '@/modules/common/hooks';
+import { getAddress } from '@/modules/common/utils/address';
 import { getInvite } from '@/modules/friendrequest/utils';
 
 const Chat = () => {
   const [chats, setChats] = useState(null);
-  const { user } = useMoralis();
   const { activeContact, threadID, setThreadID } = useAppContext();
 
   useEffect(() => {
-    if (activeContact) {
-      const me = user.get('ethAddress');
+    const getThread = async () => {
+      const me = await getAddress();
       const result = getInvite(activeContact, me) || getInvite(me, activeContact);
       if (result) {
         setThreadID(result.dbInfo.threadID);
       }
     }
-  }, [activeContact, setThreadID]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    if (activeContact) {
+      getThread();
+    }
+  }, [activeContact, setThreadID]);
 
   useEffect(() => {
     const loadChats = async () => {
+      const address = await getAddress();
+
       ChatUtil.setThreadID(threadID);
-      ChatUtil.setAddress(user.get('ethAddress'));
+      ChatUtil.setAddress(address);
 
       const chats = await ChatUtil.getAll();
 
@@ -38,7 +43,7 @@ const Chat = () => {
     if (threadID) {
       loadChats().then(setChats);
     }
-  }, [threadID]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [threadID]);
 
   // TODO.
   // useEffect(() => {

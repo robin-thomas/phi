@@ -1,7 +1,6 @@
 import { createContext, useState, useEffect } from 'react';
 
-import { useMoralis } from 'react-moralis';
-
+import { getAddress } from '@/modules/common/utils/address';
 import Bucket from '@/modules/file/utils/bucket';
 import { downloadProfilePictureFromBucket } from '@/modules/file/utils/image';
 import { Ack, Invite, loadFriendRequests, getAllInvites } from '@/modules/friendrequest/utils';
@@ -10,8 +9,6 @@ import { getProfile } from '@/modules/profile/utils/ceramic';
 const DataContext = createContext();
 
 const DataProvider = ({ children }) => {
-  const { user } = useMoralis();
-
   const [network, setNetwork] = useState(null);
   const [profile, setProfile] = useState({});
   const [profilePic, setProfilePic] = useState(null);
@@ -25,6 +22,7 @@ const DataProvider = ({ children }) => {
   const [loadingContacts, setLoadingContacts] = useState(false);
   const [threadID, setThreadID] = useState(null);
   const [checkingContact, setCheckingContact] = useState(false);
+  const [provider, setProvider] = useState(null);
 
   useEffect(() => Bucket.getKey(process.env.TEXTILE_BUCKET_PROFILE).then(setProfileKey), []);
 
@@ -37,14 +35,20 @@ const DataProvider = ({ children }) => {
   }, [authenticated]);
 
   useEffect(() => {
-    if (profile?.image && profileKey) {
-      downloadProfilePictureFromBucket(profileKey, user.get('ethAddress'), profile.image.original.mimeType).then(setProfilePic);
+    const download = async () => {
+      const address = await getAddress();
+      const pic = downloadProfilePictureFromBucket(profileKey, address, profile.image.original.mimeType);
+      setProfilePic(pic);
     }
-  }, [profile.image, profileKey, user]);
+
+    if (profile?.image && profileKey) {
+      download();
+    }
+  }, [profile.image, profileKey]);
 
   useEffect(() => {
     const getContacts = async () => {
-      const address = user.get('ethAddress');
+      const address = await getAddress();
       await loadFriendRequests(address);
 
       const { received, sent } = getAllInvites();
@@ -138,6 +142,7 @@ const DataProvider = ({ children }) => {
         setThreadID,
         checkingContact,
         setCheckingContact,
+        provider, setProvider,
       }}
     >
       {children}

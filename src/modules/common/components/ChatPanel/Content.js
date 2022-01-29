@@ -1,17 +1,15 @@
 import { useState, useEffect } from 'react';
 
-import detectEthereumProvider from '@metamask/detect-provider';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import MUISkeleton from '@mui/material/Skeleton';
 import Image from 'next/image';
-import { useMoralis } from 'react-moralis';
 
 import ActiveContact from '../../../contact/components/ActiveContact';
 import styles from './Content.module.css';
 import MetamaskLogo from '@/assets/images/metamask.png';
 import { useAppContext } from '@/modules/common/hooks';
-import Metamask from '@/modules/common/utils/metamask';
+import { login } from '@/modules/wallet/utils/onboard';
 
 const Skeleton = () => (
   <>
@@ -22,45 +20,20 @@ const Skeleton = () => (
 
 const Content = () => {
   const [name, setName] = useState('');
-  const [error, setError] = useState(null);
 
-  const { authenticate, isAuthenticated } = useMoralis();
-  const { profile, activeContact, authenticated, setAuthenticated, setNetwork } = useAppContext();
+  const { setProvider, profile, activeContact, authenticated, setAuthenticated, setNetwork } = useAppContext();
 
-  useEffect(() => {
-    (async () => {
-      const provider = await detectEthereumProvider();
-      if (!provider) {
-        setError('No Metamask! Please install it from: <a href="https://metamask.io/" target="_blank">https://metamask.io/</a>');
-      } else if (provider !== window.ethereum) {
-        setError('Do you have multiple wallets installed?');
-      } else {
-        setError('');
-      }
-    })();
-  }, []);
+  const authenticate = async () => {
+    const callback = (provider) => {
+      setProvider(provider);
+      setAuthenticated(Boolean(provider));
+      setNetwork(process.env.ETH_CHAIN_NAME);
 
-  useEffect(() => {
-    (async () => {
-      if (isAuthenticated) {
-        const chainId = await Metamask.chainId().get();
-        if (chainId === process.env.ETH_CHAIN_ID) {
-          setAuthenticated(true);
-          setNetwork(process.env.ETH_CHAIN_NAME);
-        } else {
-          setNetwork('Wrong Network');
+      console.log('provider', provider);
+    }
 
-          try {
-            await Metamask.chainId().switchTo(process.env.ETH_CHAIN_ID);
-            setNetwork(process.env.ETH_CHAIN_NAME);
-            setAuthenticated(true);
-          } catch (err) {
-            console.error(err);
-          }
-        }
-      }
-    })();
-  }, [isAuthenticated, setAuthenticated, setNetwork]);
+    await login(callback);
+  }
 
   useEffect(() => profile?.name && setName(profile?.name), [profile]);
 
@@ -72,11 +45,7 @@ const Content = () => {
             <Image alt="Metamask Wallet login" src={MetamaskLogo} width={336} height={450} />
           </div>
           <div className={styles.metamask}>
-            {error !== null && error !== '' ? (
-              <h3 dangerouslySetInnerHTML={{ __html: error }} />
-            ) : error === '' && (
-              <Button variant="contained" onClick={authenticate}>Connect Wallet</Button>
-            )}
+            <Button variant="contained" onClick={authenticate}>Connect Wallet</Button>
           </div>
         </>
       ) : (

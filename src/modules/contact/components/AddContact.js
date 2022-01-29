@@ -7,15 +7,12 @@ import CardHeader from '@mui/material/CardHeader';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import { useFormik } from 'formik';
-import { useMoralis } from 'react-moralis';
 import * as yup from 'yup';
 
 import { Contact } from './Contact';
 import { SearchInput } from '@/modules/search/components';
 
 const AddContact = (props, ref) => {
-  const { user } = useMoralis();
-
   const [open, setOpen] = useState(false);
   const [checkingContact, setCheckingContact] = useState(false);
 
@@ -31,7 +28,7 @@ const AddContact = (props, ref) => {
       address: yup
         .string()
         .matches(/^(0x){1}[0-9a-fA-F]{40}$/, 'Not valid ethereum address')
-        .notOneOf([user?.attributes?.ethAddress], 'That\'s your address!')
+        //.notOneOf([user?.attributes?.ethAddress], 'That\'s your address!')
         .required('We need this!')
     }),
     onSubmit: () => setCheckingContact(true),
