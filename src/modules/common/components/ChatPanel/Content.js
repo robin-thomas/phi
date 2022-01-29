@@ -21,15 +21,20 @@ const Skeleton = () => (
 const Content = () => {
   const [name, setName] = useState('');
 
-  const { setProvider, profile, activeContact, authenticated, setAuthenticated, setNetwork } = useAppContext();
+  const { address, setAddress, setProvider, profile, activeContact, setNetwork } = useAppContext();
 
   const authenticate = async () => {
-    const callback = (provider) => {
-      setProvider(provider);
-      setAuthenticated(Boolean(provider));
-      setNetwork(process.env.ETH_CHAIN_NAME);
+    const callback = async (provider) => {
+      await provider.ready;
 
-      console.log('provider', provider);
+      setProvider(provider);
+
+      const network = await provider.getNetwork();
+      setNetwork(network?.name || null);
+
+      const signer = provider.getSigner();
+      const _address = await signer.getAddress();
+      setAddress(_address.toLowerCase());
     }
 
     await login(callback);
@@ -39,7 +44,7 @@ const Content = () => {
 
   return (
     <div className={styles.content}>
-      {!authenticated ? (
+      {!address ? (
         <>
           <div className={styles.metamask}>
             <Image alt="Metamask Wallet login" src={MetamaskLogo} width={336} height={450} />

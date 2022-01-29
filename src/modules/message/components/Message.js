@@ -7,18 +7,18 @@ import format from 'date-fns/format';
 
 import styles from './Message.module.css';
 import MessageImage from './MessageImage';
-import { getAddress } from '@/modules/common/utils/address';
+import { useAppContext } from '@/modules/common/hooks';
 import { Avatar } from '@/modules/profile/components';
 import { getProfile } from '@/modules/profile/utils/ceramic';
 
 const Message = ({ chat }) => {
+  const { address } = useAppContext();
+
   const [name, setName] = useState('');
   const [profile, setProfile] = useState(null);
 
   useEffect(() => {
     const retrieveProfile = async () => {
-      const address = await getAddress();
-
       // you sent the message.
       if (address === chat.from) {
         setProfile(undefined);
@@ -30,7 +30,7 @@ const Message = ({ chat }) => {
     }
 
     retrieveProfile();
-  }, [chat]);
+  }, [chat, address]);
 
   useEffect(() => {
     if (profile !== null) {

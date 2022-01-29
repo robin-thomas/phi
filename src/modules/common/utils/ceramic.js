@@ -2,8 +2,6 @@ import CeramicClient from '@ceramicnetwork/http-client';
 import { Caip10Link } from '@ceramicnetwork/stream-caip10-link';
 import { WebClient, EthereumAuthProvider, SelfID } from '@self.id/web';
 
-import { getAddress } from './address';
-
 let webClient = null;
 let authenticatedClient = null;
 
@@ -17,10 +15,8 @@ export const address2did = async (address) => {
   return did;
 }
 
-export const self = async () => {
+export const self = async (address) => {
   if (!authenticatedClient) {
-    const address = await getAddress();
-
     authenticatedClient = await SelfID.authenticate({
       authProvider: new EthereumAuthProvider(window.ethereum, address),
       ceramic: process.env.CERAMIC_NODE_URL,

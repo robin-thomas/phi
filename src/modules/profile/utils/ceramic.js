@@ -2,7 +2,6 @@ import LRU from 'lru-cache';
 
 import { cacheConfig } from '../constants/cache';
 import { profileDefaults } from '../constants/profile';
-import { getAddress } from '@/modules/common/utils/address';
 import { address2did, client, self } from '@/modules/common/utils/ceramic';
 
 const cache = new LRU(cacheConfig);
@@ -15,15 +14,14 @@ const setDefaults = (profile, address = null) => {
   return profile;
 }
 
-export const getProfile = async (address = null) => {
-  if (!address) {
+export const getProfile = async (address, selfProfile = false) => {
+  if (selfProfile) {
     console.debug('Retrieving authenticated ceramic basicProfile');
 
-    const authenticatedClient = await self();
+    const authenticatedClient = await self(address);
     const profile = await authenticatedClient.get('basicProfile');
 
-    const _address = await getAddress();
-    return setDefaults(profile, _address);
+    return setDefaults(profile, address);
   }
 
   console.debug('Searching ceramic profile for: ', address);
@@ -45,18 +43,18 @@ export const getProfile = async (address = null) => {
   return cache.get(address);
 }
 
-export const updateProfile = async (key, value) => {
-  const profile = await getProfile();
+export const updateProfile = async (address, key, value) => {
+  const profile = await getProfile(address, true /* self profile */);
 
   const updateProfile = {...profile, [key]: value};
   console.debug('Updating ceramic basicProfile to: ', updateProfile);
 
-  const authenticatedClient = await self();
+  const authenticatedClient = await self(address);
   return await authenticatedClient.set('basicProfile', updateProfile);
 }
 
-export const updateProfileImage = async (ipfsLink, file) => {
-  const profile = await getProfile();
+export const updateProfileImage = async (address, ipfsLink, file) => {
+  const profile = await getProfile(address, true /* self profile */);
 
   const image = {
     original: {

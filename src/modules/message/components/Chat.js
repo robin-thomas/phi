@@ -7,17 +7,15 @@ import ChatBox from '../../chatbox/components/ChatBox';
 import { messageGrouper } from '../utils/list';
 import ChatUtil from '../utils/textile/chat';
 import { useAppContext } from '@/modules/common/hooks';
-import { getAddress } from '@/modules/common/utils/address';
 import { getInvite } from '@/modules/friendrequest/utils';
 
 const Chat = () => {
   const [chats, setChats] = useState(null);
-  const { activeContact, threadID, setThreadID } = useAppContext();
+  const { address, activeContact, threadID, setThreadID } = useAppContext();
 
   useEffect(() => {
     const getThread = async () => {
-      const me = await getAddress();
-      const result = getInvite(activeContact, me) || getInvite(me, activeContact);
+      const result = getInvite(activeContact, address) || getInvite(address, activeContact);
       if (result) {
         setThreadID(result.dbInfo.threadID);
       }
@@ -26,12 +24,10 @@ const Chat = () => {
     if (activeContact) {
       getThread();
     }
-  }, [activeContact, setThreadID]);
+  }, [address, activeContact, setThreadID]);
 
   useEffect(() => {
     const loadChats = async () => {
-      const address = await getAddress();
-
       ChatUtil.setThreadID(threadID);
       ChatUtil.setAddress(address);
 
@@ -43,7 +39,7 @@ const Chat = () => {
     if (threadID) {
       loadChats().then(setChats);
     }
-  }, [threadID]);
+  }, [threadID, address]);
 
   // TODO.
   // useEffect(() => {

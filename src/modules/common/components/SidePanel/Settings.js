@@ -15,7 +15,7 @@ import { logout } from '@/modules/wallet/utils/onboard';
 
 const Settings = () => {
   const ref = useRef();
-  const { authenticated, setAuthenticated, setShowProfile } = useAppContext();
+  const { address, setShowProfile, setAddress } = useAppContext();
 
   const showProfile = () => {
     setShowProfile(true);
@@ -24,7 +24,7 @@ const Settings = () => {
 
   const onLogout = () => {
     logout();
-    setAuthenticated(false);
+    setAddress(null);
   }
 
   return (
@@ -32,11 +32,11 @@ const Settings = () => {
       <Popover ref={ref}>
         <Box sx={{ minWidth: 280, bgcolor: 'background.paper' }}>
           <List subheader={<ListSubheader>Settings</ListSubheader>}>
-            <ListItemButton text="Your Profile" disabled={!authenticated} onClick={showProfile}>
+            <ListItemButton text="Your Profile" disabled={!address} onClick={showProfile}>
               <AccountBoxIcon />
             </ListItemButton>
             <Divider />
-            <ListItemButton text="Logout" disabled={!authenticated} onClick={onLogout}>
+            <ListItemButton text="Logout" disabled={!address} onClick={onLogout}>
               <LogoutIcon />
             </ListItemButton>
           </List>

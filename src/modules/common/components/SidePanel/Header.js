@@ -4,9 +4,9 @@ import { useAppContext } from '@/modules/common/hooks';
 import Avatar from '@/modules/profile/components/Avatar';
 
 const Header = () => {
-  const { profile, authenticated } = useAppContext();
+  const { profile, address } = useAppContext();
 
-  if (!authenticated) {
+  if (!address) {
     return null;
   }
 

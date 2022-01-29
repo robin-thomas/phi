@@ -1,6 +1,5 @@
 import { createContext, useState, useEffect } from 'react';
 
-import { getAddress } from '@/modules/common/utils/address';
 import Bucket from '@/modules/file/utils/bucket';
 import { downloadProfilePictureFromBucket } from '@/modules/file/utils/image';
 import { Ack, Invite, loadFriendRequests, getAllInvites } from '@/modules/friendrequest/utils';
@@ -14,7 +13,7 @@ const DataProvider = ({ children }) => {
   const [profilePic, setProfilePic] = useState(null);
   const [showProfile, setShowProfile] = useState(false);
   const [profileKey, setProfileKey] = useState(null);
-  const [authenticated, setAuthenticated] = useState(false);
+  const [address, setAddress] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const [contacts, setContacts] = useState(null);
   const [activeContact, setActiveContact] = useState(null);
@@ -27,16 +26,15 @@ const DataProvider = ({ children }) => {
   useEffect(() => Bucket.getKey(process.env.TEXTILE_BUCKET_PROFILE).then(setProfileKey), []);
 
   useEffect(() => {
-    if (authenticated) {
-      getProfile().then(setProfile);
+    if (address) {
+      getProfile(address, true /* self profile */).then(setProfile);
     } else {
       setProfile({});
     }
-  }, [authenticated]);
+  }, [address]);
 
   useEffect(() => {
     const download = async () => {
-      const address = await getAddress();
       const pic = downloadProfilePictureFromBucket(profileKey, address, profile.image.original.mimeType);
       setProfilePic(pic);
     }
@@ -44,11 +42,10 @@ const DataProvider = ({ children }) => {
     if (profile?.image && profileKey) {
       download();
     }
-  }, [profile.image, profileKey]);
+  }, [address, profile.image, profileKey]);
 
   useEffect(() => {
     const getContacts = async () => {
-      const address = await getAddress();
       await loadFriendRequests(address);
 
       const { received, sent } = getAllInvites();
@@ -59,12 +56,12 @@ const DataProvider = ({ children }) => {
       ];
     }
 
-    if (authenticated) {
+    if (address) {
       getContacts().then((_contacts) => setContacts(_contacts.filter(e => e !== undefined && e !== null)));
     } else {
       setContacts(null);
     }
-  }, [authenticated]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [address]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => setSearchResults(contacts), [contacts]);
 
@@ -131,8 +128,8 @@ const DataProvider = ({ children }) => {
         searchResults, setSearchResults,
         contacts,
         setContacts,
-        authenticated,
-        setAuthenticated,
+        address,
+        setAddress,
         activeContact,
         setActiveContact,
         activeContactProfile,

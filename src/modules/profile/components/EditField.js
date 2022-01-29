@@ -13,7 +13,7 @@ import { Input } from '@/layouts/core/TextField';
 import { useAppContext } from '@/modules/common/hooks';
 
 const EditField = ({ name, label }) => {
-  const { profile, setProfile } = useAppContext();
+  const { address, profile, setProfile } = useAppContext();
 
   const [disabled, setDisabled] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -32,7 +32,7 @@ const EditField = ({ name, label }) => {
       if (values[name] !== formik.initialValues[name]) {
         setSubmitting(true);
 
-        const _profile = await updateProfile(name, values[name]);
+        const _profile = await updateProfile(address, name, values[name]);
         setProfile((_profile));
 
         setSubmitting(false);
