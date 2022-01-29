@@ -4,12 +4,11 @@ import { updateProfileImage } from '../utils/ceramic';
 import Avatar from './Avatar';
 import { IconButton } from '@/layouts/core/Button';
 import { useAppContext } from '@/modules/common/hooks';
-import { getAddress } from '@/modules/common/utils/address';
 import Bucket from '@/modules/file/utils/bucket';
 import { uploadImage } from '@/modules/file/utils/image';
 
 const EditAvatar = ({}) => {
-  const { setProfile, profileKey } = useAppContext();
+  const { address, setProfile, profileKey } = useAppContext();
 
   const [uploading, setUploading] = useState(false);
 
@@ -18,10 +17,8 @@ const EditAvatar = ({}) => {
 
     setUploading(true);
 
-    const address = await getAddress();
     const uploaded = await Bucket.upload(profileKey, `${address}/pic`, file);
-
-    updateProfileImage(uploaded).then(setProfile);
+    updateProfileImage(address, uploaded, file).then(setProfile);
   }
 
   return (

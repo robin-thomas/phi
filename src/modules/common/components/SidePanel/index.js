@@ -23,7 +23,7 @@ const About = () => (
 )
 
 const SidePanel = () => {
-  const { authenticated, showProfile, setShowProfile } = useAppContext();
+  const { address, showProfile, setShowProfile } = useAppContext();
 
   const closeDrawer = () => setShowProfile(false);
 
@@ -33,7 +33,7 @@ const SidePanel = () => {
         <Box sx={{ px: 2 }}>
           <Header />
         </Box>
-        {authenticated ? <Contacts /> : <About />}
+        {address ? <Contacts /> : <About />}
         <Drawer
           anchor="left"
           open={showProfile}

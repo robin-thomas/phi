@@ -29,3 +29,7 @@ body {
   margin-top: -10px !important;
   color: rgba(255, 255, 255, 0.6) !important;
 }
+
+.bn-onboard-custom {
+  z-index: 3;
+}

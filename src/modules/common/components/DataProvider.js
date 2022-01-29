@@ -1,7 +1,5 @@
 import { createContext, useState, useEffect } from 'react';
 
-import { useMoralis } from 'react-moralis';
-
 import Bucket from '@/modules/file/utils/bucket';
 import { downloadProfilePictureFromBucket } from '@/modules/file/utils/image';
 import { Ack, Invite, loadFriendRequests, getAllInvites } from '@/modules/friendrequest/utils';
@@ -10,14 +8,12 @@ import { getProfile } from '@/modules/profile/utils/ceramic';
 const DataContext = createContext();
 
 const DataProvider = ({ children }) => {
-  const { user } = useMoralis();
-
   const [network, setNetwork] = useState(null);
   const [profile, setProfile] = useState({});
   const [profilePic, setProfilePic] = useState(null);
   const [showProfile, setShowProfile] = useState(false);
   const [profileKey, setProfileKey] = useState(null);
-  const [authenticated, setAuthenticated] = useState(false);
+  const [address, setAddress] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const [contacts, setContacts] = useState(null);
   const [activeContact, setActiveContact] = useState(null);
@@ -25,26 +21,31 @@ const DataProvider = ({ children }) => {
   const [loadingContacts, setLoadingContacts] = useState(false);
   const [threadID, setThreadID] = useState(null);
   const [checkingContact, setCheckingContact] = useState(false);
+  const [provider, setProvider] = useState(null);
 
   useEffect(() => Bucket.getKey(process.env.TEXTILE_BUCKET_PROFILE).then(setProfileKey), []);
 
   useEffect(() => {
-    if (authenticated) {
-      getProfile().then(setProfile);
+    if (address) {
+      getProfile(address, true /* self profile */).then(setProfile);
     } else {
       setProfile({});
     }
-  }, [authenticated]);
+  }, [address]);
 
   useEffect(() => {
-    if (profile?.image && profileKey) {
-      downloadProfilePictureFromBucket(profileKey, user.get('ethAddress'), profile.image.original.mimeType).then(setProfilePic);
+    const download = async () => {
+      const pic = downloadProfilePictureFromBucket(profileKey, address, profile.image.original.mimeType);
+      setProfilePic(pic);
     }
-  }, [profile.image, profileKey, user]);
+
+    if (profile?.image && profileKey) {
+      download();
+    }
+  }, [address, profile.image, profileKey]);
 
   useEffect(() => {
     const getContacts = async () => {
-      const address = user.get('ethAddress');
       await loadFriendRequests(address);
 
       const { received, sent } = getAllInvites();
@@ -55,12 +56,12 @@ const DataProvider = ({ children }) => {
       ];
     }
 
-    if (authenticated) {
+    if (address) {
       getContacts().then((_contacts) => setContacts(_contacts.filter(e => e !== undefined && e !== null)));
     } else {
       setContacts(null);
     }
-  }, [authenticated]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [address]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => setSearchResults(contacts), [contacts]);
 
@@ -127,8 +128,8 @@ const DataProvider = ({ children }) => {
         searchResults, setSearchResults,
         contacts,
         setContacts,
-        authenticated,
-        setAuthenticated,
+        address,
+        setAddress,
         activeContact,
         setActiveContact,
         activeContactProfile,
@@ -138,6 +139,7 @@ const DataProvider = ({ children }) => {
         setThreadID,
         checkingContact,
         setCheckingContact,
+        provider, setProvider,
       }}
     >
       {children}

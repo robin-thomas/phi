@@ -1,6 +1,6 @@
 .container {
-  background-color: transparent;
-  box-shadow: none;
+  background-color: transparent !important;
+  box-shadow: none !important;
   margin-top: 8px !important;
 }
 

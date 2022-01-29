@@ -8,9 +8,9 @@ import { getClient, addThreadListener } from '@/modules/common/utils/textile';
 const cache = new LRU(cacheChatConfig);
 const collection = process.env.TEXTILE_COLLECTION_CHAT;
 
-const _decrypt = async (chat) => {
+const _decrypt = (address) => async (chat) => {
   try {
-    chat.message = await decryptJSON(chat.message);
+    chat.message = await decryptJSON(chat.message, address);
   } catch (err) { }
 
   return chat;
@@ -47,7 +47,7 @@ const Chat = {
 
     console.debug('Retrieving all chat requests from textile, and decrypting it');
     const chats = await Chat.client.find(Chat.threadID, collection, new Query());
-    const results = await Promise.all(chats.map(_decrypt));
+    const results = await Promise.all(chats.map(_decrypt(Chat.address)));
 
     cache.set(threadID, results);
     return results;
@@ -56,7 +56,7 @@ const Chat = {
   post: async (to, message, attachments = []) => {
     console.debug('Sending chat message to: ', to);
 
-    const encrypted = await encryptJSON(message, to);
+    const encrypted = await encryptJSON(message, Chat.address, to);
     const params = { from: Chat.address, to, message: encrypted, attachments, date: new Date().toISOString() };
     await this._client.create(Chat.threadID, collection, [params]);
   },
