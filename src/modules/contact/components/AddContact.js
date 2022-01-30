@@ -1,25 +1,31 @@
 import { forwardRef, useImperativeHandle, useState } from 'react';
 
-import CloseIcon from '@mui/icons-material/Close';
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 
-import { Contact } from './Contact';
+import Contact from './Contact';
+import { useAppContext } from '@/modules/common/hooks';
+import { Invite } from '@/modules/friendrequest/utils';
+import { getProfile } from '@/modules/profile/utils/ceramic';
 import { SearchInput } from '@/modules/search/components';
 
-const AddContact = (props, ref) => {
+const AddContact = (_, ref) => {
+  const { address } = useAppContext();
+
   const [open, setOpen] = useState(false);
+  const [profile, setProfile] = useState(null);
+  const [sendingInvite, setSendingInvite] = useState(false);
   const [checkingContact, setCheckingContact] = useState(false);
 
   useImperativeHandle(ref, () => ({
-    isOpen: () => open,
     openAddContact: () => setOpen(true),
-    closeAddContact: () => setOpen(false),
   }));
 
   const formik = useFormik({
@@ -27,52 +33,93 @@ const AddContact = (props, ref) => {
     validationSchema: yup.object({
       address: yup
         .string()
-        .matches(/^(0x){1}[0-9a-fA-F]{40}$/, 'Not valid ethereum address')
-        //.notOneOf([user?.attributes?.ethAddress], 'That\'s your address!')
-        .required('We need this!')
+        .lowercase()
     }),
-    onSubmit: () => setCheckingContact(true),
+    validate: (values) => {
+      const errors = {};
+
+      if (!values.address) {
+        errors.address = 'We need this to search!';
+      } else if (!/^(0x){1}[0-9a-fA-F]{40}$/.test(values.address)) {
+        errors.address = 'Not valid ethereum address';
+      } else if ([address].includes(values.address)) {
+        errors.address = 'That\'s your address!';
+      }
+
+      if (errors.address) {
+        setProfile(null);
+      }
+
+      return errors;
+    },
+    onSubmit: async (values) => {
+      if (values.address) {
+        setCheckingContact(true);
+
+        const _profile = await getProfile(values.address);
+        if (_profile) {
+          setProfile(_profile);
+        }
+
+        setCheckingContact(false);
+      } else {
+        setProfile(null);
+      }
+    },
     enableReinitialize: true,
   });
 
-  const onClose = () => setOpen(false) && formik.resetForm();
+  const onClose = () => {
+    setOpen(false);
+    formik.resetForm();
+    setProfile(null);
+  }
+
+  const addNewContact = async () => {
+    setSendingInvite(true);
+
+    try {
+      await Invite.post(profile.address);
+
+      onClose();
+    } catch (err) {
+      formik.setErrors({ address: err.message });
+    }
+
+    setSendingInvite(false);
+  }
 
   return (
-    <>
-      <Divider sx={{ mb: 2 }}/>
-      <Card
-        sx={{ pb: 2 }}
-        style={{
-          backgroundColor: 'rgba(0,0,0,0.8)',
-          backgroundImage: 'none',
-          borderRadius: '10px',
-        }}
-      >
-        <CardHeader
-          title={<h6 style={{ margin: 0, color: 'rgba(255,255,255,0.8)' }}>Add New Contact</h6>}
-          action={(
-            <IconButton onClick={onClose} disabled={checkingContact}>
-              <CloseIcon />
-            </IconButton>
-          )}
+    <Dialog
+      open={open}
+      disableBackdropClick
+      disableEscapeKeyDown
+    >
+      <DialogTitle>Add New Contact</DialogTitle>
+      <DialogContent>
+        <SearchInput
+          name="address"
+          placeholder="Ethereum address"
+          formik={formik}
+          disabled={sendingInvite || checkingContact}
         />
-        <Box sx={{ px: 2, mt: 1 }}>
-          <SearchInput
-            name="address"
-            placeholder="Ethereum address"
-            formik={formik}
-            disabled={checkingContact}
-          />
-          <Divider sx={{ my: 2 }}/>
-          <Contact
-            address={formik.values.address}
-            close={onClose}
-            checkingContact={checkingContact}
-            setCheckingContact={setCheckingContact}
-          />
-        </Box>
-      </Card>
-    </>
+        <DialogContentText sx={{ mt: 2, mb: 2 }}>
+          You can send a friend request if you know their Ethereum address. Once they approve the request, you can start messaging them.
+        </DialogContentText>
+        {profile && (
+          <>
+            <Divider sx={{ my: 2 }} />
+            <Contact profile={profile} action={<></>} />
+          </>
+        )}
+      </DialogContent>
+      <DialogActions>
+        <>
+          {profile && <Button disabled={sendingInvite} onClick={addNewContact} color="success">Send Invite</Button>}
+          <Button disabled={sendingInvite} onClick={onClose} color="info">Cancel</Button>
+        </>
+      </DialogActions>
+    </Dialog>
   );
 }
 

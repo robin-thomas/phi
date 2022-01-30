@@ -6,14 +6,15 @@ import { useAppContext } from '@/modules/common/hooks';
 import { searchProfiles } from '@/modules/profile/utils/ceramic';
 
 const SearchContacts = () => {
-  const { contacts, setSearchResults, checkingContact, setCheckingContact } = useAppContext();
+  const { address, contacts, setSearchResults, checkingContact, setCheckingContact } = useAppContext();
 
   const formik = useFormik({
     initialValues: { search: '' },
     validationSchema: yup.object({
       search: yup
         .string()
-        //.notOneOf([user?.attributes?.ethAddress], 'That\'s your address!')
+        .lowercase()
+        .notOneOf([address], 'That\'s your address!')
     }),
     onSubmit: async (values) => {
       if (values.search) {

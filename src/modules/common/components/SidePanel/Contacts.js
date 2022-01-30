@@ -8,7 +8,7 @@ import styles from './index.module.css';
 import Backdrop from '@/layouts/core/Backdrop';
 import { FabButton } from '@/layouts/core/Button';
 import { useAppContext } from '@/modules/common/hooks';
-import { /*AddContact,*/ ContactList } from '@/modules/contact/components';
+import { AddContact, ContactList } from '@/modules/contact/components';
 import Search from '@/modules/search/components';
 
 const Contacts = () => {
@@ -19,7 +19,7 @@ const Contacts = () => {
     <>
       <Box className={styles.box}>
         <Backdrop open={loadingContacts} />
-        {/* <AddContact ref={ref} /> */}
+        <AddContact ref={ref} />
         <>
           <Box sx={{ px: 2, mt: 1 }}>
             <Search />
