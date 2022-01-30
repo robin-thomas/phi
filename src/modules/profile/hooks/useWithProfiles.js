@@ -16,8 +16,9 @@ const useWithProfiles = (addresses) => {
       }
     }
 
+    setProfiles([]);
+
     if (addresses?.length > 0) {
-      setProfiles([]);
       loadProfiles();
     }
   }, [addresses]);
