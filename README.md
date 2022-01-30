@@ -1,4 +1,6 @@
 # Phi
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Frobin-thomas%2Fphi.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Frobin-thomas%2Fphi?ref=badge_shield)
+
 
 ## Inspiration
 Social networks and Blockchain are two areas I'm pretty much interested in. Social network, because that's what my daily work entails. Blockchain, because I love smart contracts and their decentralized aspect. Trying to bring both these worlds a bit closer is what inspired me to build Phi.
@@ -42,3 +44,7 @@ The web app is built using React and NextJS and is hosted on Vercel.
   * Support emojis
   * Support more attachment formats
   * Support audio calls, video calls, and so on
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Frobin-thomas%2Fphi.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Frobin-thomas%2Fphi?ref=badge_large)
