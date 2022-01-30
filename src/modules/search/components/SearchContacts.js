@@ -6,7 +6,7 @@ import { useAppContext } from '@/modules/common/hooks';
 import { searchProfiles } from '@/modules/profile/utils/ceramic';
 
 const SearchContacts = () => {
-  const { address, contacts, setSearchResults, checkingContact, setCheckingContact } = useAppContext();
+  const { address, contacts, setSearchResults } = useAppContext();
 
   const formik = useFormik({
     initialValues: { search: '' },
@@ -18,12 +18,8 @@ const SearchContacts = () => {
     }),
     onSubmit: async (values) => {
       if (values.search) {
-        setCheckingContact(true);
-
-        const _profiles = searchProfiles(values.search);
-        setSearchResults(_profiles || []);
-
-        setCheckingContact(false);
+        const profiles = searchProfiles(values.search);
+        setSearchResults(profiles);
       } else {
         setSearchResults(contacts);
       }
@@ -37,7 +33,6 @@ const SearchContacts = () => {
       placeholder="Ethereum address"
       formik={formik}
       onChange={formik.handleSubmit}
-      disabled={checkingContact}
     />
   );
 }
