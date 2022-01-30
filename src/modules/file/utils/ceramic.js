@@ -10,10 +10,10 @@ export const encrypt = async (ab, address) => {
   return Buffer.from(JSON.stringify(jwe)).toString('hex');
 }
 
-export const decrypt = async (hex) => {
+export const decrypt = async (hex, address) => {
   const jwe = Buffer.from(hex, 'hex').toString();
 
-  const { client } = await self();
+  const { client } = await self(address);
   const did = client.ceramic.did;
 
   return await did.decryptJWE(JSON.parse(jwe));
