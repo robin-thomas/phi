@@ -5,13 +5,13 @@ import { Skeleton } from '@/layouts/core/ContactCard';
 import { useAppContext } from '@/modules/common/hooks';
 import { useWithProfiles } from '@/modules/profile/hooks';
 
-const ContactList = ({ addressList }) => {
-  const { activeContact, setActiveContact } = useAppContext();
-  const profiles = useWithProfiles(addressList);
+const ContactList = () => {
+  const { activeContact, setActiveContact, searchResults } = useAppContext();
+  const profiles = useWithProfiles(searchResults);
 
   const onContact = (address) => () => setActiveContact(_active => _active === address ? null : address);
 
-  if (!addressList) {
+  if (!searchResults) {
     return <Skeleton count={3} />;
   }
 

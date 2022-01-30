@@ -13,7 +13,7 @@ import Search from '@/modules/search/components';
 
 const Contacts = () => {
   const ref = useRef();
-  const { contacts, searchResults, loadingContacts } = useAppContext();
+  const { contacts, loadingContacts } = useAppContext();
 
   return (
     <>
@@ -24,7 +24,7 @@ const Contacts = () => {
           <Box sx={{ px: 2, mt: 1 }}>
             <Search />
             <Divider sx={{ mt: contacts?.length > 0 ? 2 : 0, mb: 2 }} />
-            <ContactList addressList={searchResults} />
+            <ContactList />
           </Box>
           {contacts?.length === 0 && (
             <Box className="nofriendBox">
