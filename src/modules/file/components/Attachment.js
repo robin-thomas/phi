@@ -9,6 +9,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import Bucket from '../utils/bucket';
 import { encrypt } from '../utils/ceramic';
 import { readImage } from '../utils/image';
+import { TEXTILE_BUCKET_PROFILE } from '@/modules/profile/constants/textile';
 
 const Attachment = ({ file, address, setAttachments, removeFile }) => {
   const [progress, setProgress] = useState(0);
@@ -21,7 +22,7 @@ const Attachment = ({ file, address, setAttachments, removeFile }) => {
       const ab = await readImage(file);
       const hex = await encrypt(ab, address);
 
-      const bucketKey = await Bucket.getKey(process.env.TEXTILE_BUCKET_PROFILE);
+      const bucketKey = await Bucket.getKey(TEXTILE_BUCKET_PROFILE);
 
       // upload to textile
       const bucket = { path, content: Buffer.from(hex) };
