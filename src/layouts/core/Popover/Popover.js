@@ -2,7 +2,7 @@ import { forwardRef, useImperativeHandle, useState } from 'react';
 
 import MUIPopover from '@mui/material/Popover';
 
-const Popover = ({ children }, ref) => {
+const Popover = ({ children, ...props  }, ref) => {
   const [anchorEl, setAnchorEl] = useState(null);
 
   useImperativeHandle(ref, () => ({
@@ -19,6 +19,7 @@ const Popover = ({ children }, ref) => {
 
   return (
     <MUIPopover
+      {...props}
       open={Boolean(anchorEl)}
       anchorEl={anchorEl}
       onClose={handleClose}

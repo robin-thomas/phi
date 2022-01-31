@@ -27,6 +27,7 @@ export const getImageDetails = (url) => {
   return new Promise(resolve => {
     const img = new window.Image();
     img.onload = () => resolve({ width: img.width, height: img.height });
+    img.onerror = console.error;
     img.src = url;
   });
 }
@@ -44,14 +45,15 @@ export const downloadProfilePictureFromBucket = async (bucketKey, address, mimeT
   return imageCache.get(address);
 }
 
-export const downloadImageFromBucket = async (bucketKey, location, mimeType) => {
+export const downloadImageFromBucket = async (bucketKey, location, mimeType, mapper = async () => {}) => {
   if (imageCache.has(location)) {
     console.debug('Found image in cache. Not downloading from bucket');
     return imageCache.get(location);
   }
 
   const buf = await Bucket.download(bucketKey, location);
-  const url = URL.createObjectURL(new Blob([buf], { type: mimeType }));
+  const mapped = await mapper(buf);
+  const url = URL.createObjectURL(new Blob([mapped], { type: mimeType }));
 
   imageCache.set(location, url);
   return imageCache.get(location);

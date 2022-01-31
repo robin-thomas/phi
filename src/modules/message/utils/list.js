@@ -1,3 +1,5 @@
+import { checkText } from 'smile2emoji';
+
 export const messageGrouper = (chats) => {
   const results = [];
 
@@ -10,7 +12,7 @@ export const messageGrouper = (chats) => {
 
     const j = i + 1;
     while (j < chats.length && chats[i].from === chats[j].from) {
-      // if differnce between 2 messages are greater than 10 minutes,
+      // if differnce between 2 messages are greater than 5 minutes,
       // dont club then together.
       const prev = new Date(chats[i].date).getTime();
       const curr = new Date(chats[j].date).getTime();
@@ -23,13 +25,19 @@ export const messageGrouper = (chats) => {
       ++j;
     }
 
-    if (j < chats.length) {
+    if (i + 1 === j) {
+      results.push({ ...chats[i], messages, date: chats[i].date });
+    } else if (j < chats.length) {
       results.push({ ...chats[i], messages, date: chats[j].date });
     } else {
       results.push({ ...chats[i], messages, date: chats[j - 1].date });
     }
 
     i = j - 1;
+  }
+
+  for (const result of results) {
+    result.messages = result.messages.map(checkText);
   }
 
   return results;
