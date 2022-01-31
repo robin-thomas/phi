@@ -87,7 +87,7 @@ const ChatBox = ({ threadID }) => {
           </Grid>
         ))}
       </Grid>
-      <Popover ref={ref} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+      <Popover ref={ref} transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}>
         <Emoji setEmoji={setEmoji} />
       </Popover>
       <TextField

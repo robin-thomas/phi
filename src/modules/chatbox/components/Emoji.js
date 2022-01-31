@@ -8,10 +8,12 @@ const Emoji = ({ setEmoji }) => {
   return (
     <Picker
       onEmojiClick={onEmojiSelect}
-      disableAutoFocus={true}
       skinTone="1f3fb"
       groupNames={{ smileys_people: 'PEOPLE' }}
       native
+      disableAutoFocus
+      disableSearchBar
+      disableSkinTonePicker
     />
   );
 }
