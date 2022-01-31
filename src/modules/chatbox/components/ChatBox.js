@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import AttachFileIcon from '@mui/icons-material/AttachFile';
+import InsertEmoticonIcon from '@mui/icons-material/InsertEmoticon';
 import SendIcon from '@mui/icons-material/Send';
 import Grid from '@mui/material/Grid';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -9,8 +10,10 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 
 import { attachmentsDefaults } from '../constants/attachments';
+import Emoji from './Emoji';
 import { whitetheme } from '@/app/styles/theme';
 import { IconButton } from '@/layouts/core/Button';
+import { Popover } from '@/layouts/core/Popover';
 import { TextField } from '@/layouts/core/TextField';
 import { useAppContext } from '@/modules/common/hooks';
 import Attachment from '@/modules/file/components/Attachment';
@@ -20,9 +23,18 @@ import Chat from '@/modules/message/utils/textile/chat';
 const whiteTheme = createTheme(whitetheme);
 
 const ChatBox = ({ threadID }) => {
-  const [files, setFiles] = useState({});
-  const [attachments, setAttachments] = useState([]);
+  const ref = useRef();
   const { activeContact } = useAppContext();
+
+  const [files, setFiles] = useState({});
+  const [emoji, setEmoji] = useState(false);
+  const [attachments, setAttachments] = useState([]);
+
+  useEffect(() => {
+    if (emoji?.emoji) {
+      formik.setFieldValue('message', `${formik.values.message}${emoji.emoji}`);
+    }
+  }, [formik, emoji]);
 
   const attachFile = async () => {
     const file = await uploadImage();
@@ -61,6 +73,9 @@ const ChatBox = ({ threadID }) => {
           </Grid>
         ))}
       </Grid>
+      <Popover ref={ref} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+        <Emoji setEmoji={setEmoji} />
+      </Popover>
       <TextField
         formik={formik}
         name="message"
@@ -71,6 +86,13 @@ const ChatBox = ({ threadID }) => {
           endAdornment: (
             <InputAdornment position="end">
               <>
+                <IconButton
+                  title="Add emojis"
+                  onClick={ref.current?.handleOpen}
+                  disabled={Object.keys(files).length === attachmentsDefaults.maxFiles}
+                >
+                  <InsertEmoticonIcon fontSize="small" />
+                </IconButton>
                 <IconButton
                   title="Attach file"
                   onClick={attachFile}
