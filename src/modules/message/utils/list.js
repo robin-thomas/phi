@@ -1,3 +1,5 @@
+import { checkText } from 'smile2emoji';
+
 export const messageGrouper = (chats) => {
   const results = [];
 
@@ -32,6 +34,10 @@ export const messageGrouper = (chats) => {
     }
 
     i = j - 1;
+  }
+
+  for (const result of results) {
+    result.messages = result.messages.map(checkText);
   }
 
   return results;
