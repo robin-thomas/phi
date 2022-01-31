@@ -7,6 +7,7 @@ import Grid from '@mui/material/Grid';
 import InputAdornment from '@mui/material/InputAdornment';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { useFormik } from 'formik';
+import { checkText } from 'smile2emoji';
 import * as yup from 'yup';
 
 import { attachmentsDefaults } from '../constants/attachments';
@@ -36,13 +37,6 @@ const ChatBox = ({ threadID }) => {
     }
   }, [formik, emoji]);
 
-  const attachFile = async () => {
-    const file = await uploadImage();
-    setFiles(_files => ({ ..._files, [file.name]: file }));
-  };
-
-  const removeFile = (name) => () => setFiles(_files => _files.filter(file => file !== name));
-
   const formik = useFormik({
     initialValues: { message: '' },
     validationSchema: yup.object({ message: yup.string() }),
@@ -52,12 +46,32 @@ const ChatBox = ({ threadID }) => {
         Chat.post(activeContact, values.message, attachments);
 
         resetForm();
-        setFiles([]);
-        setAttachments([]);
+        reset();
       }
     },
     enableReinitialize: true,
   });
+
+  const onMessageUpdate = async () => {
+    const message = checkText(formik.values.message);
+
+    if (message !== formik.values.message) {
+      formik.setFieldValue('message', message);
+    }
+  }
+
+  const attachFile = async () => {
+    const file = await uploadImage();
+    setFiles(_files => ({ ..._files, [file.name]: file }));
+  };
+
+  const removeFile = (name) => () => setFiles(_files => _files.filter(file => file !== name));
+
+  const reset = () => {
+    setEmoji(null);
+    setFiles([]);
+    setAttachments([]);
+  }
 
   return (
     <ThemeProvider theme={whiteTheme}>
@@ -80,6 +94,7 @@ const ChatBox = ({ threadID }) => {
         formik={formik}
         name="message"
         placeholder="Type a message"
+        onChange={onMessageUpdate}
         onKeyDown={(e) => e.key === 'Enter' && formik.handleSubmit()}
         sx={{ mt: 1 }}
         InputProps={{
