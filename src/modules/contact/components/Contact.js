@@ -1,8 +1,11 @@
+import { useEffect, useState } from 'react';
+
 import Avatar from '@mui/material/Avatar';
 
 import styles from './index.module.css';
-import { ContactCard } from '@/layouts/core/ContactCard';
+import { Skeleton, ContactCard } from '@/layouts/core/ContactCard';
 import { useWithProfilePicture } from '@/modules/profile/hooks';
+import { getProfile } from '@/modules/profile/utils/ceramic';
 
 const BaseContact = ({ profile, action, onClick, classes }) => {
   const src = useWithProfilePicture(profile);
@@ -19,11 +22,25 @@ const BaseContact = ({ profile, action, onClick, classes }) => {
   );
 }
 
-const Contact = (props) => {
+const Contact = ({ profile, ...props }) => {
+  const [user, setUser] = useState(profile.name ? profile : null);
+
+  useEffect(() => {
+    if (!profile.name) {
+      getProfile(profile.address)
+        .then(setUser);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  if (!user) {
+    return <Skeleton />;
+  }
+
   if (props.active) {
     return (
       <BaseContact
         {...props}
+        profile={user}
         classes={`${styles.container} ${styles.clickable} ${styles.active}`}
       />
     );
@@ -33,6 +50,7 @@ const Contact = (props) => {
     return (
       <BaseContact
         {...props}
+        profile={user}
         classes={`${styles.container} ${styles.active}`}
       />
     );
@@ -41,6 +59,7 @@ const Contact = (props) => {
   return (
     <BaseContact
       {...props}
+      profile={user}
       classes={`${styles.container} ${styles.clickable}`}
     />
   );
