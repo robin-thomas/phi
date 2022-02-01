@@ -1,8 +1,8 @@
 {
   "ignore": {
-    "next": {
-      "versions": ">11",
-      "reason": "import issue"
+    "eslint": {
+      "versions": ">7",
+      "reason": "next.js have no support yet"
     }
   }
 }
