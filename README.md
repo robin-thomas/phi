@@ -20,6 +20,10 @@
   </a>
 </p>
 
+<p align="center">
+  <img src="https://i.imgur.com/Q3Uu0Uo.png" height="500" />
+</p>
+
 ## Inspiration
 Social networks and Blockchain are two areas I'm pretty much interested in. Social network, because that's what my daily work entails. Blockchain, because I love smart contracts and their decentralized aspect. Trying to bring both these worlds a bit closer is what inspired me to build Phi.
 
