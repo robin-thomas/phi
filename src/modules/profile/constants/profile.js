@@ -1,5 +1,5 @@
 export const profileDefaults = {
-  name: 'John Does',
+  name: 'John Doe',
   description: 'Available',
   avatar: {
     width: 200,
