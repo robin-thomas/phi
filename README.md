@@ -6,14 +6,14 @@
 </p>
 
 <p align="center">
- <a aria-label="GitHub Release" href="https://github.com/robin-thomas/phi/releases" target="_blank">
-    <img alt="" src="https://img.shields.io/github/v/release/robin-thomas/phi?labelColor=000&sort=semver&style=for-the-badge">
-  </a>
- <a aria-label="Last Modified" href="https://github.com/robin-thomas/phi/releases" target="_blank">
-    <img src="https://img.shields.io/github/release-date/robin-thomas/phi?style=for-the-badge&labelColor=000">
-  </a>
   <a aria-label="License" href="https://github.com/robin-thomas/phi/blob/main/LICENSE" target="_blank">
     <img alt="" src="https://img.shields.io/npm/l/next.svg?style=for-the-badge&labelColor=000">
+  </a>
+  <a aria-label="GitHub Release" href="https://github.com/robin-thomas/phi/releases" target="_blank">
+    <img alt="" src="https://img.shields.io/github/v/release/robin-thomas/phi?labelColor=000&sort=semver&style=for-the-badge">
+  </a>
+  <a aria-label="Last Modified" href="https://github.com/robin-thomas/phi/releases" target="_blank">
+    <img src="https://img.shields.io/github/release-date/robin-thomas/phi?style=for-the-badge&labelColor=000">
   </a>
   <a aria-label="Join the community on GitHub" href="https://github.com/ipfs/community/discussions/717" target="_blank">
     <img alt="" src="https://img.shields.io/badge/Join%20the%20community-blueviolet.svg?style=for-the-badge&labelColor=0000&logo=github&logoWidth=20">
