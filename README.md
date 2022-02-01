@@ -10,7 +10,7 @@
     <img alt="" src="https://img.shields.io/github/v/release/robin-thomas/phi?labelColor=000&sort=semver&style=for-the-badge">
   </a>
   <a aria-label="Last Modified" href="https://github.com/robin-thomas/phi/releases" target="_blank">
-    <img src="https://img.shields.io/github/release-date/robin-thomas/phi?style=for-the-badge&labelColor=000">
+    <img src="https://img.shields.io/github/release-date/robin-thomas/phi?style=for-the-badge&labelColor=000&color=red">
   </a>
   <a aria-label="License" href="https://github.com/robin-thomas/phi/blob/main/LICENSE" target="_blank">
     <img alt="" src="https://img.shields.io/npm/l/next.svg?style=for-the-badge&labelColor=000">
