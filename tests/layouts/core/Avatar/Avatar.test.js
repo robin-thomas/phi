@@ -25,7 +25,7 @@ describe('Avatar', () => {
     expect(avatar).toHaveStyle('height: 50px');
   });
 
-  it('Verify that the skeleton props works fine', () => {
+  it('Verify that the skeleton prop works fine', () => {
     const { container } = render(<Avatar skeleton />);
 
     const avatar = container.querySelector('span.MuiSkeleton-root');
@@ -35,7 +35,7 @@ describe('Avatar', () => {
     expect(avatar).toHaveStyle('height: 200px');
   });
 
-  it('Verify that the mini skeleton props works fine', () => {
+  it('Verify that the mini skeleton prop works fine', () => {
     const { container } = render(<Avatar mini skeleton />);
 
     const avatar = container.querySelector('span.MuiSkeleton-root');

@@ -27,7 +27,7 @@ describe('ListItemButton', () => {
     expect(screen.getByRole('button')).not.toHaveAttribute('aria-disabled', 'true');
   });
 
-  it('Verify that the disabled option works', () => {
+  it('Verify that the disabled prop works fine', () => {
     cleanup();
 
     render(getComponent({ disabled: true }));
@@ -35,7 +35,7 @@ describe('ListItemButton', () => {
     expect(screen.getByRole('button')).toHaveAttribute('aria-disabled', 'true');
   });
 
-  it('Verify that the onClick handler works', async () => {
+  it('Verify that the onClick prop works fine', async () => {
     cleanup();
 
     const onClick = jest.fn();

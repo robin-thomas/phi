@@ -27,7 +27,7 @@ describe('FabButton', () => {
     expect(button).not.toBeDisabled();
   });
 
-  it('Verify whether tooltip works on hover', async () => {
+  it('Verify that the tooltip prop works fine', async () => {
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
 
     fireEvent.mouseOver(button);
@@ -37,7 +37,7 @@ describe('FabButton', () => {
     expect(screen.getByRole('tooltip')).toHaveTextContent(props.title);
   });
 
-  it('Verify that the disabled option works', () => {
+  it('Verify that the disabled prop works fine', () => {
     cleanup();
 
     render(getComponent({ disabled: true }));
@@ -45,7 +45,7 @@ describe('FabButton', () => {
     expect(screen.getByRole('button')).toBeDisabled();
   });
 
-  it('Verify that the onClick handler works', async () => {
+  it('Verify that the onClick prop works fine', async () => {
     cleanup();
 
     const onClick = jest.fn();
