@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 
 import styles from './index.module.css';
-import { Backdrop } from '@/layouts/core/Backdrop/Backdrop';
+import { Backdrop } from '@/layouts/core/Backdrop';
 import { FabButton } from '@/layouts/core/Button';
 import { useAppContext } from '@/modules/common/hooks';
 import { AddContact, ContactList } from '@/modules/contact/components';

@@ -1,0 +1,34 @@
+name: ci
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  wait_for_vercel:
+    name: Wait for vercel
+    runs-on: ubuntu-latest
+    outputs:
+      preview_url: ${{ steps.waitForVercelPreviewDeployment.outputs.url }}
+    steps:
+      - name: Wait for Vercel preview deployment to be ready
+        uses: patrickedqvist/wait-for-vercel-preview@master
+        id: waitForVercelPreviewDeployment
+        with:
+          token: ${{ secrets.TOKEN_GITHUB }}
+          max_timeout: 120
+  tests:
+    name: Tests
+    needs: wait_for_vercel
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - uses: microsoft/playwright-github-action@v1
+      - run: npm install --include=dev
+      - run: npm test
+        env:
+          VERCEL_URL: ${{ needs.wait_for_vercel.outputs.preview_url }}
+          VERCEL_ENV: preview
