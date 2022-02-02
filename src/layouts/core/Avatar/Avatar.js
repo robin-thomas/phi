@@ -12,7 +12,7 @@ const Avatar = ({ mini, src, skeleton }) => {
   }
 
   return (
-    <MUIAvatar sx={{ width, height }} alt="John Doe" src={src} />
+    <MUIAvatar sx={{ width, height }} src={src} />
   );
 }
 
