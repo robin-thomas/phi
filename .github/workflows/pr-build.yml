@@ -1,4 +1,4 @@
-name: ci
+name: CI
 
 on:
   pull_request:
@@ -6,7 +6,7 @@ on:
 
 jobs:
   wait_for_vercel:
-    name: Wait for vercel
+    name: Wait for Vercel Deployment
     runs-on: ubuntu-latest
     outputs:
       preview_url: ${{ steps.waitForVercelPreviewDeployment.outputs.url }}
@@ -18,7 +18,7 @@ jobs:
           token: ${{ secrets.TOKEN_GITHUB }}
           max_timeout: 120
   tests:
-    name: Tests
+    name: Run Unit Tests
     needs: wait_for_vercel
     runs-on: ubuntu-latest
     steps:
