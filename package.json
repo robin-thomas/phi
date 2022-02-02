@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest --ci"
+    "test": "jest --ci",
+    "test:coverage": "jest --ci --coverage --verbose"
   },
   "repository": {
     "type": "git",

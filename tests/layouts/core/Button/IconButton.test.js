@@ -1,8 +1,8 @@
 import { render, cleanup, screen, fireEvent, waitFor } from '@testing-library/react';
 
-import { FabButton } from '@/layouts/core/Button';
+import { IconButton } from '@/layouts/core/Button';
 
-describe('FabButton', () => {
+describe('IconButton', () => {
   let button;
 
   const props = {
@@ -10,7 +10,7 @@ describe('FabButton', () => {
   }
   const text = 'Hello I\'m a button';
 
-  const getComponent = (newProps = {}) => <FabButton {...props} {...newProps}>{text}</FabButton>;
+  const getComponent = (newProps = {}) => <IconButton {...props} {...newProps}>{text}</IconButton>;
 
   beforeEach(() => {
     render(getComponent());
@@ -21,7 +21,7 @@ describe('FabButton', () => {
     cleanup();
   });
 
-  it('Render a FabButton', () => {
+  it('Render a IconButton', () => {
     expect(button).toBeInTheDocument();
     expect(button).toHaveTextContent(text);
     expect(button).not.toBeDisabled();
