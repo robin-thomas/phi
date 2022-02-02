@@ -1,8 +1,0 @@
-{
-  "ignore": {
-    "eslint": {
-      "versions": ">7",
-      "reason": "next.js have no support yet"
-    }
-  }
-}
