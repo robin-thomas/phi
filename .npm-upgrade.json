@@ -1,8 +1,0 @@
-{
-  "ignore": {
-    "next": {
-      "versions": ">11",
-      "reason": "import issue"
-    }
-  }
-}
