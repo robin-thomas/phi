@@ -20,4 +20,8 @@ BackDropLoading.propTypes = {
   open: PropTypes.bool,
 };
 
+BackDropLoading.defaultProps = {
+  open: false,
+};
+
 export default BackDropLoading;

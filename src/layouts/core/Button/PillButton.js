@@ -23,7 +23,7 @@ const PillButton = ({ children }) => (
 )
 
 PillButton.propTypes = {
-  children: PropTypes.node,
+  children: PropTypes.node.isRequired,
 };
 
 export default PillButton;

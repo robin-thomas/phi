@@ -16,10 +16,10 @@ const ListItemButton = ({ text, disabled, onClick, children }) => (
 );
 
 ListItemButton.propTypes = {
-  text: PropTypes.string,
+  text: PropTypes.string.isRequired,
   disabled: PropTypes.bool,
   onClick: PropTypes.func,
-  children: PropTypes.node,
+  children: PropTypes.node.isRequired,
 };
 
 export default ListItemButton;

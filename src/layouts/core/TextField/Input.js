@@ -25,8 +25,8 @@ const Input = ({ formik, name, label, disabled, ...props}) => (
 )
 
 Input.propTypes = {
-  formik: PropTypes.object,
-  name: PropTypes.string,
+  formik: PropTypes.object.isRequired,
+  name: PropTypes.string.isRequired,
   label: PropTypes.string,
   disabled: PropTypes.bool,
 };

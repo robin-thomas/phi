@@ -35,7 +35,7 @@ const Popover = ({ children, ...props  }, ref) => {
 };
 
 Popover.propTypes = {
-  children: PropTypes.node,
+  children: PropTypes.node.isRequired,
 };
 
 export default forwardRef(Popover);

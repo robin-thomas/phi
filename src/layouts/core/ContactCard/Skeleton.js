@@ -27,7 +27,7 @@ const Skeleton = () => (
 );
 
 const Skeletons = ({ count }) => {
-  const rows = new Array(count || 1).fill(0);
+  const rows = new Array(count).fill(0);
 
   return (
     <MUIStack>
@@ -39,5 +39,9 @@ const Skeletons = ({ count }) => {
 Skeletons.propTypes = {
   count: PropTypes.number,
 };
+
+Skeletons.defaultProps = {
+  count: 1,
+}
 
 export default Skeletons;

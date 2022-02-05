@@ -6,7 +6,7 @@ describe('ListItemButton', () => {
   let button;
 
   const props = {
-    title: 'Hello I\'m a tooltip',
+    text: 'Hello I\'m a tooltip',
   }
   const text = 'Hello I\'m a button';
 

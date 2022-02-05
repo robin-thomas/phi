@@ -17,10 +17,10 @@ const IconButton = ({ title, onClick, disabled, children }) => (
 );
 
 IconButton.propTypes = {
-  title: PropTypes.string,
+  title: PropTypes.string.isRequired,
   onClick: PropTypes.func,
   disabled: PropTypes.bool,
-  children: PropTypes.node,
+  children: PropTypes.node.isRequired,
 };
 
 export default IconButton;

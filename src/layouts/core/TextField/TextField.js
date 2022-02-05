@@ -28,8 +28,8 @@ const TextField = ({ formik, name, placeholder, onBlur, onChange, onKeyDown, sx,
 );
 
 TextField.propTypes = {
-  formik: PropTypes.object,
-  name: PropTypes.string,
+  formik: PropTypes.object.isRequired,
+  name: PropTypes.string.isRequired,
   placeholder: PropTypes.string,
   onBlur: PropTypes.func,
   onChange: PropTypes.func,
