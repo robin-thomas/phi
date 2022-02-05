@@ -12,12 +12,10 @@ const customJestConfig = {
     '^@/layouts/(.*)$': '<rootDir>/src/layouts/$1',
   },
   testEnvironment: 'jsdom',
-  setupFiles: [
-    'jest-prop-types',
-  ],
   setupFilesAfterEnv: [
     '@testing-library/jest-dom/extend-expect',
     '@testing-library/react',
+    '<rootDir>/tests/setup.js',
   ],
   transform: { // to get the correct coverage.
     '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
