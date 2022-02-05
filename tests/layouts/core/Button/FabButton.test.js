@@ -55,4 +55,10 @@ describe('FabButton', () => {
 
     expect(onClick).toHaveBeenCalled();
   });
+
+  it('Verify that if a required prop is not passed, it will throw error', () => {
+    cleanup();
+
+    expect(() => render(<FabButton />)).toThrowError();
+  });
 });

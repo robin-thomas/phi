@@ -1,4 +1,5 @@
 import MUIButton from '@mui/material/Button';
+import PropTypes from 'prop-types';
 
 const PillButton = ({ children }) => (
   <MUIButton
@@ -20,5 +21,9 @@ const PillButton = ({ children }) => (
     {children}
   </MUIButton>
 )
+
+PillButton.propTypes = {
+  children: PropTypes.node.isRequired,
+};
 
 export default PillButton;

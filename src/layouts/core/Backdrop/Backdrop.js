@@ -1,6 +1,7 @@
 import MUIBackdrop from '@mui/material/Backdrop';
 import MUICircularProgress from '@mui/material/CircularProgress';
 import { withStyles } from '@mui/styles';
+import PropTypes from 'prop-types';
 
 const Backdrop = withStyles({
   root: {
@@ -14,5 +15,13 @@ const BackDropLoading = ({ open }) => (
     <MUICircularProgress color="secondary" />
   </Backdrop>
 );
+
+BackDropLoading.propTypes = {
+  open: PropTypes.bool,
+};
+
+BackDropLoading.defaultProps = {
+  open: false,
+};
 
 export default BackDropLoading;

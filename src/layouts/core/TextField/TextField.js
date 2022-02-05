@@ -1,4 +1,5 @@
 import MUITextField from '@mui/material/TextField';
+import PropTypes from 'prop-types';
 
 const TextField = ({ formik, name, placeholder, onBlur, onChange, onKeyDown, sx, disabled, InputProps }) => (
   <MUITextField
@@ -25,5 +26,17 @@ const TextField = ({ formik, name, placeholder, onBlur, onChange, onKeyDown, sx,
     fullWidth
   />
 );
+
+TextField.propTypes = {
+  formik: PropTypes.object.isRequired,
+  name: PropTypes.string.isRequired,
+  placeholder: PropTypes.string,
+  onBlur: PropTypes.func,
+  onChange: PropTypes.func,
+  onKeyDown: PropTypes.func,
+  sx: PropTypes.object,
+  disabled: PropTypes.bool,
+  InputProps: PropTypes.object,
+};
 
 export default TextField;
