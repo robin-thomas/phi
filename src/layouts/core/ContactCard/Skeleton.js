@@ -2,6 +2,7 @@ import MUICard from '@mui/material/Card';
 import MUICardHeader from '@mui/material/CardHeader';
 import MUISkeleton from '@mui/material/Skeleton';
 import MUIStack from '@mui/material/Stack';
+import PropTypes from 'prop-types';
 
 import styles from './index.module.css';
 
@@ -34,5 +35,9 @@ const Skeletons = ({ count }) => {
     </MUIStack>
   );
 }
+
+Skeletons.propTypes = {
+  count: PropTypes.number,
+};
 
 export default Skeletons;
