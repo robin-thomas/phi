@@ -56,6 +56,7 @@
     "eslint-config-next": "12.0.10",
     "husky": "^7.0.4",
     "jest": "^27.4.7",
+    "jest-prop-types": "^1.0.1",
     "lint-staged": "^12.3.2",
     "prettier": "^2.5.1",
     "sharp": "^0.29.3"
