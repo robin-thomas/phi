@@ -8,7 +8,7 @@ describe('Emoji', () => {
     await preloadAll();
   });
 
-  it('Picker should be rendered', () => {
+  it('Emoji Picker should be rendered', () => {
     const setEmoji = jest.fn();
     const { container } = render(<Emoji setEmoji={setEmoji}/>);
 
