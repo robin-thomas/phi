@@ -21,7 +21,7 @@ const customJestConfig = {
     '<rootDir>/tests/setup.js',
   ],
   transform: { // to get the correct coverage.
-    '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'], plugins: ['transform-dynamic-import'] }],
+    '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
   },
 }
 

@@ -1,25 +1,20 @@
-import { render, screen } from '@testing-library/react';
-import preloadAll from 'jest-next-dynamic';
+import { render, screen, waitFor } from '@testing-library/react';
 
 import { Emoji } from '@/modules/chatbox/components';
 
 describe('Emoji', () => {
-  beforeAll(async () => {
-    await preloadAll();
-  });
-
-  it('Emoji Picker should be rendered', () => {
+  it('Emoji Picker should be rendered', async () => {
     const setEmoji = jest.fn();
-    const { debug, container } = render(<Emoji setEmoji={setEmoji}/>);
+    render(<Emoji setEmoji={setEmoji}/>);
 
-    debug();
-
-    expect(container.firstChild).toHaveClass('emoji-picker-react');
+    await waitFor(() => expect(screen.getByRole('button', { name: '😀' })).toBeInTheDocument());
   });
 
   it('Verify that the setEmoji prop works fine', async () => {
     const setEmoji = jest.fn();
     render(<Emoji setEmoji={setEmoji} />);
+
+    await waitFor(() => expect(screen.getByRole('button', { name: '😀' })).toBeInTheDocument());
 
     const emoji = screen.getByRole('button', { name: '😀' });
     emoji.click();
