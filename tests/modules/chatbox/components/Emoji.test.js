@@ -10,7 +10,9 @@ describe('Emoji', () => {
 
   it('Emoji Picker should be rendered', () => {
     const setEmoji = jest.fn();
-    const { container } = render(<Emoji setEmoji={setEmoji}/>);
+    const { debug, container } = render(<Emoji setEmoji={setEmoji}/>);
+
+    debug();
 
     expect(container.firstChild).toHaveClass('emoji-picker-react');
   });
