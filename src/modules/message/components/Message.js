@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import format from 'date-fns/format';
+import propTypes from 'prop-types';
 
 import styles from './Message.module.css';
 import MessageImage from './MessageImage';
@@ -80,5 +81,9 @@ const Message = ({ chat }) => {
     </Box>
   );
 }
+
+Message.propTypes = {
+  chat: propTypes.object.isRequired,
+};
 
 export default Message;

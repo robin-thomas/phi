@@ -2,6 +2,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import SearchIcon from '@mui/icons-material/Search';
 import CircularProgress from '@mui/material/CircularProgress';
 import InputAdornment from '@mui/material/InputAdornment';
+import propTypes from 'prop-types';
 
 import { IconButton } from '@/layouts/core/Button';
 import { TextField } from '@/layouts/core/TextField';
@@ -34,5 +35,14 @@ const Search = ({ name, placeholder, formik, onChange, disabled, display }) => (
     }}
   />
 )
+
+Search.propTypes = {
+  name: propTypes.string.isRequired,
+  placeholder: propTypes.string.isRequired,
+  formik: propTypes.object.isRequired,
+  onChange: propTypes.func,
+  disabled: propTypes.bool,
+  display: propTypes.bool,
+};
 
 export default Search;

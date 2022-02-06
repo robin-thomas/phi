@@ -7,6 +7,7 @@ import Grid from '@mui/material/Grid';
 import InputAdornment from '@mui/material/InputAdornment';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { useFormik } from 'formik';
+import propTypes from 'prop-types';
 import { checkText } from 'smile2emoji';
 import * as yup from 'yup';
 
@@ -129,6 +130,10 @@ const ChatBox = ({ threadID }) => {
       />
     </ThemeProvider>
   )
+};
+
+ChatBox.propTypes = {
+  threadID: propTypes.string.isRequired,
 };
 
 export default ChatBox;

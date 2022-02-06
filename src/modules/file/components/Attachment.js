@@ -5,6 +5,7 @@ import Alert from '@mui/material/Alert';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import LinearProgress from '@mui/material/LinearProgress';
+import propTypes from 'prop-types';
 
 import Bucket from '../utils/bucket';
 import { encrypt } from '../utils/ceramic';
@@ -58,5 +59,12 @@ const Attachment = ({ file, address, setAttachments, removeFile }) => {
     </Alert>
   )
 }
+
+Attachment.propTypes = {
+  file: propTypes.object.isRequired,
+  address: propTypes.string.isRequired,
+  setAttachments: propTypes.func.isRequired,
+  removeFile: propTypes.func.isRequired,
+};
 
 export default Attachment;
