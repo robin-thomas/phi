@@ -9,9 +9,12 @@ const createJestConfig = nextJest({
 const customJestConfig = {
   roots: ['<rootDir>/tests/'],
   moduleNameMapper: {
+    '^@/app/(.*)$': '<rootDir>/src/app/$1',
+    '^@/config/(.*)$': '<rootDir>/src/app/config/$1',
     '^@/layouts/(.*)$': '<rootDir>/src/layouts/$1',
+    '^@/modules/(.*)$': '<rootDir>/src/modules/$1',
   },
-  testEnvironment: 'jsdom',
+  testEnvironment: '<rootDir>/tests/testEnv.js',
   setupFilesAfterEnv: [
     '@testing-library/jest-dom/extend-expect',
     '@testing-library/react',

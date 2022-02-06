@@ -32,12 +32,6 @@ const ChatBox = ({ threadID }) => {
   const [emoji, setEmoji] = useState(false);
   const [attachments, setAttachments] = useState([]);
 
-  useEffect(() => {
-    if (emoji?.emoji) {
-      formik.setFieldValue('message', `${formik.values.message}${emoji.emoji}`);
-    }
-  }, [formik, emoji]);
-
   const formik = useFormik({
     initialValues: { message: '' },
     validationSchema: yup.object({ message: yup.string() }),
@@ -53,7 +47,13 @@ const ChatBox = ({ threadID }) => {
     enableReinitialize: true,
   });
 
-  const onMessageUpdate = async () => {
+  useEffect(() => {
+    if (emoji?.emoji) {
+      formik.setFieldValue('message', `${formik.values.message}${emoji.emoji}`);
+    }
+  }, [emoji]); // eslint-disable-line
+
+  const onMessageUpdate = () => {
     const message = checkText(formik.values.message);
 
     if (message !== formik.values.message) {

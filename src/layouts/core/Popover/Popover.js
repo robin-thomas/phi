@@ -3,7 +3,7 @@ import { forwardRef, useImperativeHandle, useState } from 'react';
 import MUIPopover from '@mui/material/Popover';
 import PropTypes from 'prop-types';
 
-const Popover = ({ children, ...props  }, ref) => {
+const Popover = forwardRef(({ children, ...props  }, ref) => {
   const [anchorEl, setAnchorEl] = useState(null);
 
   useImperativeHandle(ref, () => ({
@@ -32,10 +32,11 @@ const Popover = ({ children, ...props  }, ref) => {
       {children}
     </MUIPopover>
   )
-};
+});
 
+Popover.displayName = 'Popover';
 Popover.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-export default forwardRef(Popover);
+export default Popover;
