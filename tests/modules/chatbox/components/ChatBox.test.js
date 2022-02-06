@@ -85,7 +85,7 @@ describe('ChatBox', () => {
     emoji.click();
 
     await waitFor(() => expect(chatbox).toHaveValue('😀'));
-  }, 10000); /* 10s timeout */
+  }, 20000); /* 20s timeout */
 
   it('Verify that a file can be attached to chatbox', async () => {
     const attachFileBtn = screen.getByLabelText('Attach file').firstChild;
