@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 
+import propTypes from 'prop-types';
+
 import { Avatar as BaseAvatar } from '@/layouts/core/Avatar';
 import { useAppContext } from '@/modules/common/hooks';
 import { downloadProfilePictureFromBucket } from '@/modules/file/utils/image';
@@ -37,5 +39,11 @@ const Avatar = ({ profile, mini, uploading }) => {
 
   return <BaseAvatar src={profilePic} mini={mini} skeleton={loading} />;
 }
+
+Avatar.propTypes = {
+  profile: propTypes.object,
+  mini: propTypes.bool,
+  uploading: propTypes.bool,
+};
 
 export default Avatar;

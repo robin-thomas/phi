@@ -1,4 +1,5 @@
 import dynamic from 'next/dynamic';
+import propTypes from 'prop-types';
 
 const Picker = dynamic(() => import('emoji-picker-react'), { ssr: false });
 
@@ -17,5 +18,9 @@ const Emoji = ({ setEmoji }) => {
     />
   );
 }
+
+Emoji.propTypes = {
+  setEmoji: propTypes.func.isRequired,
+};
 
 export default Emoji;

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import Skeleton from '@mui/material/Skeleton';
 import Image from 'next/image';
+import propTypes from 'prop-types';
 
 import { useAppContext } from '@/modules/common/hooks';
 import Bucket from '@/modules/file/utils/bucket';
@@ -36,5 +37,9 @@ const MessageImage = ({ attachment }) => {
 
   return <Image src={image.src} alt="" width={image.width} height={image.height} />;
 }
+
+MessageImage.propTypes = {
+  attachment: propTypes.object.isRequired,
+};
 
 export default MessageImage;

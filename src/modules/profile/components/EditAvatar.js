@@ -7,7 +7,7 @@ import { useAppContext } from '@/modules/common/hooks';
 import Bucket from '@/modules/file/utils/bucket';
 import { uploadImage } from '@/modules/file/utils/image';
 
-const EditAvatar = ({}) => {
+const EditAvatar = () => {
   const { address, setProfile, profileKey } = useAppContext();
 
   const [uploading, setUploading] = useState(false);

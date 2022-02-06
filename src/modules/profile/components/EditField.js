@@ -5,6 +5,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import CircularProgress from '@mui/material/CircularProgress';
 import InputAdornment from '@mui/material/InputAdornment';
 import { useFormik } from 'formik';
+import propTypes from 'prop-types';
 import * as yup from 'yup';
 
 import { updateProfile } from '../utils/ceramic';
@@ -66,5 +67,10 @@ const EditField = ({ name, label }) => {
     />
   )
 }
+
+EditField.propTypes = {
+  name: propTypes.string.isRequired,
+  label: propTypes.string.isRequired,
+};
 
 export default EditField;

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import Avatar from '@mui/material/Avatar';
+import propTypes from 'prop-types';
 
 import styles from './index.module.css';
 import { Skeleton, ContactCard } from '@/layouts/core/ContactCard';
@@ -21,6 +22,13 @@ const BaseContact = ({ profile, action, onClick, classes }) => {
     />
   );
 }
+
+BaseContact.propTypes = {
+  profile: propTypes.object.isRequired,
+  action: propTypes.node,
+  onClick: propTypes.func,
+  classes: propTypes.string,
+};
 
 const Contact = ({ profile, ...props }) => {
   const [user, setUser] = useState(profile.name ? profile : null);
@@ -63,6 +71,13 @@ const Contact = ({ profile, ...props }) => {
       classes={`${styles.container} ${styles.clickable}`}
     />
   );
+};
+
+Contact.propTypes = {
+  profile: propTypes.object.isRequired,
+  active: propTypes.bool,
+  action: propTypes.node,
+  onClick: propTypes.func,
 };
 
 export default Contact;
