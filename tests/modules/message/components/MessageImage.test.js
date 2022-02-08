@@ -14,7 +14,6 @@ jest.mock('@/modules/file/utils/bucket', () => ({
   },
 }));
 
-
 jest.mock('@/modules/file/utils/ceramic', () => ({
   __esModule: true,
   decrypt: jest.fn(() => Promise.resolve('')),
