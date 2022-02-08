@@ -31,7 +31,7 @@ const MessageImage = ({ attachment }) => {
     downloadImage().then(setImage);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (!image) {
+  if (!image?.src) {
     return <Skeleton variant="rectangular" width={150} height={250} />;
   }
 
