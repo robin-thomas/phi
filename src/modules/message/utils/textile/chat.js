@@ -59,7 +59,7 @@ const Chat = {
 
     const encrypted = await encryptJSON(message, Chat.address, to);
     const params = { from: Chat.address, to, message: encrypted, attachments, date: new Date().toISOString() };
-    await this._client.create(Chat.threadID, collection, [params]);
+    return await Chat.client.create(Chat.threadID, collection, [params]);
   },
 
   listen: (_callback) => {
@@ -68,10 +68,13 @@ const Chat = {
 
       if (!err && reply?.collectionName === collection) {
         if ([reply?.instance?.from, reply?.instance.to].includes(Chat.address)) {
-          console.debug('Received a chat message from: ', reply?.instance?.from);
+          console.debug('Received a chat message from: ', reply.instance?.from);
 
-          result = await _decrypt(reply.instance);
-          cache.set(result.from + result.to, result);
+          result = await _decrypt(Chat.address)(reply.instance);
+
+          const threadID = Chat.threadID.toString();
+          const results = cache.get(threadID);
+          cache.set(threadID, [...results, result]);
         }
       }
 
