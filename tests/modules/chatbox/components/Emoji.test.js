@@ -10,8 +10,8 @@ describe('Emoji', () => {
     const emoji = await screen.findByRole('button', { name: '😀' });
     expect(emoji).toBeInTheDocument();
 
-    // fireEvent.click(emoji);
+    fireEvent.click(emoji);
 
-    // expect(setEmoji).toHaveBeenCalledWith(expect.objectContaining({ emoji: '😀' }));
-  });
+    expect(setEmoji).toHaveBeenCalledWith(expect.objectContaining({ emoji: '😀' }));
+  }, 10000);
 });
