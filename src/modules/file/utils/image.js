@@ -1,11 +1,9 @@
 import LRU from 'lru-cache';
 
+import { imageCacheConfig } from '../constants/cache';
 import Bucket from './bucket';
 
-const imageCache = new LRU({
-  max: 50,
-  maxAge: 24 * 60 * 60 * 1000,
-});
+const imageCache = new LRU(imageCacheConfig);
 
 export const uploadImage = () => {
   const input = document.createElement('input');
