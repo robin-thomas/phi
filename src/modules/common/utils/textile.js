@@ -24,7 +24,11 @@ export const getClient = async (clientClass) => {
   return client;
 }
 
-export const addThreadListener = (client, callback, threadID) => {
+export const addThreadListener = (client, callback, threadID, collection = null) => {
   const filters = [{ actionTypes: ['CREATE'] }];
+  if (collection) {
+    filters.push({ collectionName: collection });
+  }
+
   client.listen(threadID, filters, callback);
 }

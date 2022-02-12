@@ -81,7 +81,7 @@ const Chat = {
       _callback(result);
     };
 
-    addThreadListener(Chat.client, callback, Chat.threadID);
+    addThreadListener(Chat.client, callback, Chat.threadID, collection);
   },
 }
 
