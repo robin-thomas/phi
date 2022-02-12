@@ -7,7 +7,6 @@ import Grid from '@mui/material/Grid';
 import InputAdornment from '@mui/material/InputAdornment';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { useFormik } from 'formik';
-import propTypes from 'prop-types';
 import { checkText } from 'smile2emoji';
 import * as yup from 'yup';
 
@@ -24,7 +23,7 @@ import Chat from '@/modules/message/utils/textile/chat';
 
 const whiteTheme = createTheme(whitetheme);
 
-const ChatBox = ({ threadID }) => {
+const ChatBox = () => {
   const ref = useRef();
   const { activeContact } = useAppContext();
 
@@ -37,8 +36,7 @@ const ChatBox = ({ threadID }) => {
     validationSchema: yup.object({ message: yup.string() }),
     onSubmit: async (values, { resetForm }) => {
       if (values.message || attachments.length > 0) {
-        Chat.setThreadId(threadID);
-        Chat.post(activeContact, values.message, attachments);
+        await Chat.post(activeContact, values.message, attachments);
 
         resetForm();
         reset();
@@ -130,10 +128,6 @@ const ChatBox = ({ threadID }) => {
       />
     </ThemeProvider>
   )
-};
-
-ChatBox.propTypes = {
-  threadID: propTypes.string.isRequired,
 };
 
 export default ChatBox;

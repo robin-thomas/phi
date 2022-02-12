@@ -76,7 +76,7 @@ const Invite = {
     }
 
     console.debug('Listening to chat invites thread');
-    addThreadListener(base.client(), callback, base.threadID());
+    addThreadListener(base.client(), callback, base.threadID(), TEXTILE_COLLECTION_INVITE);
   }
 }
 

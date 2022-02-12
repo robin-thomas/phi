@@ -29,7 +29,7 @@ const Ack = {
     }
 
     console.debug('Listening to chat invite acks thread');
-    addThreadListener(base.client(), callback, base.threadID());
+    addThreadListener(base.client(), callback, base.threadID(), TEXTILE_COLLECTION_INVITE_ACK);
   }
 }
 

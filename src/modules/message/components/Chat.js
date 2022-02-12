@@ -3,9 +3,9 @@ import { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 
 import Messages from '.';
-import ChatBox from '../../chatbox/components/ChatBox';
 import { messageGrouper } from '../utils/list';
 import ChatUtil from '../utils/textile/chat';
+import { ChatBox } from '@/modules/chatbox/components';
 import { useAppContext } from '@/modules/common/hooks';
 import { getInvite } from '@/modules/friendrequest/utils';
 
@@ -32,28 +32,15 @@ const Chat = () => {
       ChatUtil.setAddress(address);
 
       const chats = await ChatUtil.getAll();
-
-      return messageGrouper(chats);
+      if (chats.length > 0) {
+        setChats(messageGrouper(chats));
+      }
     }
 
     if (threadID) {
-      loadChats().then(setChats);
+      loadChats().then(() => ChatUtil.listen(loadChats));
     }
   }, [threadID, address]);
-
-  // TODO.
-  // useEffect(() => {
-  //   const callback = (result) => {
-  //     if (result?.from) {
-  //       setChats(_chats => ([..._chats, { ...result, messages: [result.message] } ]));
-  //     }
-  //   };
-
-  //   if (threadID) {
-  //     ChatUtil.setThreadID(threadID);
-  //     ChatUtil.listen(callback);
-  //   }
-  // }, [threadID]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
@@ -61,7 +48,7 @@ const Chat = () => {
         <Messages chats={chats} />
       </Box>
       <Box position="absolute" bottom={80} width="90%">
-        <ChatBox threadID={threadID} />
+        <ChatBox />
       </Box>
     </>
   )
