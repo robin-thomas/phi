@@ -10,7 +10,7 @@ describe('Emoji', () => {
     await waitFor(() => expect(screen.getByRole('button', { name: '😀' })).toBeInTheDocument());
   });
 
-  it('Verify that the setEmoji prop works fine', async () => {
+  xit('Verify that the setEmoji prop works fine', async () => {
     const setEmoji = jest.fn();
     render(<Emoji setEmoji={setEmoji} />);
 
