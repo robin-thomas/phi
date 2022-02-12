@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 
 import { Emoji } from '@/modules/chatbox/components';
 
@@ -17,7 +17,7 @@ describe('Emoji', () => {
     await waitFor(() => expect(screen.getByRole('button', { name: '😀' })).toBeInTheDocument());
 
     const emoji = screen.getByRole('button', { name: '😀' });
-    emoji.click();
+    fireEvent.click(emoji);
 
     expect(setEmoji).toHaveBeenCalledWith(expect.objectContaining({ emoji: '😀' }));
   });
