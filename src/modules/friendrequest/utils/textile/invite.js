@@ -65,7 +65,7 @@ const Invite = {
     await base.post(params);
   },
 
-  addThreadListener: async (_callback) => {
+  addThreadListener: (_callback) => {
     const callback = async (reply, err) => {
       const result = await base.callback(reply, err, _decrypt);
 

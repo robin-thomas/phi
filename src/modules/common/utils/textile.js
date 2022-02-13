@@ -27,7 +27,7 @@ export const getClient = async (clientClass) => {
 export const addThreadListener = (client, callback, threadID, collection = null) => {
   const filters = [{ actionTypes: ['CREATE'] }];
   if (collection) {
-    filters.push({ collectionName: collection });
+    filters[0].collectionName = collection;
   }
 
   client.listen(threadID, filters, callback);
