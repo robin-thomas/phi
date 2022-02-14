@@ -72,6 +72,22 @@ const ChatBox = () => {
     setAttachments([]);
   }
 
+  const disableButton = (btnName) => {
+    if (formik.isSubmitting) {
+      return true;
+    }
+
+    switch (btnName) {
+      case 'attachFile':
+        return Object.keys(files).length === attachmentsDefaults.maxFiles;
+
+      case 'sendMessage':
+        return attachments.length == 0 && (!formik.values.message || formik.values.message?.length === 0);
+    }
+
+    return false;
+  }
+
   return (
     <ThemeProvider theme={whiteTheme}>
       <Grid container>
@@ -93,6 +109,7 @@ const ChatBox = () => {
         formik={formik}
         name="message"
         placeholder="Type a message"
+        disabled={formik.isSubmitting}
         onChange={onMessageUpdate}
         onKeyDown={(e) => e.key === 'Enter' && formik.handleSubmit()}
         sx={{ mt: 1 }}
@@ -103,21 +120,21 @@ const ChatBox = () => {
                 <IconButton
                   title="Add emojis"
                   onClick={ref.current?.handleOpen}
-                  disabled={Object.keys(files).length === attachmentsDefaults.maxFiles}
+                  disabled={disableButton('addEmoji')}
                 >
                   <InsertEmoticonIcon fontSize="small" />
                 </IconButton>
                 <IconButton
                   title="Attach file"
                   onClick={attachFile}
-                  disabled={Object.keys(files).length === attachmentsDefaults.maxFiles}
+                  disabled={disableButton('attachFile')}
                 >
                   <AttachFileIcon fontSize="small" />
                 </IconButton>
                 <IconButton
                   title="Send message"
                   onClick={formik.handleSubmit}
-                  disabled={attachments.length == 0 && (!formik.values.message || formik.values.message?.length === 0)}
+                  disabled={disableButton('sendMessage')}
                 >
                   <SendIcon fontSize="small" />
                 </IconButton>
