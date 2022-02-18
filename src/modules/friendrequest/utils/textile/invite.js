@@ -2,9 +2,9 @@ import { cacheInviteConfig } from '../../constants/cache';
 import { TEXTILE_COLLECTION_INVITE } from '../../constants/textile';
 import Base from './base';
 import chatSchema from '@/config/schema/chat.json';
+import { TEXTILE_COLLECTION_CHAT } from '@/modules/common/constants/textile';
 import { encryptJSON, decryptJSON } from '@/modules/common/utils/ceramic';
 import { addThreadListener } from '@/modules/common/utils/textile';
-import { TEXTILE_COLLECTION_CHAT } from '@/modules/message/constants/textile';
 
 const base = new Base(cacheInviteConfig, TEXTILE_COLLECTION_INVITE);
 

@@ -3,7 +3,8 @@ import { createContext, useState, useEffect } from 'react';
 import { ETH_CHAIN_ID } from '@/app/config/app';
 import Bucket from '@/modules/file/utils/bucket';
 import { downloadProfilePictureFromBucket } from '@/modules/file/utils/image';
-import { Ack, Invite, loadFriendRequests, getAllInvites } from '@/modules/friendrequest/utils';
+import { Ack, Invite, loadFriendRequests, getAllInvites, getInvite } from '@/modules/friendrequest/utils';
+import ChatUtil from '@/modules/message/utils/textile/chat';
 import { TEXTILE_BUCKET_PROFILE } from '@/modules/profile/constants/textile';
 import { getProfile } from '@/modules/profile/utils/ceramic';
 
@@ -24,11 +25,14 @@ const DataProvider = ({ children }) => {
   const [threadID, setThreadID] = useState(null);
   const [checkingContact, setCheckingContact] = useState(false);
   const [provider, setProvider] = useState(null);
+  const [threadIDs, setThreadIDs] = useState({});
+  const [unreadCount, setUnreadCount] = useState({});
 
   useEffect(() => Bucket.getKey(TEXTILE_BUCKET_PROFILE).then(setProfileKey), []);
 
   useEffect(() => {
     if (address) {
+      ChatUtil.setAddress(address);
       getProfile(address, true /* self profile */).then(setProfile);
     } else {
       setProfile({});
@@ -109,6 +113,42 @@ const DataProvider = ({ children }) => {
   }, [contacts]);
 
   useEffect(() => {
+    const retrieveThreadIDs = () => {
+      const ids = {};
+
+      for (const contact of contacts) {
+        const result = getInvite(contact, address) || getInvite(address, contact);
+        if (result?.dbInfo?.threadID) {
+          ids[contact] = result.dbInfo.threadID;
+        }
+      }
+
+      setThreadIDs(ids);
+    }
+
+    if (contacts) {
+      retrieveThreadIDs();
+    }
+  }, [address, contacts]);
+
+  useEffect(() => {
+    const setChatListeners = async () => {
+      for (const contact of Object.keys(threadIDs)) {
+        ChatUtil.listen(threadIDs[contact], contact, (chat) => {
+          if (chat?.to === address) {
+            // increment unread count
+            setUnreadCount(count => ({ ...count, [chat.from]: (count[chat.from] || 0) + 1 }));
+          }
+        });
+      }
+    }
+
+    if (threadIDs) {
+      setChatListeners();
+    }
+  }, [threadIDs]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
     if (activeContact) {
       getProfile(activeContact).then(setActiveContactProfile);
     } else {
@@ -142,6 +182,8 @@ const DataProvider = ({ children }) => {
         checkingContact,
         setCheckingContact,
         provider, setProvider,
+        unreadCount, setUnreadCount,
+        threadIDs,
       }}
     >
       {children}
