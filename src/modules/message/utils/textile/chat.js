@@ -2,8 +2,8 @@ import { Client, ThreadID, Query } from '@textile/hub';
 import LRU from 'lru-cache';
 
 import { cacheChatConfig } from '../../constants/cache';
-import { TEXTILE_COLLECTION_CHAT } from '../../constants/textile';
-import { encryptJSON, decryptJSON } from '@/modules/common/utils/ceramic';
+import { TEXTILE_COLLECTION_CHAT } from '@/modules/common/constants/textile';
+import { decryptJSON } from '@/modules/common/utils/ceramic';
 import { getClient, addThreadListener } from '@/modules/common/utils/textile';
 
 const cache = new LRU(cacheChatConfig);
@@ -20,11 +20,6 @@ const _decrypt = (address) => async (chat) => {
 const Chat = {
   client: null,
   address: null,
-  threadID: null,
-
-  setThreadID: (threadID) => {
-    Chat.threadID = ThreadID.fromString(threadID);
-  },
 
   setAddress: (address) => {
     Chat.address = address;
@@ -36,9 +31,7 @@ const Chat = {
     }
   },
 
-  getAll: async () => {
-    const threadID = Chat.threadID.toString();
-
+  getAll: async (threadID) => {
     await Chat.loadClient();
 
     if (cache.has(threadID)) {
@@ -47,33 +40,24 @@ const Chat = {
     }
 
     console.debug('Retrieving all chat requests from textile, and decrypting it');
-    const chats = await Chat.client.find(Chat.threadID, collection, new Query());
+    const chats = await Chat.client.find(ThreadID.fromString(threadID), collection, new Query());
     const results = await Promise.all(chats.map(_decrypt(Chat.address)));
 
     cache.set(threadID, results);
     return results;
   },
 
-  post: async (to, message, attachments = []) => {
-    console.debug('Sending chat message to: ', to);
-
-    const encrypted = await encryptJSON(message, Chat.address, to);
-    const params = { from: Chat.address, to, message: encrypted, attachments, date: new Date().toISOString() };
-    return await Chat.client.create(Chat.threadID, collection, [params]);
-  },
-
-  listen: (_callback) => {
+  listen: async (threadID, contact, _callback) => {
     const callback = async (reply, err) => {
       let result = null;
 
-      if (!err && reply?.collectionName === collection) {
+      if (!err) {
         if ([reply?.instance?.from, reply?.instance.to].includes(Chat.address)) {
           console.debug('Received a chat message from: ', reply.instance?.from);
 
           result = await _decrypt(Chat.address)(reply.instance);
 
-          const threadID = Chat.threadID.toString();
-          const results = cache.get(threadID);
+          const results = cache.get(threadID) || [];
           cache.set(threadID, [...results, result]);
         }
       }
@@ -81,7 +65,10 @@ const Chat = {
       _callback(result);
     };
 
-    addThreadListener(Chat.client, callback, Chat.threadID, collection);
+    await Chat.getAll(threadID);
+
+    console.debug(`Listening to chats from: ${contact}`);
+    addThreadListener(Chat.client, callback, ThreadID.fromString(threadID), collection);
   },
 }
 

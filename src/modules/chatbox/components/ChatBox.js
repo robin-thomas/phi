@@ -11,6 +11,7 @@ import { checkText } from 'smile2emoji';
 import * as yup from 'yup';
 
 import { attachmentsDefaults } from '../constants/attachments';
+import Chat from '../utils/textile';
 import Emoji from './Emoji';
 import { whitetheme } from '@/app/styles/theme';
 import { IconButton } from '@/layouts/core/Button';
@@ -19,13 +20,12 @@ import { TextField } from '@/layouts/core/TextField';
 import { useAppContext } from '@/modules/common/hooks';
 import Attachment from '@/modules/file/components/Attachment';
 import { uploadImage } from '@/modules/file/utils/image';
-import Chat from '@/modules/message/utils/textile/chat';
 
 const whiteTheme = createTheme(whitetheme);
 
 const ChatBox = () => {
   const ref = useRef();
-  const { activeContact } = useAppContext();
+  const { address, threadIDs, activeContact, setUnreadCount } = useAppContext();
 
   const [files, setFiles] = useState({});
   const [emoji, setEmoji] = useState(false);
@@ -34,16 +34,25 @@ const ChatBox = () => {
   const formik = useFormik({
     initialValues: { message: '' },
     validationSchema: yup.object({ message: yup.string() }),
-    onSubmit: async (values, { resetForm }) => {
+    onSubmit: (values, { resetForm }) => {
       if (values.message || attachments.length > 0) {
-        await Chat.post(activeContact, values.message, attachments);
+        Chat.post(threadIDs[activeContact], {
+          from: address,
+          to: activeContact,
+          message: values.message,
+          attachments,
+        });
 
         resetForm();
-        reset();
+        setEmoji(null);
+        setFiles([]);
+        setAttachments([]);
       }
     },
     enableReinitialize: true,
   });
+
+  useEffect(() => setUnreadCount(count => ({ ...count, [activeContact]: 0 })), [activeContact, setUnreadCount]);
 
   useEffect(() => {
     if (emoji?.emoji) {
@@ -66,10 +75,20 @@ const ChatBox = () => {
 
   const removeFile = (name) => () => setFiles(_files => _files.filter(file => file !== name));
 
-  const reset = () => {
-    setEmoji(null);
-    setFiles([]);
-    setAttachments([]);
+  const disableButton = (btnName) => {
+    if (formik.isSubmitting) {
+      return true;
+    }
+
+    switch (btnName) {
+      case 'attachFile':
+        return Object.keys(files).length === attachmentsDefaults.maxFiles;
+
+      case 'sendMessage':
+        return attachments.length == 0 && (!formik.values.message || formik.values.message?.length === 0);
+    }
+
+    return false;
   }
 
   return (
@@ -93,6 +112,7 @@ const ChatBox = () => {
         formik={formik}
         name="message"
         placeholder="Type a message"
+        disabled={formik.isSubmitting}
         onChange={onMessageUpdate}
         onKeyDown={(e) => e.key === 'Enter' && formik.handleSubmit()}
         sx={{ mt: 1 }}
@@ -103,21 +123,21 @@ const ChatBox = () => {
                 <IconButton
                   title="Add emojis"
                   onClick={ref.current?.handleOpen}
-                  disabled={Object.keys(files).length === attachmentsDefaults.maxFiles}
+                  disabled={disableButton('addEmoji')}
                 >
                   <InsertEmoticonIcon fontSize="small" />
                 </IconButton>
                 <IconButton
                   title="Attach file"
                   onClick={attachFile}
-                  disabled={Object.keys(files).length === attachmentsDefaults.maxFiles}
+                  disabled={disableButton('attachFile')}
                 >
                   <AttachFileIcon fontSize="small" />
                 </IconButton>
                 <IconButton
                   title="Send message"
                   onClick={formik.handleSubmit}
-                  disabled={attachments.length == 0 && (!formik.values.message || formik.values.message?.length === 0)}
+                  disabled={disableButton('sendMessage')}
                 >
                   <SendIcon fontSize="small" />
                 </IconButton>

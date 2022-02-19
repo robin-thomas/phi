@@ -7,40 +7,23 @@ import { messageGrouper } from '../utils/list';
 import ChatUtil from '../utils/textile/chat';
 import { ChatBox } from '@/modules/chatbox/components';
 import { useAppContext } from '@/modules/common/hooks';
-import { getInvite } from '@/modules/friendrequest/utils';
 
 const Chat = () => {
   const [chats, setChats] = useState(null);
-  const { address, activeContact, threadID, setThreadID } = useAppContext();
-
-  useEffect(() => {
-    const getThread = async () => {
-      const result = getInvite(activeContact, address) || getInvite(address, activeContact);
-      if (result) {
-        setThreadID(result.dbInfo.threadID);
-      }
-    }
-
-    if (activeContact) {
-      getThread();
-    }
-  }, [address, activeContact, setThreadID]);
+  const { threadIDs, activeContact, updateChats } = useAppContext();
 
   useEffect(() => {
     const loadChats = async () => {
-      ChatUtil.setThreadID(threadID);
-      ChatUtil.setAddress(address);
-
-      const chats = await ChatUtil.getAll();
+      const chats = await ChatUtil.getAll(threadIDs[activeContact]);
       if (chats.length > 0) {
         setChats(messageGrouper(chats));
       }
     }
 
-    if (threadID) {
-      loadChats().then(() => ChatUtil.listen(loadChats));
+    if (threadIDs[activeContact]) {
+      loadChats();
     }
-  }, [threadID, address]);
+  }, [threadIDs, activeContact, updateChats]);
 
   return (
     <>

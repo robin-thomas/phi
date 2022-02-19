@@ -1,20 +1,22 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
 import { ChatBox } from '@/modules/chatbox/components';
+import Chat from '@/modules/chatbox/utils/textile';
 import Bucket from '@/modules/file/utils/bucket';
-import Chat from '@/modules/message/utils/textile/chat';
 
 jest.mock('@/modules/common/hooks', () => ({
   __esModule: true,
-  useAppContext: jest.fn(() => ({ activeContact: 'contact' })),
+  useAppContext: jest.fn(() => ({
+    address: 'address',
+    activeContact: 'contact',
+    threadIDs: { 'contact': '1' },
+    setUnreadCount: jest.fn(),
+  })),
 }));
 
-jest.mock('@/modules/message/utils/textile/chat', () => ({
+jest.mock('@/modules/chatbox/utils/textile', () => ({
   __esModule: true,
-  default: {
-    setThreadId: jest.fn(),
-    post: jest.fn(),
-  },
+  default: { post: jest.fn() },
 }));
 
 jest.mock('@/modules/file/utils/image', () => ({
@@ -37,12 +39,10 @@ jest.mock('@/modules/file/utils/bucket', () => ({
 }));
 
 describe('ChatBox', () => {
-  const threadID = '1';
-
   beforeEach(() => {
     Chat.post.mockClear();
 
-    render(<ChatBox threadID={threadID} />);
+    render(<ChatBox />);
   });
 
   it('ChatBox is rendered', () => {
@@ -69,7 +69,12 @@ describe('ChatBox', () => {
     expect(submitBtn).not.toBeDisabled();
     submitBtn.click();
 
-    await waitFor(() => expect(Chat.post).toHaveBeenCalledWith('contact', 'Hello', []));
+    await waitFor(() => expect(Chat.post).toHaveBeenCalledWith('1', {
+      from: 'address',
+      to: 'contact',
+      message: 'Hello',
+      attachments: [],
+    }));
   });
 
   it('Verify that selected emoji is added to chatbox', async () => {

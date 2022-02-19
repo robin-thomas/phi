@@ -20,7 +20,7 @@ const Ack = {
     await base.post(params);
   },
 
-  addThreadListener: async () => {
+  addThreadListener: () => {
     const callback = async (reply, err) => {
       const result = await base.callback(reply, err);
       if (result?.instance) {
