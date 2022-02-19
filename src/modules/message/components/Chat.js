@@ -10,26 +10,20 @@ import { useAppContext } from '@/modules/common/hooks';
 
 const Chat = () => {
   const [chats, setChats] = useState(null);
-  const { threadIDs, address, activeContact, threadID, setThreadID } = useAppContext();
-
-  useEffect(() => {
-    if (threadIDs[activeContact]) {
-      setThreadID(threadIDs[activeContact]);
-    }
-  }, [threadIDs, activeContact, setThreadID]);
+  const { threadIDs, activeContact, updateChats } = useAppContext();
 
   useEffect(() => {
     const loadChats = async () => {
-      const chats = await ChatUtil.getAll(threadID);
+      const chats = await ChatUtil.getAll(threadIDs[activeContact]);
       if (chats.length > 0) {
         setChats(messageGrouper(chats));
       }
     }
 
-    if (threadID) {
+    if (threadIDs[activeContact]) {
       loadChats();
     }
-  }, [threadID, address]);
+  }, [threadIDs, activeContact, updateChats]);
 
   return (
     <>

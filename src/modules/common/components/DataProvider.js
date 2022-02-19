@@ -22,11 +22,11 @@ const DataProvider = ({ children }) => {
   const [activeContact, setActiveContact] = useState(null);
   const [activeContactProfile, setActiveContactProfile] = useState(null);
   const [loadingContacts, setLoadingContacts] = useState(false);
-  const [threadID, setThreadID] = useState(null);
   const [checkingContact, setCheckingContact] = useState(false);
   const [provider, setProvider] = useState(null);
   const [threadIDs, setThreadIDs] = useState({});
   const [unreadCount, setUnreadCount] = useState({});
+  const [updateChats, setUpdateChats] = useState(0);
 
   useEffect(() => Bucket.getKey(TEXTILE_BUCKET_PROFILE).then(setProfileKey), []);
 
@@ -133,18 +133,26 @@ const DataProvider = ({ children }) => {
 
   useEffect(() => {
     const setChatListeners = async () => {
+      const closeListeners = [];
+
       for (const contact of Object.keys(threadIDs)) {
-        ChatUtil.listen(threadIDs[contact], contact, (chat) => {
+        const fn = await ChatUtil.listen(threadIDs[contact], contact, (chat) => {
           if (chat?.to === address) {
-            // increment unread count
             setUnreadCount(count => ({ ...count, [chat.from]: (count[chat.from] || 0) + 1 }));
           }
+
+          setUpdateChats(_count => _count + 1);
         });
+
+        closeListeners.push(fn);
       }
+
+      return closeListeners;
     }
 
     if (threadIDs) {
-      setChatListeners();
+      setChatListeners()
+        .then((closeListeners) => closeListeners.map(fn => fn()));
     }
   }, [threadIDs]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -177,13 +185,12 @@ const DataProvider = ({ children }) => {
         activeContactProfile,
         loadingContacts,
         setLoadingContacts,
-        threadID,
-        setThreadID,
         checkingContact,
         setCheckingContact,
         provider, setProvider,
         unreadCount, setUnreadCount,
         threadIDs,
+        updateChats,
       }}
     >
       {children}

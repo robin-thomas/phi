@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react';
+
 import Avatar from '@mui/material/Avatar';
 import MUIBox from '@mui/material/Box';
 import SimpleBar from 'simplebar-react';
@@ -13,14 +15,24 @@ const Action = ({ count }) => (
     alignItems="center"
     minHeight="5vh"
   >
-    <Avatar sx={{ width: 26, height: 26, bgcolor: 'rgb(197,126,126)' }}>
+    <Avatar sx={{ width: 24, height: 24, bgcolor: 'rgb(197,126,126)' }}>
       {count}
     </Avatar>
   </MUIBox>
 );
 
 const ContactList = () => {
-  const { activeContact, setActiveContact, searchResults, unreadCount } = useAppContext();
+  const { activeContact, setActiveContact, searchResults, unreadCount, setUnreadCount } = useAppContext();
+
+  const [contactCount, setContactCount] = useState(unreadCount);
+
+  useEffect(() => {
+    if (!activeContact) {
+      setContactCount(unreadCount);
+    } else if (unreadCount[activeContact]) {
+      setUnreadCount(_count => ({ ..._count, [activeContact]: 0 }));
+    }
+  }, [unreadCount, activeContact, setUnreadCount]);
 
   const onContact = (address) => () => setActiveContact(_active => _active === address ? null : address);
 
@@ -40,7 +52,7 @@ const ContactList = () => {
           profile={{ address }}
           active={activeContact === address}
           onClick={onContact(address)}
-          action={unreadCount[address] ? <Action count={unreadCount[address]} /> : undefined}
+          action={unreadCount[address] ? <Action count={contactCount[address]} /> : undefined}
         />
       ))}
     </SimpleBar>
