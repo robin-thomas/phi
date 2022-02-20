@@ -15,16 +15,24 @@ const Avatar = ({ profile, mini, uploading }) => {
 
   // load the profile picture.
   useEffect(() => {
+    let mounted = true;
+
     const downloadImage = async () => {
       setLoading(true);
       const _profilePic = await downloadProfilePictureFromBucket(profileKey, user.address, user.image.original.mimeType);
 
-      setProfilePic(_profilePic);
-      setLoading(false);
+      if (mounted) {
+        setProfilePic(_profilePic);
+        setLoading(false);
+      }
     }
 
     if (user?.image && profileKey) {
       downloadImage();
+    }
+
+    return () => {
+      mounted = false;
     }
   }, [user?.image, user?.address, profileKey]);
 

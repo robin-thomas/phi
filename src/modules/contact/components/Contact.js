@@ -34,9 +34,15 @@ const Contact = ({ profile, ...props }) => {
   const [user, setUser] = useState(profile.name ? profile : null);
 
   useEffect(() => {
+    let mounted = true;
+
     if (!profile.name) {
       getProfile(profile.address)
-        .then(setUser);
+        .then((user) => mounted && setUser(user));
+
+      return () => {
+        mounted = false;
+      };
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 

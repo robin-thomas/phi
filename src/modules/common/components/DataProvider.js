@@ -45,7 +45,7 @@ const DataProvider = ({ children }) => {
       setProfilePic(pic);
     }
 
-    if (profile?.image && profileKey) {
+    if (address && profile?.image && profileKey) {
       download();
     }
   }, [address, profile.image, profileKey]);
