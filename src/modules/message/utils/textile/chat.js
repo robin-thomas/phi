@@ -68,7 +68,7 @@ const Chat = {
     await Chat.getAll(threadID);
 
     console.debug(`Listening to chats from: ${contact}`);
-    addThreadListener(Chat.client, callback, ThreadID.fromString(threadID), collection);
+    return addThreadListener(Chat.client, callback, ThreadID.fromString(threadID), collection);
   },
 }
 
