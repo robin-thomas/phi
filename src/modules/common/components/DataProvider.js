@@ -45,7 +45,7 @@ const DataProvider = ({ children }) => {
       setProfilePic(pic);
     }
 
-    if (profile?.image && profileKey) {
+    if (address && profile?.image && profileKey) {
       download();
     }
   }, [address, profile.image, profileKey]);
@@ -136,7 +136,7 @@ const DataProvider = ({ children }) => {
       const closeListeners = [];
 
       for (const contact of Object.keys(threadIDs)) {
-        const fn = await ChatUtil.listen(threadIDs[contact], contact, (chat) => {
+        const { close } = await ChatUtil.listen(threadIDs[contact], contact, (chat) => {
           if (chat?.to === address) {
             setUnreadCount(count => ({ ...count, [chat.from]: (count[chat.from] || 0) + 1 }));
           }
@@ -144,7 +144,7 @@ const DataProvider = ({ children }) => {
           setUpdateChats(_count => _count + 1);
         });
 
-        closeListeners.push(fn);
+        closeListeners.push(close);
       }
 
       return closeListeners;

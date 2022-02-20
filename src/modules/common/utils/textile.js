@@ -30,5 +30,5 @@ export const addThreadListener = (client, callback, threadID, collection = null)
     filters[0].collectionName = collection;
   }
 
-  client.listen(threadID, filters, callback);
+  return client.listen(threadID, filters, callback);
 }
