@@ -25,8 +25,6 @@ const Content = () => {
 
   const authenticate = () => login(async (provider) => {
     if (provider) {
-      await provider.ready;
-
       setProvider(provider);
 
       const network = await provider.getNetwork();

@@ -9,10 +9,17 @@ export const login = async (setProvider) => {
   onboard = BNCOnboard({
     ...onboardDefaults,
     subscriptions: {
-      wallet: wallet => {
+      wallet: async (wallet) => {
         if (wallet.provider) {
-          window.localStorage.setItem(SAVED_WALLET_KEY, wallet.name);
-          setProvider(new ethers.providers.Web3Provider(wallet.provider, 'any'));
+          const provider = new ethers.providers.Web3Provider(wallet.provider);
+          await provider.ready;
+
+          try {
+            await provider.getSigner().getAddress();
+
+            window.localStorage.setItem(SAVED_WALLET_KEY, wallet.name);
+            setProvider(provider);
+          } catch (err) {}
         } else {
           window.localStorage.removeItem(SAVED_WALLET_KEY);
           setProvider(null);
