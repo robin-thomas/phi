@@ -15,16 +15,11 @@ import { logout } from '@/modules/wallet/utils/onboard';
 
 const Settings = () => {
   const ref = useRef();
-  const { address, setShowProfile, setAddress } = useAppContext();
+  const { address, setShowProfile } = useAppContext();
 
   const showProfile = () => {
     setShowProfile(true);
     ref.current?.handleClose();
-  }
-
-  const onLogout = () => {
-    logout();
-    setAddress(null);
   }
 
   return (
@@ -36,7 +31,7 @@ const Settings = () => {
               <AccountBoxIcon />
             </ListItemButton>
             <Divider />
-            <ListItemButton text="Logout" disabled={!address} onClick={onLogout}>
+            <ListItemButton text="Logout" disabled={!address} onClick={logout}>
               <LogoutIcon />
             </ListItemButton>
           </List>

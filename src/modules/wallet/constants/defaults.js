@@ -1,3 +1,5 @@
+import { APP_NAME, ETH_CHAIN_ID } from '@/config/app';
+
 const ETH_CHAIN_ID_INTEGER = 4;
 const rpcUrl = `https://rinkeby.infura.io/v3/${process.env.INFURA_APP_KEY}`;
 
@@ -21,3 +23,5 @@ export const onboardDefaults = {
     { checkName: 'network' },
   ],
 };
+
+export const SAVED_WALLET_KEY = `${APP_NAME}:${ETH_CHAIN_ID}:wallet`;

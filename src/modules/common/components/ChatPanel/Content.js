@@ -9,7 +9,7 @@ import ActiveContact from '../../../contact/components/ActiveContact';
 import styles from './Content.module.css';
 import MetamaskLogo from '@/assets/images/metamask.png';
 import { useAppContext } from '@/modules/common/hooks';
-import { login } from '@/modules/wallet/utils/onboard';
+import { isLoggedIn, login } from '@/modules/wallet/utils/onboard';
 
 const Skeleton = () => (
   <>
@@ -23,8 +23,8 @@ const Content = () => {
 
   const { address, setAddress, setProvider, profile, activeContact, setNetwork } = useAppContext();
 
-  const authenticate = async () => {
-    const callback = async (provider) => {
+  const authenticate = () => login(async (provider) => {
+    if (provider) {
       await provider.ready;
 
       setProvider(provider);
@@ -35,11 +35,14 @@ const Content = () => {
       const signer = provider.getSigner();
       const _address = await signer.getAddress();
       setAddress(_address.toLowerCase());
+    } else {
+      setProvider(null);
+      setNetwork(null);
+      setAddress(null);
     }
+  });
 
-    await login(callback);
-  }
-
+  useEffect(() => isLoggedIn() && authenticate(), []); // eslint-disable-line
   useEffect(() => profile?.name && setName(profile?.name), [profile]);
 
   return (
