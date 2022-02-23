@@ -14,11 +14,11 @@ const setDefaults = (profile, address = null) => {
   return profile;
 }
 
-export const getProfile = async (address, selfProfile = false) => {
+export const getProfile = async (address, selfProfile = false, provider = null) => {
   if (selfProfile) {
     console.debug('Retrieving authenticated ceramic basicProfile');
 
-    const authenticatedClient = await self(address);
+    const authenticatedClient = await self(address, provider);
     const profile = await authenticatedClient.get('basicProfile');
 
     return setDefaults(profile, address);

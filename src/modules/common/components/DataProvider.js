@@ -31,13 +31,13 @@ const DataProvider = ({ children }) => {
   useEffect(() => Bucket.getKey(TEXTILE_BUCKET_PROFILE).then(setProfileKey), []);
 
   useEffect(() => {
-    if (address) {
+    if (provider && address) {
       ChatUtil.setAddress(address);
-      getProfile(address, true /* self profile */).then(setProfile);
+      getProfile(address, true /* self profile */, provider).then(setProfile);
     } else {
       setProfile({});
     }
-  }, [address]);
+  }, [address, provider]);
 
   useEffect(() => {
     const download = async () => {
@@ -75,7 +75,7 @@ const DataProvider = ({ children }) => {
     const networkChanged = (chainId) => {
       if (chainId !== ETH_CHAIN_ID) {
         window.location.reload();
-      } else {
+      } else if (provider) {
         provider.getNetwork().then(_network => setNetwork(_network?.name || null));
       }
     }
@@ -126,7 +126,7 @@ const DataProvider = ({ children }) => {
       setThreadIDs(ids);
     }
 
-    if (contacts) {
+    if (address && contacts) {
       retrieveThreadIDs();
     }
   }, [address, contacts]);
