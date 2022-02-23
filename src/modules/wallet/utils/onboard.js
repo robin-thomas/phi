@@ -6,6 +6,11 @@ import { onboardDefaults, SAVED_WALLET_KEY } from '../constants/defaults';
 let onboard = null;
 
 export const login = async (setProvider) => {
+  const removeWallet = () => {
+    window.localStorage.removeItem(SAVED_WALLET_KEY);
+    setProvider(null);
+  }
+
   onboard = BNCOnboard({
     ...onboardDefaults,
     subscriptions: {
@@ -19,10 +24,11 @@ export const login = async (setProvider) => {
 
             window.localStorage.setItem(SAVED_WALLET_KEY, wallet.name);
             setProvider(provider);
-          } catch (err) {}
+          } catch (err) {
+            removeWallet();
+          }
         } else {
-          window.localStorage.removeItem(SAVED_WALLET_KEY);
-          setProvider(null);
+          removeWallet();
         }
       },
     },

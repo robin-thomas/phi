@@ -1,6 +1,8 @@
 import CeramicClient from '@ceramicnetwork/http-client';
 import { Caip10Link } from '@ceramicnetwork/stream-caip10-link';
+import { Eip1193Bridge } from '@ethersproject/experimental';
 import { WebClient, EthereumAuthProvider, SelfID } from '@self.id/web';
+
 
 import { CERAMIC_NETWORK, CERAMIC_NODE_URL } from '../constants/ceramic';
 
@@ -17,10 +19,12 @@ export const address2did = async (address) => {
   return did;
 }
 
-export const self = async (address) => {
+export const self = async (address, provider) => {
   if (!authenticatedClient) {
+    const _provider = new Eip1193Bridge(provider.getSigner(), provider);
+
     authenticatedClient = await SelfID.authenticate({
-      authProvider: new EthereumAuthProvider(window.ethereum, address),
+      authProvider: new EthereumAuthProvider(_provider, address),
       ceramic: CERAMIC_NODE_URL,
       connectNetwork: CERAMIC_NETWORK,
     });

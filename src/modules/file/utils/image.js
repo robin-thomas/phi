@@ -6,11 +6,13 @@ import Bucket from './bucket';
 const imageCache = new LRU(imageCacheConfig);
 
 export const uploadImage = () => {
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = 'image/*';
-  input.onchange = async (e) => e.target.files[0];
-  input.click();
+  return new Promise(resolve => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = () => resolve(input.files[0]);
+    input.click();
+  });
 }
 
 export const readImage = (file) => {

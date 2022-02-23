@@ -23,7 +23,7 @@ const EditAvatar = () => {
 
   return (
     <IconButton title="Change Profile Picture" onClick={onClick}>
-      <Avatar uploading={uploading} />;
+      <Avatar uploading={uploading} />
     </IconButton>
   );
 }
