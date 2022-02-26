@@ -63,7 +63,18 @@ const DataProvider = ({ children }) => {
     }
 
     if (address) {
-      getContacts().then((_contacts) => setContacts(_contacts.filter(e => e !== undefined && e !== null)));
+      getContacts().then((_contacts) => {
+        const filtered = _contacts.filter(e => Boolean(e));
+
+        const getInviteOrAck = (contact) => {
+          return Ack.get(contact, address) || Ack.get(address, contact) || Invite.get(contact, address) || Invite.get(address, contact);
+        }
+
+        // Sort them based on the last message.
+        filtered.sort((a, b) => getInviteOrAck(a).date <= getInviteOrAck(b).date ? 1 : -1);
+
+        setContacts(filtered);
+      });
     } else {
       setContacts(null);
     }
