@@ -4,7 +4,7 @@ import Message from '@/modules/message/components/Message';
 
 jest.mock('@/modules/common/hooks', () => ({
   __esModule: true,
-  useAppContext: jest.fn(() => ({ address: 'address', profile: {} })),
+  useAppContext: jest.fn(() => ({ profile: { address: 'address' } })),
 }));
 
 jest.mock('@/modules/file/utils/bucket', () => ({

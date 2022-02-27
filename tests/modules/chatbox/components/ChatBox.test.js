@@ -7,7 +7,7 @@ import Bucket from '@/modules/file/utils/bucket';
 jest.mock('@/modules/common/hooks', () => ({
   __esModule: true,
   useAppContext: jest.fn(() => ({
-    address: 'address',
+    profile: { address: 'address' },
     activeContact: 'contact',
     threadIDs: { 'contact': '1' },
     setUnreadCount: jest.fn(),
@@ -36,6 +36,11 @@ jest.mock('@/modules/file/utils/bucket', () => ({
     getKey: jest.fn(() => Promise.resolve('key')),
     upload: jest.fn(() => Promise.resolve(null)),
   },
+}));
+
+jest.mock('@/modules/friendrequest/utils/textile/ack', () => ({
+  __esModule: true,
+  default: { get: jest.fn(), update: jest.fn() },
 }));
 
 describe('ChatBox', () => {
