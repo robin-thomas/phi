@@ -24,7 +24,9 @@ const _newThread = async (client) => {
 const _decrypt = (address) => async (result) => {
   try {
     result.dbInfo = await decryptJSON(result.dbInfo, address);
-  } catch (err) {}
+  } catch (err) {
+    console.error(err);
+  }
 
   return result;
 }

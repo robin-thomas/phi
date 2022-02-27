@@ -28,7 +28,7 @@ const Ack = {
 
     entity.date = new Date().toISOString();
 
-    return await base.client().save(base.threadID(), TEXTILE_COLLECTION_INVITE_ACK, entity);
+    return await base.client().save(base.threadID(), TEXTILE_COLLECTION_INVITE_ACK, [entity]);
   },
 
   addThreadListener: () => {

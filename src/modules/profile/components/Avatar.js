@@ -4,7 +4,7 @@ import propTypes from 'prop-types';
 
 import { Avatar as BaseAvatar } from '@/layouts/core/Avatar';
 import { useAppContext } from '@/modules/common/hooks';
-import { downloadProfilePictureFromBucket } from '@/modules/file/utils/image';
+import { downloadProfilePicture } from '@/modules/file/utils/image';
 
 const Avatar = ({ profile, mini, uploading }) => {
   const { profileKey, profile: selfProfile } = useAppContext();
@@ -19,7 +19,7 @@ const Avatar = ({ profile, mini, uploading }) => {
 
     const downloadImage = async () => {
       setLoading(true);
-      const _profilePic = await downloadProfilePictureFromBucket(profileKey, user.address, user.image.original.mimeType);
+      const _profilePic = await downloadProfilePicture(profileKey, user.address, user.image.original.mimeType);
 
       if (mounted) {
         setProfilePic(_profilePic);

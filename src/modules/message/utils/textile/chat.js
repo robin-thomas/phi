@@ -18,21 +18,14 @@ const _decrypt = (address) => async (chat) => {
 }
 
 const Chat = {
-  client: null,
   address: null,
 
   setAddress: (address) => {
     Chat.address = address;
   },
 
-  loadClient: async () => {
-    if (!Chat.client) {
-      Chat.client = await getClient(Client);
-    }
-  },
-
   getAll: async (threadID) => {
-    await Chat.loadClient();
+    const client = await getClient(Client, 'Client');
 
     if (cache.has(threadID)) {
       console.debug('Retrieving all chats from cache');
@@ -40,7 +33,7 @@ const Chat = {
     }
 
     console.debug('Retrieving all chat requests from textile, and decrypting it');
-    const chats = await Chat.client.find(ThreadID.fromString(threadID), collection, new Query());
+    const chats = await client.find(ThreadID.fromString(threadID), collection, new Query());
     const results = await Promise.all(chats.map(_decrypt(Chat.address)));
 
     cache.set(threadID, results);
@@ -65,10 +58,11 @@ const Chat = {
       _callback(result);
     };
 
+    const client = await getClient(Client, 'Client');
     await Chat.getAll(threadID);
 
     console.debug(`Listening to chats from: ${contact}`);
-    return addThreadListener(Chat.client, callback, ThreadID.fromString(threadID), collection);
+    return addThreadListener(client, callback, ThreadID.fromString(threadID), collection);
   },
 }
 

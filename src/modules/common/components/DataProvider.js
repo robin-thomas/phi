@@ -1,8 +1,9 @@
 import { createContext, useState, useEffect } from 'react';
 
+import { self } from '../utils/ceramic';
 import { ETH_CHAIN_ID } from '@/app/config/app';
 import Bucket from '@/modules/file/utils/bucket';
-import { downloadProfilePictureFromBucket } from '@/modules/file/utils/image';
+import { downloadProfilePicture } from '@/modules/file/utils/image';
 import { Ack, Invite, loadFriendRequests, getAllInvites, getInvite } from '@/modules/friendrequest/utils';
 import ChatUtil from '@/modules/message/utils/textile/chat';
 import { TEXTILE_BUCKET_PROFILE } from '@/modules/profile/constants/textile';
@@ -33,26 +34,24 @@ const DataProvider = ({ children }) => {
   useEffect(() => {
     if (provider && address) {
       ChatUtil.setAddress(address);
-      getProfile(address, true /* self profile */, provider).then(setProfile);
+
+      self(address, provider)
+        .then(() => getProfile(address, true /* self profile */))
+        .then((_profile) => setProfile({..._profile, address}));
     } else {
       setProfile({});
     }
   }, [address, provider]);
 
   useEffect(() => {
-    const download = async () => {
-      const pic = downloadProfilePictureFromBucket(profileKey, address, profile.image.original.mimeType);
-      setProfilePic(pic);
+    if (profile?.address && profile?.image && profileKey) {
+      downloadProfilePicture(profileKey, profile.address, profile.image.original.mimeType).then(setProfilePic);
     }
-
-    if (address && profile?.image && profileKey) {
-      download();
-    }
-  }, [address, profile.image, profileKey]);
+  }, [profile?.address, profile?.image, profileKey]);
 
   useEffect(() => {
     const getContacts = async () => {
-      await loadFriendRequests(address);
+      await loadFriendRequests(profile.address);
 
       const { received, sent } = getAllInvites();
 
@@ -62,12 +61,12 @@ const DataProvider = ({ children }) => {
       ];
     }
 
-    if (address) {
+    if (profile?.address) {
       getContacts().then((_contacts) => {
         const filtered = _contacts.filter(e => Boolean(e));
 
         const getInviteOrAck = (contact) => {
-          return Ack.get(contact, address) || Ack.get(address, contact) || Invite.get(contact, address) || Invite.get(address, contact);
+          return Ack.get(contact, profile.address) || Ack.get(profile.address, contact) || getInvite(contact, profile.address) || getInvite(profile.address, contact);
         }
 
         // Sort them based on the last message.
@@ -78,7 +77,7 @@ const DataProvider = ({ children }) => {
     } else {
       setContacts(null);
     }
-  }, [address]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [profile?.address]);
 
   useEffect(() => setSearchResults(contacts), [contacts]);
 
@@ -103,7 +102,7 @@ const DataProvider = ({ children }) => {
         window.ethereum.removeListener('accountsChanged', accountChanged);
       };
     }
-  }, []);
+  }, [provider]);
 
   useEffect(() => {
     const callback = async (reply, err) => {
@@ -128,7 +127,7 @@ const DataProvider = ({ children }) => {
       const ids = {};
 
       for (const contact of contacts) {
-        const result = getInvite(contact, address) || getInvite(address, contact);
+        const result = getInvite(contact, profile.address) || getInvite(profile.address, contact);
         if (result?.dbInfo?.threadID) {
           ids[contact] = result.dbInfo.threadID;
         }
@@ -137,10 +136,10 @@ const DataProvider = ({ children }) => {
       setThreadIDs(ids);
     }
 
-    if (address && contacts) {
+    if (profile?.address && contacts) {
       retrieveThreadIDs();
     }
-  }, [address, contacts]);
+  }, [profile?.address, contacts]);
 
   useEffect(() => {
     const setChatListeners = async () => {
@@ -148,8 +147,12 @@ const DataProvider = ({ children }) => {
 
       for (const contact of Object.keys(threadIDs)) {
         const { close } = await ChatUtil.listen(threadIDs[contact], contact, (chat) => {
-          if (chat?.to === address) {
+          if (chat?.to === profile?.address) {
             setUnreadCount(count => ({ ...count, [chat.from]: (count[chat.from] || 0) + 1 }));
+
+            // Move chat.from contact to top.
+            const _contacts = contacts.filter(e => e !== chat.from);
+            setContacts([chat.from, ..._contacts]);
           }
 
           setUpdateChats(_count => _count + 1);
@@ -162,8 +165,11 @@ const DataProvider = ({ children }) => {
     }
 
     if (threadIDs) {
-      setChatListeners()
-        .then((closeListeners) => closeListeners.map(fn => fn()));
+      const promise = setChatListeners();
+
+      return () => {
+        promise.then((closeListeners) => closeListeners.map(fn => fn()));
+      };
     }
   }, [threadIDs]); // eslint-disable-line react-hooks/exhaustive-deps
 

@@ -32,7 +32,7 @@ export const getImageDetails = (url) => {
   });
 }
 
-export const downloadProfilePictureFromBucket = async (bucketKey, address, mimeType) => {
+export const downloadProfilePicture = async (bucketKey, address, mimeType) => {
   if (imageCache.has(address)) {
     console.debug('Found image in cache. Not downloading from bucket');
     return imageCache.get(address);

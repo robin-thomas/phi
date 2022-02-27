@@ -7,14 +7,8 @@ import { getClient } from '@/modules/common/utils/textile';
 const collection = TEXTILE_COLLECTION_CHAT;
 
 const Chat = {
-  loadClient: async () => {
-    if (!Chat.client) {
-      Chat.client = await getClient(Client);
-    }
-  },
-
   post: async (threadID, params) => {
-    await Chat.loadClient();
+    const client = await getClient(Client, 'Client');
 
     console.debug('Sending chat message to: ', params.to);
     params.attachments = params.attachments || [];
@@ -22,7 +16,7 @@ const Chat = {
     params.message = await encryptJSON(params.message, params.from, params.to);
     params.date = new Date().toISOString();
 
-    return await Chat.client.create(ThreadID.fromString(threadID), collection, [params]);
+    return await client.create(ThreadID.fromString(threadID), collection, [params]);
   },
 }
 

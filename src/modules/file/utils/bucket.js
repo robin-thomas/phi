@@ -11,7 +11,7 @@ const Bucket = {
 
   init: async (bucketKey = null) => {
     if (!Bucket.client) {
-      Bucket.client = await getClient(Buckets);
+      Bucket.client = await getClient(Buckets, 'Buckets');
     }
 
     if (bucketKey) {
