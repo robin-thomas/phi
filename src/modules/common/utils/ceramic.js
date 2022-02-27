@@ -3,7 +3,6 @@ import { Caip10Link } from '@ceramicnetwork/stream-caip10-link';
 import { Eip1193Bridge } from '@ethersproject/experimental';
 import { WebClient, EthereumAuthProvider, SelfID } from '@self.id/web';
 
-
 import { CERAMIC_NETWORK, CERAMIC_NODE_URL } from '../constants/ceramic';
 
 let webClient = null;

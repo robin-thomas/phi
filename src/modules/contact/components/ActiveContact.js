@@ -37,10 +37,10 @@ const ActiveContact = () => {
       }
     }
 
-    if (activeContact) {
+    if (activeContact && profile?.address) {
       loadActiveContact();
     }
-  }, [activeContact, profile.address]);
+  }, [activeContact, profile?.address]);
 
   const acceptRequest = () => {
     acceptOrReject({ from: profile.address, to: activeContact, accepted: true })

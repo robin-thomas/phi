@@ -8,7 +8,7 @@ import Bucket from '@/modules/file/utils/bucket';
 import { uploadImage } from '@/modules/file/utils/image';
 
 const EditAvatar = () => {
-  const { address, setProfile, profileKey } = useAppContext();
+  const { profile, setProfile, profileKey } = useAppContext();
 
   const [uploading, setUploading] = useState(false);
 
@@ -17,8 +17,8 @@ const EditAvatar = () => {
 
     setUploading(true);
 
-    const uploaded = await Bucket.upload(profileKey, `${address}/pic`, file);
-    updateProfileImage(address, uploaded, file).then(setProfile);
+    const uploaded = await Bucket.upload(profileKey, `${profile.address}/pic`, file);
+    updateProfileImage(profile.address, uploaded, file).then(setProfile);
   }
 
   return (

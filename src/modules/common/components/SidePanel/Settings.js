@@ -15,7 +15,7 @@ import { logout } from '@/modules/wallet/utils/onboard';
 
 const Settings = () => {
   const ref = useRef();
-  const { address, setShowProfile } = useAppContext();
+  const { profile, setShowProfile } = useAppContext();
 
   const showProfile = () => {
     setShowProfile(true);
@@ -27,11 +27,11 @@ const Settings = () => {
       <Popover ref={ref}>
         <Box sx={{ minWidth: 280, bgcolor: 'background.paper' }}>
           <List subheader={<ListSubheader>Settings</ListSubheader>}>
-            <ListItemButton text="Your Profile" disabled={!address} onClick={showProfile}>
+            <ListItemButton text="Your Profile" disabled={!profile?.address} onClick={showProfile}>
               <AccountBoxIcon />
             </ListItemButton>
             <Divider />
-            <ListItemButton text="Logout" disabled={!address} onClick={logout}>
+            <ListItemButton text="Logout" disabled={!profile?.address} onClick={logout}>
               <LogoutIcon />
             </ListItemButton>
           </List>

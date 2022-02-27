@@ -17,7 +17,18 @@ const Ack = {
     console.debug('Sending chat ack to: ', to);
 
     const params = { to, from, date: new Date().toISOString(), accepted };
-    await base.post(params);
+    return await base.post(params);
+  },
+
+  update: async (from, to) => {
+    const entity = Ack.get(from, to) || Ack.get(to, from);
+    if (!entity) {
+      throw new Error(`No chat ack found for ${from} and ${to}`);
+    }
+
+    entity.date = new Date().toISOString();
+
+    return await base.client().save(base.threadID(), TEXTILE_COLLECTION_INVITE_ACK, [entity]);
   },
 
   addThreadListener: () => {

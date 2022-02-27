@@ -15,7 +15,7 @@ class Base {
 
   async loadClient(address) {
     if (!this._client) {
-      this._client = await getClient(Client);
+      this._client = await getClient(Client, 'Client');
       this._address = address;
     }
   }

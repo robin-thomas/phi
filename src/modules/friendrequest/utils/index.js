@@ -16,7 +16,10 @@ export const getAck = (from, to) => Ack.get(from, to);
 export const getInvite = (from, to) => Invite.get(from, to);
 export const getAllInvites = Invite.getAll;
 
-export const loadFriendRequests = async (address) => await Promise.all([Invite.loadInvites(address), Ack.loadAcks(address) ]);
+export const loadFriendRequests = async (address) => await Promise.all([
+  Invite.loadInvites(address),
+  Ack.loadAcks(address),
+]);
 
 export { Ack };
 export { Invite };

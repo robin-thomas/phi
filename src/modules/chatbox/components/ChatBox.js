@@ -20,12 +20,13 @@ import { TextField } from '@/layouts/core/TextField';
 import { useAppContext } from '@/modules/common/hooks';
 import Attachment from '@/modules/file/components/Attachment';
 import { uploadImage } from '@/modules/file/utils/image';
+import Ack from '@/modules/friendrequest/utils/textile/ack';
 
 const whiteTheme = createTheme(whitetheme);
 
 const ChatBox = () => {
   const ref = useRef();
-  const { address, threadIDs, activeContact, setUnreadCount } = useAppContext();
+  const { profile, threadIDs, activeContact, setUnreadCount } = useAppContext();
 
   const [files, setFiles] = useState({});
   const [emoji, setEmoji] = useState(false);
@@ -36,12 +37,11 @@ const ChatBox = () => {
     validationSchema: yup.object({ message: yup.string() }),
     onSubmit: (values, { resetForm }) => {
       if (values.message || attachments.length > 0) {
-        Chat.post(threadIDs[activeContact], {
-          from: address,
-          to: activeContact,
-          message: values.message,
-          attachments,
-        });
+        const from = profile.address;
+        const to = activeContact;
+
+        Chat.post(threadIDs[activeContact], { from, to, message: values.message, attachments });
+        Ack.update(from, to);
 
         resetForm();
         setEmoji(null);

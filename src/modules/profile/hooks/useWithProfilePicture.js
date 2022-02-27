@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { useAppContext } from '@/modules/common/hooks';
-import { downloadProfilePictureFromBucket } from '@/modules/file/utils/image';
+import { downloadProfilePicture } from '@/modules/file/utils/image';
 
 const useWithProfilePicture = (profile) => {
   const[src, setSrc] = useState(null);
@@ -10,7 +10,7 @@ const useWithProfilePicture = (profile) => {
   // Download the profile picture (if present).
   useEffect(() => {
     if (profileKey && profile?.image) {
-      downloadProfilePictureFromBucket(profileKey, profile.address, profile.image.original.mimeType)
+      downloadProfilePicture(profileKey, profile.address, profile.image.original.mimeType)
         .then(setSrc);
     }
   }, [profile, profileKey]);

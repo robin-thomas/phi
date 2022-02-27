@@ -3,6 +3,8 @@ import { PrivateKey } from '@textile/hub';
 import { TEXTILE_KEY } from '../constants/textile';
 import { APP_NAME } from '@/app/config/app';
 
+let client = {};
+
 const getIdentity = async () => {
   const key = `${APP_NAME}_identity`;
 
@@ -16,12 +18,14 @@ const getIdentity = async () => {
   return PrivateKey.fromString(stored);
 }
 
-export const getClient = async (clientClass) => {
-  const client = await clientClass.withKeyInfo({ key: TEXTILE_KEY, secret: '' });
-  const identity = await getIdentity();
-  await client.getToken(identity);
+export const getClient = async (clientClass, className) => {
+  if (!client[className]) {
+    client[className] = await clientClass.withKeyInfo({ key: TEXTILE_KEY, secret: '' });
+    const identity = await getIdentity();
+    await client[className].getToken(identity);
+  }
 
-  return client;
+  return client[className];
 }
 
 export const addThreadListener = (client, callback, threadID, collection = null) => {

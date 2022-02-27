@@ -11,8 +11,8 @@ const MessageSent = ({ chat }) => (
   <Grid container justifyContent="flex-end">
     <Grid container item xs={7} justifyContent="flex-end">
       <Stack>
-        {chat.messages.map(message => (
-          <Grid key={message} container justifyContent="flex-end">
+        {chat.messages.map((message, index) => (
+          <Grid key={index} container justifyContent="flex-end">
             <div className={`${styles.message} ${styles.self}`}>
               {message}
             </div>

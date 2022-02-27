@@ -6,11 +6,11 @@ import MessageSent from './MessageSent';
 import { useAppContext } from '@/modules/common/hooks';
 
 const Message = ({ chat }) => {
-  const { address } = useAppContext();
+  const { profile } = useAppContext();
 
   return (
     <Box sx={{ mb: 1 }}>
-      {address === chat.from ? <MessageSent chat={chat} /> : <MessageReceived chat={chat} />}
+      {profile?.address === chat.from ? <MessageSent chat={chat} /> : <MessageReceived chat={chat} />}
     </Box>
   );
 }

@@ -4,7 +4,7 @@ import styles from './Header.module.css';
 import { useAppContext } from '@/modules/common/hooks';
 
 const Header = () => {
-  const { address, activeContactProfile } = useAppContext();
+  const { profile, activeContactProfile } = useAppContext();
 
   return (
     <Grid
@@ -14,7 +14,7 @@ const Header = () => {
       className={styles.header}
       justifyContent="space-between"
     >
-      {address && (
+      {profile?.address && (
         <Grid item xs="auto" sx={{ ml: 18 }}>
           {activeContactProfile?.name && (
             <span className={styles.appName}>{activeContactProfile?.name}</span>

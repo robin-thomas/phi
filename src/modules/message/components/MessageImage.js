@@ -11,7 +11,7 @@ import { getImageDetails, downloadImageFromBucket } from '@/modules/file/utils/i
 import { TEXTILE_BUCKET_PROFILE } from '@/modules/profile/constants/textile';
 
 const MessageImage = ({ attachment }) => {
-  const { address } = useAppContext();
+  const { profile } = useAppContext();
 
   const [image, setImage] = useState(null);
 
@@ -21,7 +21,7 @@ const MessageImage = ({ attachment }) => {
       const { location, mimeType } = attachment;
       const url = await downloadImageFromBucket(bucketKey, location, mimeType, async (buf) => {
         const hex = Buffer.from(buf).toString();
-        return await decrypt(hex, address);
+        return await decrypt(hex, profile.address);
       });
       const { width, height } = await getImageDetails(url);
 
