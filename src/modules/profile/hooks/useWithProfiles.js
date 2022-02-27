@@ -11,7 +11,7 @@ const useWithProfiles = (addresses) => {
         const _profile = await getProfile(address);
 
         if (_profile?.name) {
-          setProfiles(_profiles => [..._profiles, { ..._profile, address }]);
+          setProfiles(_profiles => [..._profiles, _profile]);
         }
       }
     }

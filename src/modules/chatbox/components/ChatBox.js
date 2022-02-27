@@ -26,7 +26,7 @@ const whiteTheme = createTheme(whitetheme);
 
 const ChatBox = () => {
   const ref = useRef();
-  const { address, threadIDs, activeContact, setUnreadCount } = useAppContext();
+  const { profile, threadIDs, activeContact, setUnreadCount } = useAppContext();
 
   const [files, setFiles] = useState({});
   const [emoji, setEmoji] = useState(false);
@@ -37,7 +37,7 @@ const ChatBox = () => {
     validationSchema: yup.object({ message: yup.string() }),
     onSubmit: (values, { resetForm }) => {
       if (values.message || attachments.length > 0) {
-        const from = address;
+        const from = profile.address;
         const to = activeContact;
 
         Chat.post(threadIDs[activeContact], { from, to, message: values.message, attachments });

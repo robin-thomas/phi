@@ -21,7 +21,7 @@ const Skeleton = () => (
 const Content = () => {
   const [name, setName] = useState('');
 
-  const { address, setAddress, setProvider, profile, activeContact, setNetwork } = useAppContext();
+  const { setProvider, profile, activeContact, setNetwork } = useAppContext();
 
   const authenticate = () => login(async (provider) => {
     if (provider) {
@@ -29,14 +29,9 @@ const Content = () => {
 
       const network = await provider.getNetwork();
       setNetwork(network?.name || null);
-
-      const signer = provider.getSigner();
-      const _address = await signer.getAddress();
-      setAddress(_address.toLowerCase());
     } else {
       setProvider(null);
       setNetwork(null);
-      setAddress(null);
     }
   });
 
@@ -45,7 +40,7 @@ const Content = () => {
 
   return (
     <div className={styles.content}>
-      {!address ? (
+      {!profile?.address ? (
         <>
           <div className={styles.metamask}>
             <Image alt="Metamask Wallet login" src={MetamaskLogo} width={336} height={450} />

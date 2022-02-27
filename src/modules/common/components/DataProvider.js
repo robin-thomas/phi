@@ -17,7 +17,6 @@ const DataProvider = ({ children }) => {
   const [profilePic, setProfilePic] = useState(null);
   const [showProfile, setShowProfile] = useState(false);
   const [profileKey, setProfileKey] = useState(null);
-  const [address, setAddress] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const [contacts, setContacts] = useState(null);
   const [activeContact, setActiveContact] = useState(null);
@@ -32,16 +31,20 @@ const DataProvider = ({ children }) => {
   useEffect(() => Bucket.getKey(TEXTILE_BUCKET_PROFILE).then(setProfileKey), []);
 
   useEffect(() => {
-    if (provider && address) {
-      ChatUtil.setAddress(address);
+    if (provider) {
+      provider.getSigner().getAddress().then(address => {
+        address = address.toLowerCase();
 
-      self(address, provider)
-        .then(() => getProfile(address, true /* self profile */))
-        .then((_profile) => setProfile({..._profile, address}));
+        ChatUtil.setAddress(address);
+
+        self(address, provider)
+          .then(() => getProfile(address, true /* self profile */))
+          .then(setProfile);
+      });
     } else {
       setProfile({});
     }
-  }, [address, provider]);
+  }, [provider]);
 
   useEffect(() => {
     if (profile?.address && profile?.image && profileKey) {
@@ -195,8 +198,6 @@ const DataProvider = ({ children }) => {
         searchResults, setSearchResults,
         contacts,
         setContacts,
-        address,
-        setAddress,
         activeContact,
         setActiveContact,
         activeContactProfile,

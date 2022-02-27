@@ -24,7 +24,7 @@ const About = () => (
 )
 
 const SidePanel = () => {
-  const { address, showProfile, setShowProfile } = useAppContext();
+  const { profile, showProfile, setShowProfile } = useAppContext();
 
   const closeDrawer = () => setShowProfile(false);
 
@@ -34,7 +34,7 @@ const SidePanel = () => {
         <Box sx={{ px: 2 }}>
           <Header />
         </Box>
-        {address ? <Contacts /> : <About />}
+        {profile?.address ? <Contacts /> : <About />}
         <Drawer
           anchor="left"
           open={showProfile}

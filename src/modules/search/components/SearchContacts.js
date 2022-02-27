@@ -6,7 +6,7 @@ import { useAppContext } from '@/modules/common/hooks';
 import { searchProfiles } from '@/modules/profile/utils/ceramic';
 
 const SearchContacts = () => {
-  const { address, contacts, setSearchResults } = useAppContext();
+  const { profile, contacts, setSearchResults } = useAppContext();
 
   const formik = useFormik({
     initialValues: { search: '' },
@@ -14,7 +14,7 @@ const SearchContacts = () => {
       search: yup
         .string()
         .lowercase()
-        .notOneOf([address], 'That\'s your address!')
+        .notOneOf([profile.address], 'That\'s your address!')
     }),
     onSubmit: async (values) => {
       if (values.search) {

@@ -17,10 +17,10 @@ import { getProfile } from '@/modules/profile/utils/ceramic';
 import { SearchInput } from '@/modules/search/components';
 
 const AddContact = (_, ref) => {
-  const { address } = useAppContext();
+  const { profile } = useAppContext();
 
   const [open, setOpen] = useState(false);
-  const [profile, setProfile] = useState(null);
+  const [contact, setContact] = useState(null);
   const [sendingInvite, setSendingInvite] = useState(false);
   const [checkingContact, setCheckingContact] = useState(false);
 
@@ -42,12 +42,12 @@ const AddContact = (_, ref) => {
         errors.address = 'We need this to search!';
       } else if (!/^(0x){1}[0-9a-fA-F]{40}$/.test(values.address)) {
         errors.address = 'Not valid ethereum address';
-      } else if ([address].includes(values.address)) {
+      } else if ([profile?.address].includes(values.address)) {
         errors.address = 'That\'s your address!';
       }
 
       if (errors.address) {
-        setProfile(null);
+        setContact(null);
       }
 
       return errors;
@@ -56,14 +56,14 @@ const AddContact = (_, ref) => {
       if (values.address) {
         setCheckingContact(true);
 
-        const _profile = await getProfile(values.address);
-        if (_profile) {
-          setProfile(_profile);
+        const _contact = await getProfile(values.address);
+        if (_contact) {
+          setContact(_contact);
         }
 
         setCheckingContact(false);
       } else {
-        setProfile(null);
+        setContact(null);
       }
     },
     enableReinitialize: true,
@@ -72,14 +72,14 @@ const AddContact = (_, ref) => {
   const onClose = () => {
     setOpen(false);
     formik.resetForm();
-    setProfile(null);
+    setContact(null);
   }
 
   const addNewContact = async () => {
     setSendingInvite(true);
 
     try {
-      await Invite.post(profile.address);
+      await Invite.post(contact.address);
 
       onClose();
     } catch (err) {
@@ -106,16 +106,16 @@ const AddContact = (_, ref) => {
         <DialogContentText sx={{ mt: 2, mb: 2 }}>
           You can send a friend request if you know their Ethereum address. Once they approve the request, you can start messaging them.
         </DialogContentText>
-        {profile && (
+        {contact && (
           <>
             <Divider sx={{ my: 2 }} />
-            <Contact profile={profile} action={<></>} />
+            <Contact profile={contact} action={<></>} />
           </>
         )}
       </DialogContent>
       <DialogActions>
         <>
-          {profile && <Button disabled={sendingInvite} onClick={addNewContact} color="success">Send Invite</Button>}
+          {contact && <Button disabled={sendingInvite} onClick={addNewContact} color="success">Send Invite</Button>}
           <Button disabled={sendingInvite} onClick={onClose} color="info">Cancel</Button>
         </>
       </DialogActions>
