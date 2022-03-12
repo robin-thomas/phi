@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { act, render } from '@testing-library/react';
 
 import MessageImage from '@/modules/message/components/MessageImage';
 
@@ -38,11 +38,12 @@ describe('MessageImage', () => {
     expect(() => render(<MessageImage />)).toThrowError();
   });
 
-  it('Verify that the MessagImage is rendered as skeleton if no image', () => {
-    const { container } = render(<MessageImage attachment={attachment} />);
+  it('Verify that the MessagImage is rendered as skeleton if no image', async () => {
+    await act(async () => {
+      const { container } = render(<MessageImage attachment={attachment} />);
 
-    const skeleton = container.querySelector('span.MuiSkeleton-root');
-
-    expect(skeleton).toBeInTheDocument();
+      const skeleton = container.querySelector('span.MuiSkeleton-root');
+      expect(skeleton).toBeInTheDocument();
+    });
   });
 });
