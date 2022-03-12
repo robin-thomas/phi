@@ -18,8 +18,8 @@ const MessageSent = ({ chat }) => (
             </div>
           </Grid>
         ))}
-        {chat.attachments.map(image => (
-          <div key={image.name} className={`${styles.messageImage} ${styles.selfImage}`}>
+        {chat.attachments.map((image, index) => (
+          <div key={index} className={`${styles.messageImage} ${styles.selfImage}`}>
             <MessageImage address={chat.to} attachment={image} />
           </div>
         ))}

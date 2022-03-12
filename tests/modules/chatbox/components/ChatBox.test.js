@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { act, render, screen, fireEvent } from '@testing-library/react';
 
 import { ChatBox } from '@/modules/chatbox/components';
 import Chat from '@/modules/chatbox/utils/textile';
@@ -56,30 +56,30 @@ describe('ChatBox', () => {
     expect(chatbox).toBeInTheDocument();
   });
 
-  it('Verify that submit is enabled only when a message is typed', () => {
+  it('Verify that submit is enabled only when a message is typed', async () => {
     const submitBtn = screen.getByLabelText('Send message').firstChild;
     expect(submitBtn).toBeDisabled();
 
     const chatbox = screen.getByRole('textbox');
-    fireEvent.change(chatbox, { target: { value: 'Hello' } });
+    await act(async () => fireEvent.change(chatbox, { target: { value: 'Hello' } }));
 
     expect(submitBtn).not.toBeDisabled();
   });
 
   it('Verify that submit button triggers callback', async () => {
     const chatbox = screen.getByRole('textbox');
-    fireEvent.change(chatbox, { target: { value: 'Hello' } });
+    await act(async () => fireEvent.change(chatbox, { target: { value: 'Hello' } }));
 
     const submitBtn = screen.getByLabelText('Send message').firstChild;
     expect(submitBtn).not.toBeDisabled();
-    submitBtn.click();
+    await act(async () => submitBtn.click());
 
-    await waitFor(() => expect(Chat.post).toHaveBeenCalledWith('1', {
+    expect(Chat.post).toHaveBeenCalledWith('1', {
       from: 'address',
       to: 'contact',
       message: 'Hello',
       attachments: [],
-    }));
+    });
   });
 
   it('Verify that selected emoji is added to chatbox', async () => {
@@ -87,22 +87,21 @@ describe('ChatBox', () => {
     expect(chatbox).toHaveValue('');
 
     const emojiOpenBtn = screen.getByLabelText('Add emojis').firstChild;
-    emojiOpenBtn.click();
+    await act(async () => emojiOpenBtn.click());
 
-    await waitFor(() => expect(screen.getByRole('button', { name: '😀' })).toBeInTheDocument());
+    expect(screen.getByRole('button', { name: '😀' })).toBeInTheDocument();
 
     const emoji = screen.getByRole('button', { name: '😀' });
-    emoji.click();
+    await act(async () => emoji.click());
 
-    await waitFor(() => expect(chatbox).toHaveValue('😀'));
+    expect(chatbox).toHaveValue('😀');
   }, 20000); /* 20s timeout */
 
   it('Verify that a file can be attached to chatbox', async () => {
     const attachFileBtn = screen.getByLabelText('Attach file').firstChild;
-    attachFileBtn.click();
+    await act(async () => attachFileBtn.click());
 
-    await waitFor(() => expect(Bucket.upload).toHaveBeenCalled());
-
+    expect(Bucket.upload).toHaveBeenCalled();
     expect(screen.getByText('image.jpg')).toBeInTheDocument();
   });
 });

@@ -1,4 +1,4 @@
-import { render, screen }  from '@testing-library/react';
+import { act, render, screen }  from '@testing-library/react';
 
 import Message from '@/modules/message/components/Message';
 
@@ -40,16 +40,16 @@ describe('Message', () => {
     expect(() => render(<Message />)).toThrowError();
   });
 
-  it('Verify that Message component can be rendered', () => {
-    render(<Message chat={chat} />);
+  it('Verify that Message component can be rendered', async () => {
+    await act(async () => render(<Message chat={chat} />));
 
     expect(screen.getByText('message')).toBeInTheDocument();
   });
 
-  it('Verify that the Message component can render attachments', () => {
+  it('Verify that the Message component can render attachments', async () => {
     const _chat = {...chat, attachments: [{location: 'location', mimeType: 'mimeType'}]};
 
-    render(<Message chat={_chat} />);
+    await act(async () => render(<Message chat={_chat} />));
 
     expect(screen.getByText('message')).toBeInTheDocument();
   });

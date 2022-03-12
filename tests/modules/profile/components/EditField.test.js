@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { act, render, screen, fireEvent } from '@testing-library/react';
 
 import EditField from '@/modules/profile/components/EditField';
 
@@ -24,7 +24,6 @@ describe('Profile', () => {
   it('Verify that name & label props are required', () => {
     expect(() => render(<EditField />)).toThrowError();
     expect(() => render(<EditField name={name} />)).toThrowError();
-    expect(() => render(<EditField label={label} />)).toThrowError();
   });
 
   it('Verify that EditField component can be rendered', async () => {
@@ -33,10 +32,10 @@ describe('Profile', () => {
     const editField = screen.getByRole('textbox');
     expect(editField).toBeInTheDocument();
 
-    fireEvent.change(editField, { target: { value} });
-    fireEvent.blur(editField);
+    await act(async () => fireEvent.change(editField, { target: { value} }));
+    await act(async () => fireEvent.blur(editField));
 
-    await waitFor(() => expect(mockUpdateProfile).toHaveBeenCalledWith(address, name, value));
+    expect(mockUpdateProfile).toHaveBeenCalledWith(address, name, value);
   });
 
   it('Verify that the validation errors are caught properly', async () => {
@@ -48,8 +47,8 @@ describe('Profile', () => {
     expect(editField).toBeInTheDocument();
     expect(screen.queryByText(error)).not.toBeInTheDocument();
 
-    await waitFor(() => fireEvent.change(editField, { target: { value } }));
-    await waitFor(() => fireEvent.change(editField, { target: { value: '' } }));
+    await act(async () => fireEvent.change(editField, { target: { value } }));
+    await act(async () => fireEvent.change(editField, { target: { value: '' } }) );
 
     expect(screen.getByText(error)).toBeInTheDocument();
   });
